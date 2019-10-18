@@ -218,9 +218,7 @@ BALLERINA_CLASSPATH=$BALLERINA_CLASSPATH:$BALLERINA_CLASSPATH_EXT
 
 if [[ $1 == "native-img" ]]; then
     if [[ ! -z "${GRAALVM_HOME}" ]]; then
-        $GRAALVM_HOME/bin/java -cp "$BALLERINA_CLASSPATH" com.hpe.kraal.MainKt \
-            --excludePackages="ballerina" \
-            --excludeClasses="___init" $2 &&
+        $GRAALVM_HOME/bin/java -cp "$BALLERINA_CLASSPATH" com.hpe.kraal.MainKt $2 &&
         $GRAALVM_HOME/bin/native-image \
             -H:+PrintAOTCompilation \
             -H:+PrintClassInitialization \
@@ -240,7 +238,6 @@ if [[ $1 == "native-img" ]]; then
             --report-unsupported-elements-at-runtime \
             --no-fallback \
             --no-server \
-            -cp "$BALLERINA_CLASSPATH" \
             -jar $2
     else
         echo "Please set GRAALVM_HOME for native image generation"
