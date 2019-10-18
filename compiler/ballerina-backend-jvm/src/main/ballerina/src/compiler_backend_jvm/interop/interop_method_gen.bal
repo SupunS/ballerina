@@ -128,35 +128,8 @@ function genJFieldForInteropField(JFieldFunctionWrapper jFieldFuncWrapper,
     }
 
     // Generate if blocks to check and set default values to parameters
-    int birFuncParamIndex = 0;
-    int paramDefaultsBBIndex = 0;
-    foreach var birFuncParamOptional in birFuncParams {
-        var birFuncParam = <bir:FunctionParam>birFuncParamOptional;
-        // Skip boolean function parameters to indicate the existence of default values
-        if (birFuncParamIndex % 2 !== 0 || !birFuncParam.hasDefaultExpr) {
-            // Skip the loop if:
-            //  1) This birFuncParamIndex had an odd value: indicates a generated boolean parameter
-            //  2) This function param doesn't have a default value
-            birFuncParamIndex += 1;
-            continue;
-        }
-
-        // The following boolean parameter indicates the existence of a default value
-        var isDefaultValueExist = <bir:FunctionParam>birFuncParams[birFuncParamIndex + 1];
-        mv.visitVarInsn(ILOAD, indexMap.getIndex(isDefaultValueExist));
-
-        // Gen the if not equal logic
-        jvm:Label paramNextLabel = labelGen.getLabel(birFuncParam.name.value + "next");
-        mv.visitJumpInsn(IFNE, paramNextLabel);
-
-        bir:BasicBlock?[] basicBlocks = birFunc.paramDefaultBBs[paramDefaultsBBIndex];
-        generateBasicBlocks(mv, basicBlocks, labelGen, errorGen, instGen, termGen, birFunc, -1,
-                            -1, strandParamIndex, true, birModule, currentPackageName, (), false);
-        mv.visitLabel(paramNextLabel);
-
-        birFuncParamIndex += 1;
-        paramDefaultsBBIndex += 1;
-    }
+    setParamDefaultValues(mv, birModule, birFunc, birFuncParams, indexMap, labelGen, errorGen, instGen, 
+                            termGen, currentPackageName);
 
     jvm:Field jField = jFieldFuncWrapper.jField;
     jvm:JType jFieldType = jField.fType;
@@ -187,7 +160,7 @@ function genJFieldForInteropField(JFieldFunctionWrapper jFieldFuncWrapper,
     }
 
     // Load java method parameters
-    birFuncParamIndex = jField.isStatic ? 0: 2;
+    int birFuncParamIndex = jField.isStatic ? 0: 2;
     int jMethodParamIndex = 0;
     if (birFuncParamIndex < birFuncParams.length()) {
         var birFuncParam = <bir:FunctionParam>birFuncParams[birFuncParamIndex];
@@ -252,8 +225,6 @@ function genJMethodForInteropMethod(JMethodFunctionWrapper extFuncWrapper,
 
     // Create a local variable for the strand
     BalToJVMIndexMap indexMap = new;
-    bir:VariableDcl strandVarDcl = { typeValue: "string", name: { value: "$_strand_$" }, kind: "ARG" };
-    int strandParamIndex = indexMap.getIndex(strandVarDcl);
 
     // Generate method desc
     bir:Function birFunc = extFuncWrapper.func;
@@ -298,35 +269,8 @@ function genJMethodForInteropMethod(JMethodFunctionWrapper extFuncWrapper,
     }
 
     // Generate if blocks to check and set default values to parameters
-    int birFuncParamIndex = 0;
-    int paramDefaultsBBIndex = 0;
-    foreach var birFuncParamOptional in birFuncParams {
-        var birFuncParam = <bir:FunctionParam>birFuncParamOptional;
-        // Skip boolean function parameters to indicate the existence of default values
-        if (birFuncParamIndex % 2 !== 0 || !birFuncParam.hasDefaultExpr) {
-            // Skip the loop if:
-            //  1) This birFuncParamIndex had an odd value: indicates a generated boolean parameter
-            //  2) This function param doesn't have a default value
-            birFuncParamIndex += 1;
-            continue;
-        }
-
-        // The following boolean parameter indicates the existence of a default value
-        var isDefaultValueExist = <bir:FunctionParam>birFuncParams[birFuncParamIndex + 1];
-        mv.visitVarInsn(ILOAD, indexMap.getIndex(isDefaultValueExist));
-
-        // Gen the if not equal logic
-        jvm:Label paramNextLabel = labelGen.getLabel(birFuncParam.name.value + "next");
-        mv.visitJumpInsn(IFNE, paramNextLabel);
-
-        bir:BasicBlock?[] basicBlocks = birFunc.paramDefaultBBs[paramDefaultsBBIndex];
-        generateBasicBlocks(mv, basicBlocks, labelGen, errorGen, instGen, termGen, birFunc, -1,
-                            -1, strandParamIndex, true, birModule, currentPackageName, (), false);
-        mv.visitLabel(paramNextLabel);
-
-        birFuncParamIndex += 1;
-        paramDefaultsBBIndex += 1;
-    }
+    setParamDefaultValues(mv, birModule, birFunc, birFuncParams, indexMap, labelGen, errorGen, instGen, 
+                            termGen, currentPackageName);
 
     jvm:Method jMethod = extFuncWrapper.jMethod;
     jvm:MethodType jMethodType = jMethod.mType;
@@ -334,6 +278,71 @@ function genJMethodForInteropMethod(JMethodFunctionWrapper extFuncWrapper,
     jvm:JType jMethodRetType = jMethodType.retType;
 
     // Load receiver which is the 0th parameter in the birFunc
+    loadReceiver(mv, jMethod, birFuncParams, indexMap, labelGen);
+
+    // Load java method parameters
+    int birFuncParamIndex = jMethod.kind is jvm:METHOD && !jMethod.isStatic  ? 2: 0;
+    int jMethodParamIndex = 0;
+    int paramCount = birFuncParams.length();
+    while (birFuncParamIndex < paramCount) {
+        var birFuncParam = <bir:FunctionParam>birFuncParams[birFuncParamIndex];
+        int paramLocalVarIndex = indexMap.getIndex(birFuncParam);
+        boolean isVarArg = (birFuncParamIndex == (paramCount - 2)) && birFunc.restParamExist;
+        loadMethodParamToStackInInteropFunction(mv, birFuncParam,
+                                    jMethodParamTypes[jMethodParamIndex], currentPackageName, paramLocalVarIndex,
+                                    indexMap, isVarArg);
+        birFuncParamIndex += 2;
+        jMethodParamIndex += 1;
+    }
+
+    if jMethod.kind is jvm:METHOD && !jMethod.isStatic {
+        if jMethod.isInterface {
+            mv.visitMethodInsn(INVOKEINTERFACE, jMethod.class, jMethod.name, jMethod.sig, true);
+        } else {
+            mv.visitMethodInsn(INVOKEVIRTUAL, jMethod.class, jMethod.name, jMethod.sig, false);
+        }
+    } else if jMethod.kind is jvm:METHOD && jMethod.isStatic {
+        mv.visitMethodInsn(INVOKESTATIC, jMethod.class, jMethod.name, jMethod.sig, false);
+    } else {
+        mv.visitMethodInsn(INVOKESPECIAL, jMethod.class, jMethod.name, jMethod.sig, false);
+    }
+
+    // Handle return type
+    bir:BType retType = <bir:BType>birFunc.typeValue["retType"];
+    int returnVarRefIndex = handleReturn(mv, birFunc, retType, jMethodRetType, indexMap, currentPackageName, labelGen);
+    jvm:Label retLabel = labelGen.getLabel("return_lable");
+    mv.visitLabel(retLabel);
+    mv.visitLineNumber(birFunc.pos.sLine, retLabel);
+    
+    if (retType is bir:BUnionType && getActualType(retType) is bir:BTypeNil) {
+        mv.visitInsn(ACONST_NULL);
+        mv.visitInsn(ARETURN);
+    } else {
+        termGen.genReturnTerm({pos:{}, kind:"RETURN"}, returnVarRefIndex, birFunc);
+    }
+    
+    
+    // iterate the exception classes and generate catch blocks
+    foreach var exception in extFuncWrapper.jMethod.throws {
+        jvm:Label catchLabel = labelGen.getLabel(exception + "$label$");
+        mv.visitLabel(catchLabel);
+        //mv.visitLdcInsn(exception);
+        mv.visitMethodInsn(INVOKESTATIC, BAL_ERRORS, "createInteropError", io:sprintf("(L%s;)L%s;", THROWABLE, ERROR_VALUE), false);
+        mv.visitInsn(ARETURN);
+    }
+
+    // throw unhandled exception error
+    mv.visitLabel(throwableLabel);
+    // get the class name of the error
+    mv.visitMethodInsn(INVOKESTATIC, BAL_ERRORS, "createInteropError", io:sprintf("(L%s;)L%s;", THROWABLE, ERROR_VALUE), false);
+    mv.visitInsn(ATHROW);
+
+    mv.visitMaxs(200, 400);
+    mv.visitEnd();
+}
+
+function loadReceiver(jvm:MethodVisitor mv, jvm:Method jMethod, bir:FunctionParam?[] birFuncParams, 
+                        BalToJVMIndexMap indexMap, LabelGenerator labelGen) {
     if jMethod.kind is jvm:METHOD && !jMethod.isStatic {
         //var receiverParam = <bir:FunctionParam>birFuncParams[0];
         var receiverLocalVarIndex = indexMap.getIndex(<bir:FunctionParam>birFuncParams[0]);
@@ -362,37 +371,48 @@ function genJMethodForInteropMethod(JMethodFunctionWrapper extFuncWrapper,
         mv.visitTypeInsn(NEW, jMethod.class);
         mv.visitInsn(DUP);
     }
+}
 
-    // Load java method parameters
-    birFuncParamIndex = jMethod.kind is jvm:METHOD && !jMethod.isStatic  ? 2: 0;
-    int jMethodParamIndex = 0;
-    int paramCount = birFuncParams.length();
-    while (birFuncParamIndex < paramCount) {
-        var birFuncParam = <bir:FunctionParam>birFuncParams[birFuncParamIndex];
-        int paramLocalVarIndex = indexMap.getIndex(birFuncParam);
-        boolean isVarArg = (birFuncParamIndex == (paramCount - 2)) && birFunc.restParamExist;
-        loadMethodParamToStackInInteropFunction(mv, birFuncParam,
-                                    jMethodParamTypes[jMethodParamIndex], currentPackageName, paramLocalVarIndex,
-                                    indexMap, isVarArg);
-        birFuncParamIndex += 2;
-        jMethodParamIndex += 1;
-    }
-
-    if jMethod.kind is jvm:METHOD && !jMethod.isStatic {
-        if jMethod.isInterface {
-            mv.visitMethodInsn(INVOKEINTERFACE, jMethod.class, jMethod.name, jMethod.sig, true);
-        } else {
-            mv.visitMethodInsn(INVOKEVIRTUAL, jMethod.class, jMethod.name, jMethod.sig, false);
+function setParamDefaultValues(jvm:MethodVisitor mv, bir:Package birModule, bir:Function birFunc, 
+                                bir:FunctionParam?[] birFuncParams, BalToJVMIndexMap indexMap, LabelGenerator labelGen, 
+                                ErrorHandlerGenerator errorGen, InstructionGenerator instGen, TerminatorGenerator termGen,
+                                string currentPackageName) {
+    int birFuncParamIndex = 0;
+    int paramDefaultsBBIndex = 0;
+    foreach var birFuncParamOptional in birFuncParams {
+        var birFuncParam = <bir:FunctionParam>birFuncParamOptional;
+        // Skip boolean function parameters to indicate the existence of default values
+        if (birFuncParamIndex % 2 !== 0 || !birFuncParam.hasDefaultExpr) {
+            // Skip the loop if:
+            //  1) This birFuncParamIndex had an odd value: indicates a generated boolean parameter
+            //  2) This function param doesn't have a default value
+            birFuncParamIndex += 1;
+            continue;
         }
-    } else if jMethod.kind is jvm:METHOD && jMethod.isStatic {
-        mv.visitMethodInsn(INVOKESTATIC, jMethod.class, jMethod.name, jMethod.sig, false);
-    } else {
-        mv.visitMethodInsn(INVOKESPECIAL, jMethod.class, jMethod.name, jMethod.sig, false);
-    }
 
-    // Handle return type
+        // The following boolean parameter indicates the existence of a default value
+        var isDefaultValueExist = <bir:FunctionParam>birFuncParams[birFuncParamIndex + 1];
+        mv.visitVarInsn(ILOAD, indexMap.getIndex(isDefaultValueExist));
+
+        // Gen the if not equal logic
+        jvm:Label paramNextLabel = labelGen.getLabel(birFuncParam.name.value + "next");
+        mv.visitJumpInsn(IFNE, paramNextLabel);
+
+        bir:VariableDcl strandVarDcl = { typeValue: "string", name: { value: "$_strand_$" }, kind: "ARG" };
+        int strandParamIndex = indexMap.getIndex(strandVarDcl);
+        bir:BasicBlock?[] basicBlocks = birFunc.paramDefaultBBs[paramDefaultsBBIndex];
+        generateBasicBlocks(mv, basicBlocks, labelGen, errorGen, instGen, termGen, birFunc, -1,
+                            -1, strandParamIndex, true, birModule, currentPackageName, (), false);
+        mv.visitLabel(paramNextLabel);
+
+        birFuncParamIndex += 1;
+        paramDefaultsBBIndex += 1;
+    }
+}
+
+function handleReturn(jvm:MethodVisitor mv, bir:Function birFunc, bir:BType retType, jvm:JType jMethodRetType,
+                        BalToJVMIndexMap indexMap, string currentPackageName, LabelGenerator labelGen) returns int {
     int returnVarRefIndex = -1;
-    bir:BType retType = <bir:BType>birFunc.typeValue["retType"];
     if retType is bir:BTypeNil {
     } else {
         boolean isVoidReturnThrows = false;
@@ -459,36 +479,7 @@ function genJMethodForInteropMethod(JMethodFunctionWrapper extFuncWrapper,
             generateVarStore(mv, retVarDcl, currentPackageName, returnVarRefIndex);
         }  
     }
-
-    jvm:Label retLabel = labelGen.getLabel("return_lable");
-    mv.visitLabel(retLabel);
-    mv.visitLineNumber(birFunc.pos.sLine, retLabel);
-    
-    if (retType is bir:BUnionType && getActualType(retType) is bir:BTypeNil) {
-        mv.visitInsn(ACONST_NULL);
-        mv.visitInsn(ARETURN);
-    } else {
-        termGen.genReturnTerm({pos:{}, kind:"RETURN"}, returnVarRefIndex, birFunc);
-    }
-    
-    
-    // iterate the exception classes and generate catch blocks
-    foreach var exception in extFuncWrapper.jMethod.throws {
-        jvm:Label catchLabel = labelGen.getLabel(exception + "$label$");
-        mv.visitLabel(catchLabel);
-        //mv.visitLdcInsn(exception);
-        mv.visitMethodInsn(INVOKESTATIC, BAL_ERRORS, "createInteropError", io:sprintf("(L%s;)L%s;", THROWABLE, ERROR_VALUE), false);
-        mv.visitInsn(ARETURN);
-    }
-
-    // throw unhandled exception error
-    mv.visitLabel(throwableLabel);
-    // get the class name of the error
-    mv.visitMethodInsn(INVOKESTATIC, BAL_ERRORS, "createInteropError", io:sprintf("(L%s;)L%s;", THROWABLE, ERROR_VALUE), false);
-    mv.visitInsn(ATHROW);
-
-    mv.visitMaxs(200, 400);
-    mv.visitEnd();
+    return returnVarRefIndex;
 }
 
 type BValueType bir:BTypeInt | bir:BTypeFloat | bir:BTypeBoolean | bir:BTypeByte | bir:BTypeNil;

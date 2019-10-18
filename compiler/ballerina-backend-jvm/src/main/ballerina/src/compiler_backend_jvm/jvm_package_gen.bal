@@ -694,7 +694,7 @@ public function lookupExternClassName(string pkgName, string functionName) retur
 }
 
 function generateShutdownSignalListener(bir:Package pkg, string initClass, map<byte[]> jarEntries) {
-    string innerClassName = initClass + "$SignalListener";
+    string innerClassName = "$SignalListener";
     jvm:ClassWriter cw = new(COMPUTE_FRAMES);
     cw.visit(V1_8, ACC_SUPER, innerClassName, (), JAVA_THREAD, ());
 

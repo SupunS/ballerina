@@ -299,8 +299,17 @@ function genJMethodForBFunc(bir:Function func,
     mv.visitLabel(methodEndLabel);
     termGen.genReturnTerm({pos:{}, kind:"RETURN"}, returnVarRefIndex, func);
 
+    createLocalVarTable(mv, funcName, localVars, localVarOffset, labelGen, methodStartLabel, methodEndLabel, indexMap);
+
+    mv.visitMaxs(200, 400);
+    mv.visitEnd();
+}
+
+function createLocalVarTable(jvm:MethodVisitor mv, string funcName, bir:VariableDcl?[] localVars, int localVarOffset, 
+                             LabelGenerator labelGen, jvm:Label methodStartLabel, jvm:Label methodEndLabel, 
+                             BalToJVMIndexMap indexMap) {
     // Create Local Variable Table
-    k = localVarOffset;
+    int k = localVarOffset;
     // Add strand variable to LVT
     mv.visitLocalVariable("__strand", io:sprintf("L%s;", STRAND), methodStartLabel, methodEndLabel, localVarOffset);
     while (k < localVars.length()) {
@@ -333,9 +342,6 @@ function genJMethodForBFunc(bir:Function func,
         }
         k = k + 1;
     }
-
-    mv.visitMaxs(200, 400);
-    mv.visitEnd();
 }
 
 function geerateFrameClassFieldLoad(int localVarOffset, bir:VariableDcl?[] localVars, jvm:MethodVisitor mv,
@@ -344,9 +350,14 @@ function geerateFrameClassFieldLoad(int localVarOffset, bir:VariableDcl?[] local
     while (k < localVars.length()) {
         bir:VariableDcl localVar = getVariableDcl(localVars[k]);
         var index = indexMap.getIndex(localVar);
-        bir:BType bType = localVar.typeValue;
         mv.visitInsn(DUP);
+        genFieldLoad(mv, localVar, index, frameName);
+        k = k + 1;
+    }
+}
 
+function genFieldLoad(jvm:MethodVisitor mv, bir:VariableDcl localVar, int index, string frameName) {
+        bir:BType bType = localVar.typeValue;
         if (bType is bir:BTypeInt) {
             mv.visitFieldInsn(GETFIELD, frameName, stringutils:replace(localVar.name.value, "%","_"), "J");
             mv.visitVarInsn(LSTORE, index);
@@ -426,9 +437,6 @@ function geerateFrameClassFieldLoad(int localVarOffset, bir:VariableDcl?[] local
                                         io:sprintf("%s", bType));
             panic err;
         }
-        k = k + 1;
-    }
-
 }
 
 function geerateFrameClassFieldUpdate(int localVarOffset, bir:VariableDcl?[] localVars, jvm:MethodVisitor mv,
@@ -438,8 +446,13 @@ function geerateFrameClassFieldUpdate(int localVarOffset, bir:VariableDcl?[] loc
         bir:VariableDcl localVar = getVariableDcl(localVars[k]);
         var index = indexMap.getIndex(localVar);
         mv.visitInsn(DUP);
+        genFieldUpdate(mv, localVar, index, frameName);
+        k = k + 1;
+    }
+}
 
-        bir:BType bType = localVar.typeValue;
+function genFieldUpdate(jvm:MethodVisitor mv, bir:VariableDcl localVar, int index, string frameName) {
+           bir:BType bType = localVar.typeValue;
         if (bType is bir:BTypeInt) {
             mv.visitVarInsn(LLOAD, index);
             mv.visitFieldInsn(PUTFIELD, frameName, stringutils:replace(localVar.name.value, "%","_"), "J");
@@ -521,8 +534,6 @@ function geerateFrameClassFieldUpdate(int localVarOffset, bir:VariableDcl?[] loc
                                         io:sprintf("%s", bType));
             panic err;
         }
-        k = k + 1;
-    }
 }
 
 function getJVMTypeSign(bir:BType bType) returns string {
@@ -640,91 +651,7 @@ function generateBasicBlocks(jvm:MethodVisitor mv, bir:BasicBlock?[] basicBlocks
                 insKind = inst.kind;
                 generateDiagnosticPos(inst.pos, mv);
             }
-
-            if (insKind <= bir:BINARY_BITWISE_UNSIGNED_RIGHT_SHIFT) {
-                instGen.generateBinaryOpIns(<bir:BinaryOp> inst);
-            } else if (insKind <= bir:INS_KIND_TYPE_CAST) {
-                if (insKind == bir:INS_KIND_MOVE) {
-                    instGen.generateMoveIns(<bir:Move> inst);
-                } else if (insKind == bir:INS_KIND_CONST_LOAD) {
-                    instGen.generateConstantLoadIns(<bir:ConstantLoad> inst);
-                } else if (insKind == bir:INS_KIND_NEW_MAP) {
-                    instGen.generateMapNewIns(<bir:NewMap> inst);
-                } else if (insKind == bir:INS_KIND_NEW_INST) {
-                    instGen.generateObjectNewIns(<bir:NewInstance> inst, localVarOffset);
-                } else if (insKind == bir:INS_KIND_MAP_STORE) {
-                    instGen.generateMapStoreIns(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_NEW_ARRAY) {
-                    instGen.generateArrayNewIns(<bir:NewArray> inst);
-                } else if (insKind == bir:INS_KIND_ARRAY_STORE) {
-                    instGen.generateArrayStoreIns(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_MAP_LOAD) {
-                    instGen.generateMapLoadIns(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_ARRAY_LOAD) {
-                    instGen.generateArrayValueLoad(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_NEW_ERROR) {
-                    instGen.generateNewErrorIns(<bir:NewError> inst);
-                } else {
-                    instGen.generateCastIns(<bir:TypeCast> inst);
-                }
-            } else if (insKind <= bir:INS_KIND_NEW_STRING_XML_QNAME) {
-                if (insKind == bir:INS_KIND_IS_LIKE) {
-                    instGen.generateIsLikeIns(<bir:IsLike> inst);
-                } else if (insKind == bir:INS_KIND_TYPE_TEST) {
-                    instGen.generateTypeTestIns(<bir:TypeTest> inst);
-                } else if (insKind == bir:INS_KIND_OBJECT_STORE) {
-                    instGen.generateObjectStoreIns(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_OBJECT_LOAD) {
-                    instGen.generateObjectLoadIns(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_NEW_XML_ELEMENT) {
-                    instGen.generateNewXMLElementIns(<bir:NewXMLElement> inst);
-                } else if (insKind == bir:INS_KIND_NEW_XML_TEXT) {
-                    instGen.generateNewXMLTextIns(<bir:NewXMLText> inst);
-                } else if (insKind == bir:INS_KIND_NEW_XML_COMMENT) {
-                    instGen.generateNewXMLCommentIns(<bir:NewXMLComment> inst);
-                } else if (insKind == bir:INS_KIND_NEW_XML_PI) {
-                    instGen.generateNewXMLProcIns(<bir:NewXMLPI> inst);
-                } else if (insKind == bir:INS_KIND_NEW_XML_QNAME) {
-                    instGen.generateNewXMLQNameIns(<bir:NewXMLQName> inst);
-                } else {
-                    instGen.generateNewStringXMLQNameIns(<bir:NewStringXMLQName> inst);
-                } 
-            } else if (insKind <= bir:INS_KIND_NEW_STREAM) {
-                if (insKind == bir:INS_KIND_XML_SEQ_STORE) {
-                    instGen.generateXMLStoreIns(<bir:XMLAccess> inst);
-                } else if (insKind == bir:INS_KIND_XML_SEQ_LOAD) {
-                    instGen.generateXMLLoadIns(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_XML_LOAD) {
-                    instGen.generateXMLLoadIns(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_XML_LOAD_ALL) {
-                    instGen.generateXMLLoadAllIns(<bir:XMLAccess> inst);
-                } else if (insKind == bir:INS_KIND_XML_ATTRIBUTE_STORE) {
-                    instGen.generateXMLAttrStoreIns(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_XML_ATTRIBUTE_LOAD) {
-                    instGen.generateXMLAttrLoadIns(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_FP_LOAD) {
-                    instGen.generateFPLoadIns(<bir:FPLoad> inst);
-                } else if (insKind == bir:INS_KIND_STRING_LOAD) {
-                    instGen.generateStringLoadIns(<bir:FieldAccess> inst);
-                } else if (insKind == bir:INS_KIND_NEW_TABLE) {
-                    instGen.generateTableNewIns(<bir:NewTable> inst);
-                } else {
-                    instGen.generateStreamNewIns(<bir:NewStream>inst);
-                }
-            } else if (insKind <= bir:INS_KIND_NEGATE) {
-                if (insKind == bir:INS_KIND_TYPEOF) {
-                    instGen.generateTypeofIns(<bir:UnaryOp> inst);
-                } else if (insKind == bir:INS_KIND_NOT) {
-                    instGen.generateNotIns(<bir:UnaryOp> inst);
-                } else if (insKind == bir:INS_KIND_NEW_TYPEDESC) {
-                    instGen.generateNewTypedescIns(<bir:NewTypeDesc> inst);
-                } else {
-                    instGen.generateNegateIns(<bir:UnaryOp> inst);
-                } 
-            } else {
-                error err = error("JVM generation is not supported for operation " + io:sprintf("%s", inst));
-                panic err;
-            }
+            genInstruction(instGen, inst, insKind, localVarOffset);
             m += 1;
         }
 
@@ -782,6 +709,93 @@ function generateBasicBlocks(jvm:MethodVisitor mv, bir:BasicBlock?[] basicBlocks
             genYieldCheck(mv, termGen.labelGen, thenBB, funcName, localVarOffset);
         }
         j += 1;
+    }
+}
+
+function genInstruction(InstructionGenerator instGen, bir:Instruction? inst, int insKind, int localVarOffset) {
+    if (insKind <= bir:BINARY_BITWISE_UNSIGNED_RIGHT_SHIFT) {
+        instGen.generateBinaryOpIns(<bir:BinaryOp> inst);
+    } else if (insKind <= bir:INS_KIND_TYPE_CAST) {
+        if (insKind == bir:INS_KIND_MOVE) {
+            instGen.generateMoveIns(<bir:Move> inst);
+        } else if (insKind == bir:INS_KIND_CONST_LOAD) {
+            instGen.generateConstantLoadIns(<bir:ConstantLoad> inst);
+        } else if (insKind == bir:INS_KIND_NEW_MAP) {
+            instGen.generateMapNewIns(<bir:NewMap> inst);
+        } else if (insKind == bir:INS_KIND_NEW_INST) {
+            instGen.generateObjectNewIns(<bir:NewInstance> inst, localVarOffset);
+        } else if (insKind == bir:INS_KIND_MAP_STORE) {
+            instGen.generateMapStoreIns(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_NEW_ARRAY) {
+            instGen.generateArrayNewIns(<bir:NewArray> inst);
+        } else if (insKind == bir:INS_KIND_ARRAY_STORE) {
+            instGen.generateArrayStoreIns(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_MAP_LOAD) {
+            instGen.generateMapLoadIns(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_ARRAY_LOAD) {
+            instGen.generateArrayValueLoad(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_NEW_ERROR) {
+            instGen.generateNewErrorIns(<bir:NewError> inst);
+        } else {
+            instGen.generateCastIns(<bir:TypeCast> inst);
+        }
+    } else if (insKind <= bir:INS_KIND_NEW_STRING_XML_QNAME) {
+        if (insKind == bir:INS_KIND_IS_LIKE) {
+            instGen.generateIsLikeIns(<bir:IsLike> inst);
+        } else if (insKind == bir:INS_KIND_TYPE_TEST) {
+            instGen.generateTypeTestIns(<bir:TypeTest> inst);
+        } else if (insKind == bir:INS_KIND_OBJECT_STORE) {
+            instGen.generateObjectStoreIns(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_OBJECT_LOAD) {
+            instGen.generateObjectLoadIns(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_NEW_XML_ELEMENT) {
+            instGen.generateNewXMLElementIns(<bir:NewXMLElement> inst);
+        } else if (insKind == bir:INS_KIND_NEW_XML_TEXT) {
+            instGen.generateNewXMLTextIns(<bir:NewXMLText> inst);
+        } else if (insKind == bir:INS_KIND_NEW_XML_COMMENT) {
+            instGen.generateNewXMLCommentIns(<bir:NewXMLComment> inst);
+        } else if (insKind == bir:INS_KIND_NEW_XML_PI) {
+            instGen.generateNewXMLProcIns(<bir:NewXMLPI> inst);
+        } else if (insKind == bir:INS_KIND_NEW_XML_QNAME) {
+            instGen.generateNewXMLQNameIns(<bir:NewXMLQName> inst);
+        } else {
+            instGen.generateNewStringXMLQNameIns(<bir:NewStringXMLQName> inst);
+        } 
+    } else if (insKind <= bir:INS_KIND_NEW_STREAM) {
+        if (insKind == bir:INS_KIND_XML_SEQ_STORE) {
+            instGen.generateXMLStoreIns(<bir:XMLAccess> inst);
+        } else if (insKind == bir:INS_KIND_XML_SEQ_LOAD) {
+            instGen.generateXMLLoadIns(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_XML_LOAD) {
+            instGen.generateXMLLoadIns(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_XML_LOAD_ALL) {
+            instGen.generateXMLLoadAllIns(<bir:XMLAccess> inst);
+        } else if (insKind == bir:INS_KIND_XML_ATTRIBUTE_STORE) {
+            instGen.generateXMLAttrStoreIns(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_XML_ATTRIBUTE_LOAD) {
+            instGen.generateXMLAttrLoadIns(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_FP_LOAD) {
+            instGen.generateFPLoadIns(<bir:FPLoad> inst);
+        } else if (insKind == bir:INS_KIND_STRING_LOAD) {
+            instGen.generateStringLoadIns(<bir:FieldAccess> inst);
+        } else if (insKind == bir:INS_KIND_NEW_TABLE) {
+            instGen.generateTableNewIns(<bir:NewTable> inst);
+        } else {
+            instGen.generateStreamNewIns(<bir:NewStream>inst);
+        }
+    } else if (insKind <= bir:INS_KIND_NEGATE) {
+        if (insKind == bir:INS_KIND_TYPEOF) {
+            instGen.generateTypeofIns(<bir:UnaryOp> inst);
+        } else if (insKind == bir:INS_KIND_NOT) {
+            instGen.generateNotIns(<bir:UnaryOp> inst);
+        } else if (insKind == bir:INS_KIND_NEW_TYPEDESC) {
+            instGen.generateNewTypedescIns(<bir:NewTypeDesc> inst);
+        } else {
+            instGen.generateNegateIns(<bir:UnaryOp> inst);
+        } 
+    } else {
+        error err = error("JVM generation is not supported for operation " + io:sprintf("%s", inst));
+        panic err;
     }
 }
 
