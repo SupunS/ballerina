@@ -129,7 +129,7 @@ function genJFieldForInteropField(JFieldFunctionWrapper jFieldFuncWrapper,
 
     // Generate if blocks to check and set default values to parameters
     setParamDefaultValues(mv, birModule, birFunc, birFuncParams, indexMap, labelGen, errorGen, instGen, 
-                            termGen, currentPackageName);
+                            termGen, currentPackageName, strandParamIndex);
 
     jvm:Field jField = jFieldFuncWrapper.jField;
     jvm:JType jFieldType = jField.fType;
@@ -225,6 +225,8 @@ function genJMethodForInteropMethod(JMethodFunctionWrapper extFuncWrapper,
 
     // Create a local variable for the strand
     BalToJVMIndexMap indexMap = new;
+    bir:VariableDcl strandVarDcl = { typeValue: "string", name: { value: "$_strand_$" }, kind: "ARG" };
+    int strandParamIndex = indexMap.getIndex(strandVarDcl);
 
     // Generate method desc
     bir:Function birFunc = extFuncWrapper.func;
@@ -270,7 +272,7 @@ function genJMethodForInteropMethod(JMethodFunctionWrapper extFuncWrapper,
 
     // Generate if blocks to check and set default values to parameters
     setParamDefaultValues(mv, birModule, birFunc, birFuncParams, indexMap, labelGen, errorGen, instGen, 
-                            termGen, currentPackageName);
+                            termGen, currentPackageName, strandParamIndex);
 
     jvm:Method jMethod = extFuncWrapper.jMethod;
     jvm:MethodType jMethodType = jMethod.mType;
@@ -376,7 +378,7 @@ function loadReceiver(jvm:MethodVisitor mv, jvm:Method jMethod, bir:FunctionPara
 function setParamDefaultValues(jvm:MethodVisitor mv, bir:Package birModule, bir:Function birFunc, 
                                 bir:FunctionParam?[] birFuncParams, BalToJVMIndexMap indexMap, LabelGenerator labelGen, 
                                 ErrorHandlerGenerator errorGen, InstructionGenerator instGen, TerminatorGenerator termGen,
-                                string currentPackageName) {
+                                string currentPackageName, int strandParamIndex) {
     int birFuncParamIndex = 0;
     int paramDefaultsBBIndex = 0;
     foreach var birFuncParamOptional in birFuncParams {
@@ -398,8 +400,6 @@ function setParamDefaultValues(jvm:MethodVisitor mv, bir:Package birModule, bir:
         jvm:Label paramNextLabel = labelGen.getLabel(birFuncParam.name.value + "next");
         mv.visitJumpInsn(IFNE, paramNextLabel);
 
-        bir:VariableDcl strandVarDcl = { typeValue: "string", name: { value: "$_strand_$" }, kind: "ARG" };
-        int strandParamIndex = indexMap.getIndex(strandVarDcl);
         bir:BasicBlock?[] basicBlocks = birFunc.paramDefaultBBs[paramDefaultsBBIndex];
         generateBasicBlocks(mv, basicBlocks, labelGen, errorGen, instGen, termGen, birFunc, -1,
                             -1, strandParamIndex, true, birModule, currentPackageName, (), false);

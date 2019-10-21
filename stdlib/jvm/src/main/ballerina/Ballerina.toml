@@ -14,7 +14,7 @@ target = "java8"
 
     [[platform.libraries]]
     artifactId = "asm"
-    version = "6.2.1"
-    path = "./lib/asm-6.2.1.jar"
+    version = "7.1"
+    path = "./lib/asm-7.1.jar"
     groupId = "org.ow2.asm"
     modules = ["jvm"]

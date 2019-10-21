@@ -1,3 +1,18 @@
 [project]
 org-name = "ballerina"
 version = "0.0.0"
+
+[platform]
+target = "java8"
+
+    [[platform.libraries]]
+    artifactId = "ballerina-lang"
+    version = "1.0.2-SNAPSHOT"
+    path = "/Users/supun/Supun/Ballerina/ballerina/compiler/ballerina-lang/build/libs/ballerina-lang-1.0.2-SNAPSHOT.jar"
+    groupId = "ballerina"
+
+    [[platform.libraries]]
+    artifactId = "ballerina-backend-jvm"
+    version = "1.0.2-SNAPSHOT"
+    path = "/Users/supun/Supun/Ballerina/ballerina/compiler/ballerina-backend-jvm/build/libs/ballerina-backend-jvm-1.0.2-SNAPSHOT.jar"
+    groupId = "ballerina"
