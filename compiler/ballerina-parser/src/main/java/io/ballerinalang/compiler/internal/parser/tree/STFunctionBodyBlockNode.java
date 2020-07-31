@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.FunctionBodyBlockNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STFunctionBodyBlockNode extends STFunctionBodyNode {
             STNode statements,
             STNode closeBraceToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.FUNCTION_BODY_BLOCK, diagnostics);
+        super(SyntaxKind2.FUNCTION_BODY_BLOCK, diagnostics);
         this.openBraceToken = openBraceToken;
         this.namedWorkerDeclarator = namedWorkerDeclarator;
         this.statements = statements;

@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TypeCastParamNode;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class STTypeCastParamNode extends STNode {
             STNode annotations,
             STNode type,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TYPE_CAST_PARAM, diagnostics);
+        super(SyntaxKind2.TYPE_CAST_PARAM, diagnostics);
         this.annotations = annotations;
         this.type = type;
 

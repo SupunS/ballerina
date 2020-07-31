@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.internal.syntax.ExternalTreeNodeList;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -35,7 +35,7 @@ import static io.ballerinalang.compiler.internal.syntax.NodeListUtils.rangeCheck
 public final class STNodeList extends STNode {
 
     STNodeList(STNode... nodes) {
-        super(SyntaxKind.LIST);
+        super(SyntaxKind2.LIST);
         this.addChildren(nodes);
     }
 

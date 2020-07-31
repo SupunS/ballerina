@@ -20,6 +20,7 @@ package io.ballerinalang.compiler.internal.parser;
 import io.ballerinalang.compiler.internal.parser.tree.STNode;
 import io.ballerinalang.compiler.internal.parser.tree.STToken;
 import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import java.util.List;
 public abstract class AbstractParserErrorHandler {
 
     protected final AbstractTokenReader tokenReader;
-    private ArrayDeque<ParserRuleContext> ctxStack = new ArrayDeque<>();
+    private ArrayDeque<Integer> ctxStack = new ArrayDeque<>();
     private int previousTokenIndex;
     private int itterCount;
 
@@ -57,14 +58,13 @@ public abstract class AbstractParserErrorHandler {
     /*
      * Abstract methods, to be implemented by the classes that extends this abstract error handler
      */
-    protected abstract boolean isProductionWithAlternatives(ParserRuleContext context);
+    protected abstract boolean isProductionWithAlternatives(int context);
 
-    protected abstract Result seekMatch(ParserRuleContext context, int lookahead, int currentDepth,
-                                        boolean isEntryPoint);
+    protected abstract Result seekMatch(int context, int lookahead, int currentDepth, boolean isEntryPoint);
 
-    protected abstract ParserRuleContext getNextRule(ParserRuleContext context, int nextLookahead);
+    protected abstract int getNextRule(int context, int nextLookahead);
 
-    protected abstract SyntaxKind getExpectedTokenKind(ParserRuleContext context);
+    protected abstract int getExpectedTokenKind(int context);
 
     /*
      * -------------- Error recovering --------------
@@ -80,12 +80,12 @@ public abstract class AbstractParserErrorHandler {
      * @param args Arguments that requires to continue parsing from the given parser context
      * @return The action needs to be taken for the next token, in order to recover
      */
-    public Solution recover(ParserRuleContext currentCtx, STToken nextToken, Object... args) {
+    public Solution recover(int currentCtx, STToken nextToken, Object... args) {
         // Assumption: always comes here after a peek()
 
-        if (nextToken.kind == SyntaxKind.EOF_TOKEN) {
-            SyntaxKind expectedTokenKind = getExpectedTokenKind(currentCtx);
-            Solution fix = new Solution(Action.INSERT, currentCtx, expectedTokenKind, currentCtx.toString());
+        if (nextToken.kind == SyntaxKind2.EOF_TOKEN) {
+            int expectedTokenKind = getExpectedTokenKind(currentCtx);
+            Solution fix = new Solution(Action.INSERT, currentCtx, expectedTokenKind, String.valueOf(currentCtx));
             applyFix(currentCtx, fix, args);
             return fix;
         }
@@ -131,10 +131,10 @@ public abstract class AbstractParserErrorHandler {
      * Apply the fix to the current context.
      *
      * @param currentCtx Current context
-     * @param fix        Fix to apply
-     * @param args       Arguments that requires to continue parsing from the given parser context
+     * @param fix Fix to apply
+     * @param args Arguments that requires to continue parsing from the given parser context
      */
-    private void applyFix(ParserRuleContext currentCtx, Solution fix, Object... args) {
+    private void applyFix(int currentCtx, Solution fix, Object... args) {
         if (fix.action == Action.REMOVE) {
             fix.removedToken = consumeInvalidToken();
         } else {
@@ -148,8 +148,9 @@ public abstract class AbstractParserErrorHandler {
      * @param currentCtx Current context
      * @param fix Solution to recover from the missing token
      */
-    private STNode handleMissingToken(ParserRuleContext currentCtx, Solution fix) {
-        return SyntaxErrors.createMissingTokenWithDiagnostics(fix.tokenKind);
+    private STNode handleMissingToken(int currentCtx, Solution fix) {
+//        return SyntaxErrors.createMissingTokenWithDiagnostics(fix.tokenKind);
+        return null;
     }
 
     /**
@@ -157,7 +158,7 @@ public abstract class AbstractParserErrorHandler {
      *
      * @return Snapshot of the current context stack
      */
-    private ArrayDeque<ParserRuleContext> getCtxStackSnapshot() {
+    private ArrayDeque<Integer> getCtxStackSnapshot() {
         // Using ArraDeque#clone() here since it has better performance, than manually
         // creating a clone. ArraDeque#clone() method internally copies the value array
         // and avoids all the checks that is there when calling add()/addAll() methods.
@@ -175,7 +176,7 @@ public abstract class AbstractParserErrorHandler {
      * @param currentCtx Current parser context
      * @return Recovery result
      */
-    private Result seekMatch(ParserRuleContext currentCtx) {
+    private Result seekMatch(int currentCtx) {
         return seekMatchInSubTree(currentCtx, 1, 0, true);
     }
 
@@ -190,16 +191,15 @@ public abstract class AbstractParserErrorHandler {
      * @param isEntryPoint Flag indicating whether this is the entry point to the error recovery
      * @return Recovery result
      */
-    protected Result seekMatchInSubTree(ParserRuleContext currentCtx, int lookahead, int currentDepth,
-                                        boolean isEntryPoint) {
-        ArrayDeque<ParserRuleContext> tempCtxStack = this.ctxStack;
+    protected Result seekMatchInSubTree(int currentCtx, int lookahead, int currentDepth, boolean isEntryPoint) {
+        ArrayDeque<Integer> tempCtxStack = this.ctxStack;
         this.ctxStack = getCtxStackSnapshot();
         Result result = seekMatch(currentCtx, lookahead, currentDepth, isEntryPoint);
         this.ctxStack = tempCtxStack;
         return result;
     }
 
-    public void startContext(ParserRuleContext context) {
+    public void startContext(int context) {
         this.ctxStack.push(context);
     }
 
@@ -207,18 +207,18 @@ public abstract class AbstractParserErrorHandler {
         this.ctxStack.pop();
     }
 
-    public void switchContext(ParserRuleContext context) {
+    public void switchContext(int context) {
         this.ctxStack.pop();
         this.ctxStack.push(context);
     }
 
-    protected ParserRuleContext getParentContext() {
+    protected int getParentContext() {
         return this.ctxStack.peek();
     }
 
-    protected ParserRuleContext getGrandParentContext() {
-        ParserRuleContext parent = this.ctxStack.pop();
-        ParserRuleContext grandParent = this.ctxStack.peek();
+    protected int getGrandParentContext() {
+        int parent = this.ctxStack.pop();
+        int grandParent = this.ctxStack.peek();
         this.ctxStack.push(parent);
         return grandParent;
     }
@@ -234,7 +234,7 @@ public abstract class AbstractParserErrorHandler {
      * @return Recovery result
      */
     protected Result seekInAlternativesPaths(int lookahead, int currentDepth, int currentMatches,
-                                             ParserRuleContext[] alternativeRules, boolean isEntryPoint) {
+                                             int[] alternativeRules, boolean isEntryPoint) {
         @SuppressWarnings("unchecked")
         List<Result>[] results = new List[LOOKAHEAD_LIMIT];
         int bestMatchIndex = 0;
@@ -242,7 +242,7 @@ public abstract class AbstractParserErrorHandler {
         // Visit all the alternative rules and get their results. Arrange them in way
         // such that results with the same number of matches are put together. This is
         // done so that we can easily pick the best, without iterating through them.
-        for (ParserRuleContext rule : alternativeRules) {
+        for (int rule : alternativeRules) {
             Result result = seekMatchInSubTree(rule, lookahead, currentDepth, isEntryPoint);
             if (result.matches >= LOOKAHEAD_LIMIT - 1) {
                 return getFinalResult(currentMatches, result);
@@ -321,8 +321,8 @@ public abstract class AbstractParserErrorHandler {
      * @param isEntryPoint Flag indicating whether this is an entry-point or not.
      * @return Recovery result
      */
-    protected Result fixAndContinue(ParserRuleContext currentCtx, int lookahead, int currentDepth,
-                                    int matchingRulesCount, boolean isEntryPoint) {
+    protected Result fixAndContinue(int currentCtx, int lookahead, int currentDepth, int matchingRulesCount,
+                                    boolean isEntryPoint) {
         Result fixedPathResult = fixAndContinue(currentCtx, lookahead, currentDepth + 1);
         // Do not consider the current rule as match, since we had to fix it.
         // i.e: do not increment the match count by 1;
@@ -331,7 +331,7 @@ public abstract class AbstractParserErrorHandler {
             fixedPathResult.solution = fixedPathResult.fixes.peek();
         } else {
             fixedPathResult.solution =
-                    new Solution(Action.KEEP, currentCtx, getExpectedTokenKind(currentCtx), currentCtx.toString());
+                    new Solution(Action.KEEP, currentCtx, getExpectedTokenKind(currentCtx), String.valueOf(currentCtx));
         }
         return getFinalResult(matchingRulesCount, fixedPathResult);
     }
@@ -369,7 +369,7 @@ public abstract class AbstractParserErrorHandler {
      * @param currentDepth Amount of distance traveled so far
      * @return Recovery result
      */
-    protected Result fixAndContinue(ParserRuleContext currentCtx, int lookahead, int currentDepth) {
+    protected Result fixAndContinue(int currentCtx, int lookahead, int currentDepth) {
         // NOTE: Below order is important. We have to visit the current context first, before
         // getting and visiting the nextContext. Because getting the next context is a stateful
         // operation, as it could update (push/pop) the current context stack.
@@ -381,7 +381,7 @@ public abstract class AbstractParserErrorHandler {
         // At this point 'lookahead' refers to the next token position, since there is a missing
         // token at the current position. Hence we don't need to increment the 'lookahead' when
         // calling 'getNextRule'.
-        ParserRuleContext nextCtx = getNextRule(currentCtx, lookahead);
+        int nextCtx = getNextRule(currentCtx, lookahead);
         Result insertionResult = seekMatchInSubTree(nextCtx, lookahead, currentDepth, false);
 
         Result fixedPathResult;
@@ -391,7 +391,7 @@ public abstract class AbstractParserErrorHandler {
         } else if (insertionResult.matches == deletionResult.matches) {
             if (insertionResult.fixes.size() <= deletionResult.fixes.size()) {
                 action = new Solution(Action.INSERT, currentCtx, getExpectedTokenKind(currentCtx),
-                        currentCtx.toString());
+                        String.valueOf(currentCtx));
                 insertionResult.fixes.push(action);
                 fixedPathResult = insertionResult;
             } else {
@@ -401,7 +401,8 @@ public abstract class AbstractParserErrorHandler {
                 fixedPathResult = deletionResult;
             }
         } else if (insertionResult.matches > deletionResult.matches) {
-            action = new Solution(Action.INSERT, currentCtx, getExpectedTokenKind(currentCtx), currentCtx.toString());
+            action = new Solution(Action.INSERT, currentCtx, getExpectedTokenKind(currentCtx),
+                    String.valueOf(currentCtx));
             insertionResult.fixes.push(action);
             fixedPathResult = insertionResult;
         } else {
@@ -422,14 +423,14 @@ public abstract class AbstractParserErrorHandler {
      */
     public static class Solution {
 
-        public ParserRuleContext ctx;
+        public int ctx;
         public Action action;
         public String tokenText;
-        public SyntaxKind tokenKind;
+        public int tokenKind;
         public STNode recoveredNode;
         public STToken removedToken;
 
-        public Solution(Action action, ParserRuleContext ctx, SyntaxKind tokenKind, String tokenText) {
+        public Solution(Action action, int ctx, int tokenKind, String tokenText) {
             this.action = action;
             this.ctx = ctx;
             this.tokenText = tokenText;

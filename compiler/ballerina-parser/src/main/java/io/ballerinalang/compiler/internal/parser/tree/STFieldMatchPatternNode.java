@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.FieldMatchPatternNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STFieldMatchPatternNode extends STNode {
             STNode colonToken,
             STNode matchPattern,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.FIELD_MATCH_PATTERN, diagnostics);
+        super(SyntaxKind2.FIELD_MATCH_PATTERN, diagnostics);
         this.fieldNameNode = fieldNameNode;
         this.colonToken = colonToken;
         this.matchPattern = matchPattern;

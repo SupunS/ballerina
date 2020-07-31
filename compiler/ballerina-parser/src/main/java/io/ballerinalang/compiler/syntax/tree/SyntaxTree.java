@@ -74,7 +74,7 @@ public class SyntaxTree {
     }
 
     public boolean containsModulePart() {
-        return rootNode.kind() == SyntaxKind.MODULE_PART;
+        return rootNode.kind() == SyntaxKind2.MODULE_PART;
     }
 
     @SuppressWarnings("unchecked")

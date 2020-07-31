@@ -73,7 +73,7 @@ public class MarkdownParameterDocumentationLineNode extends DocumentationNode {
     }
 
     public MarkdownParameterDocumentationLineNode modify(
-            SyntaxKind kind,
+            int kind,
             Token hashToken,
             Token plusToken,
             Token parameterName,

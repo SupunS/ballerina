@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.XMLQualifiedNameNode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STXMLQualifiedNameNode extends STXMLNameNode {
             STNode colon,
             STNode name,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.XML_QUALIFIED_NAME, diagnostics);
+        super(SyntaxKind2.XML_QUALIFIED_NAME, diagnostics);
         this.prefix = prefix;
         this.colon = colon;
         this.name = name;

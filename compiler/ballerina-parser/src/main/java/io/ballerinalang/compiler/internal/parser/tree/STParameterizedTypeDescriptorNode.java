@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.ParameterizedTypeDescriptorNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STParameterizedTypeDescriptorNode extends STTypeDescriptorNode {
             STNode typeNode,
             STNode gtToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.PARAMETERIZED_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.PARAMETERIZED_TYPE_DESC, diagnostics);
         this.parameterizedType = parameterizedType;
         this.ltToken = ltToken;
         this.typeNode = typeNode;

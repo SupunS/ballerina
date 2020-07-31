@@ -64,7 +64,7 @@ public class ChildNodeList implements Iterable<Node> {
             if (!SyntaxUtils.isSTNodePresent(child)) {
                 continue;
             }
-            if (child.kind == SyntaxKind.LIST) {
+            if (child.kind == SyntaxKind2.LIST) {
                 count += child.bucketCount();
             } else {
                 count++;
@@ -81,7 +81,7 @@ public class ChildNodeList implements Iterable<Node> {
             if (!SyntaxUtils.isSTNodePresent(internalChild)) {
                 continue;
             }
-            if (internalChild.kind == SyntaxKind.LIST) {
+            if (internalChild.kind == SyntaxKind2.LIST) {
                 if (childIndex < index + internalChild.bucketCount()) {
                     int listChildIndex = childIndex - index;
                     NonTerminalNode listChild = parent.childInBucket(bucket);

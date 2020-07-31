@@ -18,7 +18,7 @@
 package io.ballerinalang.compiler.internal.syntax;
 
 import io.ballerinalang.compiler.internal.parser.tree.STNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 /**
  * Contains utility methods works with both internal and external node lists instances.
@@ -30,7 +30,7 @@ public class NodeListUtils {
     }
 
     public static boolean isSTNodeList(STNode node) {
-        return node.kind == SyntaxKind.LIST;
+        return node.kind == SyntaxKind2.LIST;
     }
 
     public static void rangeCheck(int index, int size) {

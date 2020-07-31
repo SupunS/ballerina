@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.SelectClauseNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STSelectClauseNode extends STClauseNode {
             STNode selectKeyword,
             STNode expression,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.SELECT_CLAUSE, diagnostics);
+        super(SyntaxKind2.SELECT_CLAUSE, diagnostics);
         this.selectKeyword = selectKeyword;
         this.expression = expression;
 

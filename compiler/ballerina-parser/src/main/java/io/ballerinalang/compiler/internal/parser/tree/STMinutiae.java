@@ -32,11 +32,11 @@ public class STMinutiae extends STNode {
 
     private final String text;
 
-    STMinutiae(SyntaxKind kind, String text) {
+    STMinutiae(int kind, String text) {
         this(kind, text, text.length());
     }
 
-    STMinutiae(SyntaxKind kind, String text, int width) {
+    STMinutiae(int kind, String text, int width) {
         super(kind);
         this.text = text;
         this.width = width;

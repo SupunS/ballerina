@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.CheckExpressionNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +35,7 @@ public class STCheckExpressionNode extends STExpressionNode {
     public final STNode expression;
 
     STCheckExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode checkKeyword,
             STNode expression) {
         this(
@@ -46,7 +46,7 @@ public class STCheckExpressionNode extends STExpressionNode {
     }
 
     STCheckExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode checkKeyword,
             STNode expression,
             Collection<STNodeDiagnostic> diagnostics) {
@@ -68,7 +68,7 @@ public class STCheckExpressionNode extends STExpressionNode {
     }
 
     public STCheckExpressionNode modify(
-            SyntaxKind kind,
+            int kind,
             STNode checkKeyword,
             STNode expression) {
         if (checkForReferenceEquality(

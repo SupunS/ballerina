@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.MatchClauseNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STMatchClauseNode extends STNode {
             STNode rightDoubleArrow,
             STNode blockStatement,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.MATCH_CLAUSE, diagnostics);
+        super(SyntaxKind2.MATCH_CLAUSE, diagnostics);
         this.matchPatterns = matchPatterns;
         this.matchGuard = matchGuard;
         this.rightDoubleArrow = rightDoubleArrow;

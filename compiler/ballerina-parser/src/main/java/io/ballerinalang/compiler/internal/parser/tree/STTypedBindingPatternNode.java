@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TypedBindingPatternNode;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class STTypedBindingPatternNode extends STNode {
             STNode typeDescriptor,
             STNode bindingPattern,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TYPED_BINDING_PATTERN, diagnostics);
+        super(SyntaxKind2.TYPED_BINDING_PATTERN, diagnostics);
         this.typeDescriptor = typeDescriptor;
         this.bindingPattern = bindingPattern;
 

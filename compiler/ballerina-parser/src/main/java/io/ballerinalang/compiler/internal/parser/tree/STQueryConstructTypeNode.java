@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.QueryConstructTypeNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STQueryConstructTypeNode extends STNode {
             STNode keyword,
             STNode keySpecifier,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.QUERY_CONSTRUCT_TYPE, diagnostics);
+        super(SyntaxKind2.QUERY_CONSTRUCT_TYPE, diagnostics);
         this.keyword = keyword;
         this.keySpecifier = keySpecifier;
 

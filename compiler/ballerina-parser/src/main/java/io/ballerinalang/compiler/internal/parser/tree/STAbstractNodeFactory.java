@@ -17,8 +17,6 @@
  */
 package io.ballerinalang.compiler.internal.parser.tree;
 
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
-
 import java.util.Collection;
 
 /**
@@ -67,12 +65,12 @@ public abstract class STAbstractNodeFactory {
         return null;
     }
 
-    public static STToken createMissingToken(SyntaxKind kind) {
+    public static STToken createMissingToken(int kind) {
         // TODO Seems like we can get these tokens from a cache
         return new STMissingToken(kind);
     }
 
-    public static STToken createMissingToken(SyntaxKind kind, Collection<STNodeDiagnostic> diagnostics) {
+    public static STToken createMissingToken(int kind, Collection<STNodeDiagnostic> diagnostics) {
         // TODO Seems like we can get these tokens from a cache
         return new STMissingToken(kind, diagnostics);
     }
@@ -81,25 +79,25 @@ public abstract class STAbstractNodeFactory {
         return new STInvalidToken(tokenText);
     }
 
-    public static STToken createToken(SyntaxKind kind, STNode leadingTrivia, STNode trailingTrivia) {
+    public static STToken createToken(int kind, STNode leadingTrivia, STNode trailingTrivia) {
         return new STToken(kind, leadingTrivia, trailingTrivia);
     }
 
-    public static STToken createToken(SyntaxKind kind,
+    public static STToken createToken(int kind,
                                       STNode leadingTrivia,
                                       STNode trailingTrivia,
                                       Collection<STNodeDiagnostic> diagnostics) {
-        return new STToken(kind, kind.stringValue().length(), leadingTrivia, trailingTrivia, diagnostics);
+        return new STToken(kind, 1, leadingTrivia, trailingTrivia, diagnostics);
     }
 
-    public static STToken createLiteralValueToken(SyntaxKind kind,
+    public static STToken createLiteralValueToken(int kind,
                                                   String text,
                                                   STNode leadingTrivia,
                                                   STNode trailingTrivia) {
         return new STLiteralValueToken(kind, text, leadingTrivia, trailingTrivia);
     }
 
-    public static STToken createLiteralValueToken(SyntaxKind kind,
+    public static STToken createLiteralValueToken(int kind,
                                                   String text,
                                                   STNode leadingTrivia,
                                                   STNode trailingTrivia,
@@ -107,7 +105,7 @@ public abstract class STAbstractNodeFactory {
         return new STLiteralValueToken(kind, text, leadingTrivia, trailingTrivia, diagnostics);
     }
 
-    public static STNode createMinutiae(SyntaxKind kind, String text) {
+    public static STNode createMinutiae(int kind, String text) {
         return new STMinutiae(kind, text);
     }
 
@@ -121,7 +119,7 @@ public abstract class STAbstractNodeFactory {
      * @param width the width of the lexeme
      * @return the Minutia node
      */
-    public static STNode createMinutiae(SyntaxKind kind, String text, int width) {
+    public static STNode createMinutiae(int kind, String text, int width) {
         return new STMinutiae(kind, text, width);
     }
 

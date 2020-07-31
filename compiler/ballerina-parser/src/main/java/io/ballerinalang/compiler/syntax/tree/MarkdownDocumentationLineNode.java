@@ -58,7 +58,7 @@ public class MarkdownDocumentationLineNode extends DocumentationNode {
     }
 
     public MarkdownDocumentationLineNode modify(
-            SyntaxKind kind,
+            int kind,
             Token hashToken,
             NodeList<Node> documentElements) {
         if (checkForReferenceEquality(

@@ -30,11 +30,11 @@ import java.util.Collections;
 public class STLiteralValueToken extends STToken {
     private final String text;
 
-    STLiteralValueToken(SyntaxKind kind, String text, STNode leadingTrivia, STNode trailingTrivia) {
+    STLiteralValueToken(int kind, String text, STNode leadingTrivia, STNode trailingTrivia) {
         this(kind, text, leadingTrivia, trailingTrivia, Collections.emptyList());
     }
 
-    STLiteralValueToken(SyntaxKind kind,
+    STLiteralValueToken(int kind,
                         String text,
                         STNode leadingTrivia,
                         STNode trailingTrivia,

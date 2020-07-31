@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ComputedNameFieldNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -59,7 +59,7 @@ public class STComputedNameFieldNode extends STMappingFieldNode {
             STNode colonToken,
             STNode valueExpr,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.COMPUTED_NAME_FIELD, diagnostics);
+        super(SyntaxKind2.COMPUTED_NAME_FIELD, diagnostics);
         this.openBracket = openBracket;
         this.fieldNameExpr = fieldNameExpr;
         this.closeBracket = closeBracket;

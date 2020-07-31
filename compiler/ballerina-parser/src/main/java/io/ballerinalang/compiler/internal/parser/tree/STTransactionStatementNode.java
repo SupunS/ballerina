@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TransactionStatementNode;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class STTransactionStatementNode extends STStatementNode {
             STNode transactionKeyword,
             STNode blockStatement,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TRANSACTION_STATEMENT, diagnostics);
+        super(SyntaxKind2.TRANSACTION_STATEMENT, diagnostics);
         this.transactionKeyword = transactionKeyword;
         this.blockStatement = blockStatement;
 

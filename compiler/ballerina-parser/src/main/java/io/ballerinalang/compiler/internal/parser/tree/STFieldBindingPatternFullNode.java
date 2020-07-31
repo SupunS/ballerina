@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.FieldBindingPatternFullNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STFieldBindingPatternFullNode extends STFieldBindingPatternNode {
             STNode colon,
             STNode bindingPattern,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.FIELD_BINDING_PATTERN, diagnostics);
+        super(SyntaxKind2.FIELD_BINDING_PATTERN, diagnostics);
         this.variableName = variableName;
         this.colon = colon;
         this.bindingPattern = bindingPattern;

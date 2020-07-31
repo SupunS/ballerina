@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.UnionTypeDescriptorNode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STUnionTypeDescriptorNode extends STTypeDescriptorNode {
             STNode pipeToken,
             STNode rightTypeDesc,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.UNION_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.UNION_TYPE_DESC, diagnostics);
         this.leftTypeDesc = leftTypeDesc;
         this.pipeToken = pipeToken;
         this.rightTypeDesc = rightTypeDesc;

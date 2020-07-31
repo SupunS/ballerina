@@ -19,6 +19,7 @@ package io.ballerinalang.compiler.internal.parser;
 
 import io.ballerinalang.compiler.internal.parser.tree.STToken;
 import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.ArrayDeque;
 
@@ -53,638 +54,638 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * FUNC_DEF_OR_FUNC_TYPE --> When a func-def and func-type-desc are possible.
      * e.g: start of a module level construct that starts with 'function' keyword.
      */
-    private static final ParserRuleContext[] FUNC_TYPE_OR_DEF_OPTIONAL_RETURNS =
-            { ParserRuleContext.RETURNS_KEYWORD, ParserRuleContext.FUNC_BODY_OR_TYPE_DESC_RHS };
+    private static final int[] FUNC_TYPE_OR_DEF_OPTIONAL_RETURNS =
+            { ParserRuleContext2.RETURNS_KEYWORD, ParserRuleContext2.FUNC_BODY_OR_TYPE_DESC_RHS };
 
-    private static final ParserRuleContext[] FUNC_BODY_OR_TYPE_DESC_RHS =
-            { ParserRuleContext.FUNC_BODY, ParserRuleContext.MODULE_LEVEL_AMBIGUOUS_FUNC_TYPE_DESC_RHS };
+    private static final int[] FUNC_BODY_OR_TYPE_DESC_RHS =
+            { ParserRuleContext2.FUNC_BODY, ParserRuleContext2.MODULE_LEVEL_AMBIGUOUS_FUNC_TYPE_DESC_RHS };
 
     /**
      * FUNC_DEF --> When only function definitions are possible. eg: resource function.
      */
-    private static final ParserRuleContext[] FUNC_DEF_OPTIONAL_RETURNS =
-            { ParserRuleContext.RETURNS_KEYWORD, ParserRuleContext.FUNC_BODY };
+    private static final int[] FUNC_DEF_OPTIONAL_RETURNS =
+            { ParserRuleContext2.RETURNS_KEYWORD, ParserRuleContext2.FUNC_BODY };
 
-    private static final ParserRuleContext[] FUNC_BODY =
-            { ParserRuleContext.FUNC_BODY_BLOCK, ParserRuleContext.EXTERNAL_FUNC_BODY };
+    private static final int[] FUNC_BODY =
+            { ParserRuleContext2.FUNC_BODY_BLOCK, ParserRuleContext2.EXTERNAL_FUNC_BODY };
 
-    private static final ParserRuleContext[] OBJECT_FUNC_BODY =
-            { ParserRuleContext.SEMICOLON, ParserRuleContext.EXTERNAL_FUNC_BODY };
+    private static final int[] OBJECT_FUNC_BODY =
+            { ParserRuleContext2.SEMICOLON, ParserRuleContext2.EXTERNAL_FUNC_BODY };
 
-    private static final ParserRuleContext[] EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS =
-            { ParserRuleContext.EXTERNAL_KEYWORD, ParserRuleContext.ANNOTATIONS };
+    private static final int[] EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS =
+            { ParserRuleContext2.EXTERNAL_KEYWORD, ParserRuleContext2.ANNOTATIONS };
 
     /**
      * ANNON_FUNC--> When a anonymous function is possible.
      */
-    private static final ParserRuleContext[] ANNON_FUNC_OPTIONAL_RETURNS =
-            { ParserRuleContext.RETURNS_KEYWORD, ParserRuleContext.ANON_FUNC_BODY };
+    private static final int[] ANNON_FUNC_OPTIONAL_RETURNS =
+            { ParserRuleContext2.RETURNS_KEYWORD, ParserRuleContext2.ANON_FUNC_BODY };
 
-    private static final ParserRuleContext[] ANON_FUNC_BODY =
-            { ParserRuleContext.FUNC_BODY_BLOCK, ParserRuleContext.EXPLICIT_ANON_FUNC_EXPR_BODY_START };
+    private static final int[] ANON_FUNC_BODY =
+            { ParserRuleContext2.FUNC_BODY_BLOCK, ParserRuleContext2.EXPLICIT_ANON_FUNC_EXPR_BODY_START };
 
     /**
      * FUNC_TYPE --> When a only function type is possible.
      */
-    private static final ParserRuleContext[] FUNC_TYPE_OPTIONAL_RETURNS =
-            { ParserRuleContext.RETURNS_KEYWORD, ParserRuleContext.FUNC_TYPE_DESC_END };
+    private static final int[] FUNC_TYPE_OPTIONAL_RETURNS =
+            { ParserRuleContext2.RETURNS_KEYWORD, ParserRuleContext2.FUNC_TYPE_DESC_END };
 
-    private static final ParserRuleContext[] FUNC_TYPE_OR_ANON_FUNC_OPTIONAL_RETURNS =
-            { ParserRuleContext.RETURNS_KEYWORD, ParserRuleContext.FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY };
+    private static final int[] FUNC_TYPE_OR_ANON_FUNC_OPTIONAL_RETURNS =
+            { ParserRuleContext2.RETURNS_KEYWORD, ParserRuleContext2.FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY };
 
-    private static final ParserRuleContext[] FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY =
-            { ParserRuleContext.ANON_FUNC_BODY, ParserRuleContext.STMT_LEVEL_AMBIGUOUS_FUNC_TYPE_DESC_RHS };
+    private static final int[] FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY =
+            { ParserRuleContext2.ANON_FUNC_BODY, ParserRuleContext2.STMT_LEVEL_AMBIGUOUS_FUNC_TYPE_DESC_RHS };
 
-    private static final ParserRuleContext[] WORKER_NAME_RHS =
-            { ParserRuleContext.RETURNS_KEYWORD, ParserRuleContext.BLOCK_STMT };
+    private static final int[] WORKER_NAME_RHS =
+            { ParserRuleContext2.RETURNS_KEYWORD, ParserRuleContext2.BLOCK_STMT };
 
     // We add named-worker-decl also as a statement. This is because we let having a named-worker
     // in all places a statement can be added during parsing, but then validates it based on the
     // context after the parsing the node is complete. This is to provide better error messages.
-    private static final ParserRuleContext[] STATEMENTS = { ParserRuleContext.CLOSE_BRACE,
-            ParserRuleContext.ASSIGNMENT_STMT, ParserRuleContext.VAR_DECL_STMT, ParserRuleContext.IF_BLOCK,
-            ParserRuleContext.WHILE_BLOCK, ParserRuleContext.CALL_STMT, ParserRuleContext.PANIC_STMT,
-            ParserRuleContext.CONTINUE_STATEMENT, ParserRuleContext.BREAK_STATEMENT, ParserRuleContext.RETURN_STMT,
-            ParserRuleContext.COMPOUND_ASSIGNMENT_STMT, ParserRuleContext.LOCAL_TYPE_DEFINITION_STMT,
-            ParserRuleContext.EXPRESSION_STATEMENT, ParserRuleContext.LOCK_STMT, ParserRuleContext.BLOCK_STMT,
-            ParserRuleContext.NAMED_WORKER_DECL, ParserRuleContext.FORK_STMT, ParserRuleContext.FOREACH_STMT,
-            ParserRuleContext.XML_NAMESPACE_DECLARATION, ParserRuleContext.TRANSACTION_STMT,
-            ParserRuleContext.RETRY_STMT, ParserRuleContext.ROLLBACK_STMT, ParserRuleContext.MATCH_STMT };
+    private static final int[] STATEMENTS = { ParserRuleContext2.CLOSE_BRACE,
+            ParserRuleContext2.ASSIGNMENT_STMT, ParserRuleContext2.VAR_DECL_STMT, ParserRuleContext2.IF_BLOCK,
+            ParserRuleContext2.WHILE_BLOCK, ParserRuleContext2.CALL_STMT, ParserRuleContext2.PANIC_STMT,
+            ParserRuleContext2.CONTINUE_STATEMENT, ParserRuleContext2.BREAK_STATEMENT, ParserRuleContext2.RETURN_STMT,
+            ParserRuleContext2.COMPOUND_ASSIGNMENT_STMT, ParserRuleContext2.LOCAL_TYPE_DEFINITION_STMT,
+            ParserRuleContext2.EXPRESSION_STATEMENT, ParserRuleContext2.LOCK_STMT, ParserRuleContext2.BLOCK_STMT,
+            ParserRuleContext2.NAMED_WORKER_DECL, ParserRuleContext2.FORK_STMT, ParserRuleContext2.FOREACH_STMT,
+            ParserRuleContext2.XML_NAMESPACE_DECLARATION, ParserRuleContext2.TRANSACTION_STMT,
+            ParserRuleContext2.RETRY_STMT, ParserRuleContext2.ROLLBACK_STMT, ParserRuleContext2.MATCH_STMT };
 
-    private static final ParserRuleContext[] VAR_DECL_RHS =
-            { ParserRuleContext.ASSIGN_OP, ParserRuleContext.SEMICOLON };
+    private static final int[] VAR_DECL_RHS =
+            { ParserRuleContext2.ASSIGN_OP, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] TOP_LEVEL_NODE = { ParserRuleContext.EOF, ParserRuleContext.DOC_STRING,
-            ParserRuleContext.ANNOTATIONS, ParserRuleContext.TOP_LEVEL_NODE_WITHOUT_METADATA };
+    private static final int[] TOP_LEVEL_NODE = { ParserRuleContext2.EOF, ParserRuleContext2.DOC_STRING,
+            ParserRuleContext2.ANNOTATIONS, ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_METADATA };
 
-    private static final ParserRuleContext[] TOP_LEVEL_NODE_WITHOUT_METADATA = { ParserRuleContext.EOF,
-            ParserRuleContext.PUBLIC_KEYWORD, ParserRuleContext.TOP_LEVEL_NODE_WITHOUT_MODIFIER };
+    private static final int[] TOP_LEVEL_NODE_WITHOUT_METADATA = { ParserRuleContext2.EOF,
+            ParserRuleContext2.PUBLIC_KEYWORD, ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_MODIFIER };
 
-    private static final ParserRuleContext[] TOP_LEVEL_NODE_WITHOUT_MODIFIER =
-            { ParserRuleContext.EOF, ParserRuleContext.VAR_DECL_STMT, ParserRuleContext.FUNC_DEF_OR_FUNC_TYPE,
-                    ParserRuleContext.MODULE_TYPE_DEFINITION, ParserRuleContext.SERVICE_DECL,
-                    ParserRuleContext.LISTENER_DECL, ParserRuleContext.CONSTANT_DECL, ParserRuleContext.ANNOTATION_DECL,
-                    ParserRuleContext.VAR_DECL_STMT, ParserRuleContext.XML_NAMESPACE_DECLARATION,
-                    ParserRuleContext.MODULE_ENUM_DECLARATION, ParserRuleContext.IMPORT_DECL };
+    private static final int[] TOP_LEVEL_NODE_WITHOUT_MODIFIER =
+            { ParserRuleContext2.EOF, ParserRuleContext2.VAR_DECL_STMT, ParserRuleContext2.FUNC_DEF_OR_FUNC_TYPE,
+                    ParserRuleContext2.MODULE_TYPE_DEFINITION, ParserRuleContext2.SERVICE_DECL,
+                    ParserRuleContext2.LISTENER_DECL, ParserRuleContext2.CONSTANT_DECL, ParserRuleContext2.ANNOTATION_DECL,
+                    ParserRuleContext2.VAR_DECL_STMT, ParserRuleContext2.XML_NAMESPACE_DECLARATION,
+                    ParserRuleContext2.MODULE_ENUM_DECLARATION, ParserRuleContext2.IMPORT_DECL };
 
-    private static final ParserRuleContext[] TYPE_OR_VAR_NAME =
-            { ParserRuleContext.VARIABLE_NAME, ParserRuleContext.TYPE_DESC_IN_TYPE_BINDING_PATTERN };
+    private static final int[] TYPE_OR_VAR_NAME =
+            { ParserRuleContext2.VARIABLE_NAME, ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN };
 
-    private static final ParserRuleContext[] ASSIGNMENT_OR_VAR_DECL_SECOND_TOKEN =
-            { ParserRuleContext.ASSIGN_OP, ParserRuleContext.VARIABLE_NAME };
+    private static final int[] ASSIGNMENT_OR_VAR_DECL_SECOND_TOKEN =
+            { ParserRuleContext2.ASSIGN_OP, ParserRuleContext2.VARIABLE_NAME };
 
-    private static final ParserRuleContext[] FIELD_DESCRIPTOR_RHS =
-            { ParserRuleContext.SEMICOLON, ParserRuleContext.QUESTION_MARK, ParserRuleContext.ASSIGN_OP };
+    private static final int[] FIELD_DESCRIPTOR_RHS =
+            { ParserRuleContext2.SEMICOLON, ParserRuleContext2.QUESTION_MARK, ParserRuleContext2.ASSIGN_OP };
 
-    private static final ParserRuleContext[] FIELD_OR_REST_DESCIPTOR_RHS =
-            { ParserRuleContext.ELLIPSIS, ParserRuleContext.VARIABLE_NAME };
+    private static final int[] FIELD_OR_REST_DESCIPTOR_RHS =
+            { ParserRuleContext2.ELLIPSIS, ParserRuleContext2.VARIABLE_NAME };
 
-    private static final ParserRuleContext[] RECORD_BODY_START =
-            { ParserRuleContext.CLOSED_RECORD_BODY_START, ParserRuleContext.OPEN_BRACE };
+    private static final int[] RECORD_BODY_START =
+            { ParserRuleContext2.CLOSED_RECORD_BODY_START, ParserRuleContext2.OPEN_BRACE };
 
-    private static final ParserRuleContext[] RECORD_BODY_END =
-            { ParserRuleContext.CLOSED_RECORD_BODY_END, ParserRuleContext.CLOSE_BRACE };
+    private static final int[] RECORD_BODY_END =
+            { ParserRuleContext2.CLOSED_RECORD_BODY_END, ParserRuleContext2.CLOSE_BRACE };
 
     // Give object the higher priority over records, since record body is a subset of object body.
     // Array, optional and union type descriptors are not added to the list since they are left recursive.
-    private static final ParserRuleContext[] TYPE_DESCRIPTORS = { ParserRuleContext.SIMPLE_TYPE_DESCRIPTOR,
-            ParserRuleContext.OBJECT_TYPE_DESCRIPTOR, ParserRuleContext.RECORD_TYPE_DESCRIPTOR,
-            ParserRuleContext.NIL_TYPE_DESCRIPTOR, ParserRuleContext.PARAMETERIZED_TYPE,
-            ParserRuleContext.ERROR_KEYWORD, ParserRuleContext.STREAM_KEYWORD, ParserRuleContext.TABLE_KEYWORD,
-            ParserRuleContext.FUNC_TYPE_DESC, ParserRuleContext.PARENTHESISED_TYPE_DESC_START,
-            ParserRuleContext.CONSTANT_EXPRESSION, ParserRuleContext.TUPLE_TYPE_DESC_START };
+    private static final int[] TYPE_DESCRIPTORS = { ParserRuleContext2.SIMPLE_TYPE_DESCRIPTOR,
+            ParserRuleContext2.OBJECT_TYPE_DESCRIPTOR, ParserRuleContext2.RECORD_TYPE_DESCRIPTOR,
+            ParserRuleContext2.NIL_TYPE_DESCRIPTOR, ParserRuleContext2.PARAMETERIZED_TYPE,
+            ParserRuleContext2.ERROR_KEYWORD, ParserRuleContext2.STREAM_KEYWORD, ParserRuleContext2.TABLE_KEYWORD,
+            ParserRuleContext2.FUNC_TYPE_DESC, ParserRuleContext2.PARENTHESISED_TYPE_DESC_START,
+            ParserRuleContext2.CONSTANT_EXPRESSION, ParserRuleContext2.TUPLE_TYPE_DESC_START };
 
-    private static final ParserRuleContext[] RECORD_FIELD_OR_RECORD_END =
-            { ParserRuleContext.RECORD_BODY_END, ParserRuleContext.RECORD_FIELD };
+    private static final int[] RECORD_FIELD_OR_RECORD_END =
+            { ParserRuleContext2.RECORD_BODY_END, ParserRuleContext2.RECORD_FIELD };
 
-    private static final ParserRuleContext[] RECORD_FIELD_START =
-            { ParserRuleContext.ANNOTATIONS, ParserRuleContext.ASTERISK, ParserRuleContext.TYPE_DESC_IN_RECORD_FIELD };
+    private static final int[] RECORD_FIELD_START =
+            { ParserRuleContext2.ANNOTATIONS, ParserRuleContext2.ASTERISK, ParserRuleContext2.TYPE_DESC_IN_RECORD_FIELD };
 
-    private static final ParserRuleContext[] RECORD_FIELD_WITHOUT_METADATA =
-            { ParserRuleContext.ASTERISK, ParserRuleContext.TYPE_DESC_IN_RECORD_FIELD };
+    private static final int[] RECORD_FIELD_WITHOUT_METADATA =
+            { ParserRuleContext2.ASTERISK, ParserRuleContext2.TYPE_DESC_IN_RECORD_FIELD };
 
-    private static final ParserRuleContext[] ARG_START_OR_ARG_LIST_END =
-            { ParserRuleContext.ARG_LIST_END, ParserRuleContext.ARG_START };
+    private static final int[] ARG_START_OR_ARG_LIST_END =
+            { ParserRuleContext2.ARG_LIST_END, ParserRuleContext2.ARG_START };
 
-    private static final ParserRuleContext[] ARG_START =
-            { ParserRuleContext.VARIABLE_NAME, ParserRuleContext.ELLIPSIS, ParserRuleContext.EXPRESSION };
+    private static final int[] ARG_START =
+            { ParserRuleContext2.VARIABLE_NAME, ParserRuleContext2.ELLIPSIS, ParserRuleContext2.EXPRESSION };
 
-    private static final ParserRuleContext[] ARG_END = { ParserRuleContext.CLOSE_PARENTHESIS, ParserRuleContext.COMMA };
+    private static final int[] ARG_END = { ParserRuleContext2.CLOSE_PARENTHESIS, ParserRuleContext2.COMMA };
 
-    private static final ParserRuleContext[] NAMED_OR_POSITIONAL_ARG_RHS =
-            { ParserRuleContext.ARG_END, ParserRuleContext.ASSIGN_OP };
+    private static final int[] NAMED_OR_POSITIONAL_ARG_RHS =
+            { ParserRuleContext2.ARG_END, ParserRuleContext2.ASSIGN_OP };
 
-    private static final ParserRuleContext[] OBJECT_FIELD_RHS =
-            { ParserRuleContext.SEMICOLON, ParserRuleContext.ASSIGN_OP };
+    private static final int[] OBJECT_FIELD_RHS =
+            { ParserRuleContext2.SEMICOLON, ParserRuleContext2.ASSIGN_OP };
 
-    private static final ParserRuleContext[] OBJECT_MEMBER_START =
-            { ParserRuleContext.DOC_STRING, ParserRuleContext.ANNOTATIONS, ParserRuleContext.ASTERISK,
-                    ParserRuleContext.OBJECT_FUNC_OR_FIELD, ParserRuleContext.CLOSE_BRACE };
+    private static final int[] OBJECT_MEMBER_START =
+            { ParserRuleContext2.DOC_STRING, ParserRuleContext2.ANNOTATIONS, ParserRuleContext2.ASTERISK,
+                    ParserRuleContext2.OBJECT_FUNC_OR_FIELD, ParserRuleContext2.CLOSE_BRACE };
 
-    private static final ParserRuleContext[] OBJECT_MEMBER_WITHOUT_METADATA =
-            { ParserRuleContext.ASTERISK, ParserRuleContext.OBJECT_FUNC_OR_FIELD, ParserRuleContext.CLOSE_BRACE };
+    private static final int[] OBJECT_MEMBER_WITHOUT_METADATA =
+            { ParserRuleContext2.ASTERISK, ParserRuleContext2.OBJECT_FUNC_OR_FIELD, ParserRuleContext2.CLOSE_BRACE };
 
-    private static final ParserRuleContext[] OBJECT_FUNC_OR_FIELD = { ParserRuleContext.PUBLIC_KEYWORD,
-            ParserRuleContext.PRIVATE_KEYWORD, ParserRuleContext.OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY };
+    private static final int[] OBJECT_FUNC_OR_FIELD = { ParserRuleContext2.PUBLIC_KEYWORD,
+            ParserRuleContext2.PRIVATE_KEYWORD, ParserRuleContext2.OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY };
 
-    private static final ParserRuleContext[] OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY =
-            { ParserRuleContext.TYPE_DESC_BEFORE_IDENTIFIER, ParserRuleContext.OBJECT_METHOD_START };
+    private static final int[] OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY =
+            { ParserRuleContext2.TYPE_DESC_BEFORE_IDENTIFIER, ParserRuleContext2.OBJECT_METHOD_START };
 
-    private static final ParserRuleContext[] OBJECT_METHOD_START =
-            { ParserRuleContext.REMOTE_KEYWORD, ParserRuleContext.FUNCTION_KEYWORD };
+    private static final int[] OBJECT_METHOD_START =
+            { ParserRuleContext2.REMOTE_KEYWORD, ParserRuleContext2.FUNCTION_KEYWORD };
 
-    private static final ParserRuleContext[] OBJECT_TYPE_DESCRIPTOR_START =
-            { ParserRuleContext.OBJECT_TYPE_QUALIFIER, ParserRuleContext.OBJECT_KEYWORD };
+    private static final int[] OBJECT_TYPE_DESCRIPTOR_START =
+            { ParserRuleContext2.OBJECT_TYPE_QUALIFIER, ParserRuleContext2.OBJECT_KEYWORD };
 
-    private static final ParserRuleContext[] ELSE_BODY = { ParserRuleContext.IF_BLOCK, ParserRuleContext.OPEN_BRACE };
+    private static final int[] ELSE_BODY = { ParserRuleContext2.IF_BLOCK, ParserRuleContext2.OPEN_BRACE };
 
-    private static final ParserRuleContext[] ELSE_BLOCK =
-            { ParserRuleContext.ELSE_KEYWORD, ParserRuleContext.STATEMENT };
+    private static final int[] ELSE_BLOCK =
+            { ParserRuleContext2.ELSE_KEYWORD, ParserRuleContext2.STATEMENT };
 
-    private static final ParserRuleContext[] CALL_STATEMENT =
-            { ParserRuleContext.CHECKING_KEYWORD, ParserRuleContext.VARIABLE_NAME };
+    private static final int[] CALL_STATEMENT =
+            { ParserRuleContext2.CHECKING_KEYWORD, ParserRuleContext2.VARIABLE_NAME };
 
-    private static final ParserRuleContext[] IMPORT_PREFIX_DECL =
-            { ParserRuleContext.AS_KEYWORD, ParserRuleContext.SEMICOLON };
+    private static final int[] IMPORT_PREFIX_DECL =
+            { ParserRuleContext2.AS_KEYWORD, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] IMPORT_VERSION =
-            { ParserRuleContext.VERSION_KEYWORD, ParserRuleContext.AS_KEYWORD, ParserRuleContext.SEMICOLON };
+    private static final int[] IMPORT_VERSION =
+            { ParserRuleContext2.VERSION_KEYWORD, ParserRuleContext2.AS_KEYWORD, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] IMPORT_DECL_RHS = { ParserRuleContext.SLASH, ParserRuleContext.DOT,
-            ParserRuleContext.VERSION_KEYWORD, ParserRuleContext.AS_KEYWORD, ParserRuleContext.SEMICOLON };
+    private static final int[] IMPORT_DECL_RHS = { ParserRuleContext2.SLASH, ParserRuleContext2.DOT,
+            ParserRuleContext2.VERSION_KEYWORD, ParserRuleContext2.AS_KEYWORD, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] AFTER_IMPORT_MODULE_NAME = { ParserRuleContext.DOT,
-            ParserRuleContext.VERSION_KEYWORD, ParserRuleContext.AS_KEYWORD, ParserRuleContext.SEMICOLON };
+    private static final int[] AFTER_IMPORT_MODULE_NAME = { ParserRuleContext2.DOT,
+            ParserRuleContext2.VERSION_KEYWORD, ParserRuleContext2.AS_KEYWORD, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] MAJOR_MINOR_VERSION_END =
-            { ParserRuleContext.DOT, ParserRuleContext.AS_KEYWORD, ParserRuleContext.SEMICOLON };
+    private static final int[] MAJOR_MINOR_VERSION_END =
+            { ParserRuleContext2.DOT, ParserRuleContext2.AS_KEYWORD, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] RETURN_RHS = { ParserRuleContext.SEMICOLON, ParserRuleContext.EXPRESSION };
+    private static final int[] RETURN_RHS = { ParserRuleContext2.SEMICOLON, ParserRuleContext2.EXPRESSION };
 
-    private static final ParserRuleContext[] EXPRESSION_START = { ParserRuleContext.BASIC_LITERAL,
-            ParserRuleContext.NIL_LITERAL, ParserRuleContext.VARIABLE_REF, ParserRuleContext.ACCESS_EXPRESSION,
-            ParserRuleContext.TYPEOF_EXPRESSION, ParserRuleContext.TRAP_KEYWORD, ParserRuleContext.UNARY_EXPRESSION,
-            ParserRuleContext.CHECKING_KEYWORD, ParserRuleContext.LIST_CONSTRUCTOR, ParserRuleContext.TYPE_CAST,
-            ParserRuleContext.OPEN_PARENTHESIS, ParserRuleContext.TABLE_CONSTRUCTOR_OR_QUERY_EXPRESSION,
-            ParserRuleContext.LET_EXPRESSION, ParserRuleContext.TEMPLATE_START, ParserRuleContext.XML_KEYWORD,
-            ParserRuleContext.STRING_KEYWORD, ParserRuleContext.BASE64_KEYWORD, ParserRuleContext.BASE64_KEYWORD,
-            ParserRuleContext.ANON_FUNC_EXPRESSION, ParserRuleContext.ERROR_KEYWORD, ParserRuleContext.NEW_KEYWORD,
-            ParserRuleContext.START_KEYWORD, ParserRuleContext.FLUSH_KEYWORD, ParserRuleContext.LEFT_ARROW_TOKEN,
-            ParserRuleContext.WAIT_KEYWORD, ParserRuleContext.COMMIT_KEYWORD, ParserRuleContext.TRANSACTIONAL_KEYWORD,
-            ParserRuleContext.SERVICE_CONSTRUCTOR_EXPRESSION, ParserRuleContext.FAIL_KEYWORD };
+    private static final int[] EXPRESSION_START = { ParserRuleContext2.BASIC_LITERAL,
+            ParserRuleContext2.NIL_LITERAL, ParserRuleContext2.VARIABLE_REF, ParserRuleContext2.ACCESS_EXPRESSION,
+            ParserRuleContext2.TYPEOF_EXPRESSION, ParserRuleContext2.TRAP_KEYWORD, ParserRuleContext2.UNARY_EXPRESSION,
+            ParserRuleContext2.CHECKING_KEYWORD, ParserRuleContext2.LIST_CONSTRUCTOR, ParserRuleContext2.TYPE_CAST,
+            ParserRuleContext2.OPEN_PARENTHESIS, ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_EXPRESSION,
+            ParserRuleContext2.LET_EXPRESSION, ParserRuleContext2.TEMPLATE_START, ParserRuleContext2.XML_KEYWORD,
+            ParserRuleContext2.STRING_KEYWORD, ParserRuleContext2.BASE64_KEYWORD, ParserRuleContext2.BASE64_KEYWORD,
+            ParserRuleContext2.ANON_FUNC_EXPRESSION, ParserRuleContext2.ERROR_KEYWORD, ParserRuleContext2.NEW_KEYWORD,
+            ParserRuleContext2.START_KEYWORD, ParserRuleContext2.FLUSH_KEYWORD, ParserRuleContext2.LEFT_ARROW_TOKEN,
+            ParserRuleContext2.WAIT_KEYWORD, ParserRuleContext2.COMMIT_KEYWORD, ParserRuleContext2.TRANSACTIONAL_KEYWORD,
+            ParserRuleContext2.SERVICE_CONSTRUCTOR_EXPRESSION, ParserRuleContext2.FAIL_KEYWORD };
 
-    private static final ParserRuleContext[] FIRST_MAPPING_FIELD_START =
-            { ParserRuleContext.MAPPING_FIELD, ParserRuleContext.CLOSE_BRACE };
+    private static final int[] FIRST_MAPPING_FIELD_START =
+            { ParserRuleContext2.MAPPING_FIELD, ParserRuleContext2.CLOSE_BRACE };
 
-    private static final ParserRuleContext[] MAPPING_FIELD_START = { ParserRuleContext.SPECIFIC_FIELD,
-            ParserRuleContext.COMPUTED_FIELD_NAME, ParserRuleContext.ELLIPSIS, ParserRuleContext.READONLY_KEYWORD };
+    private static final int[] MAPPING_FIELD_START = { ParserRuleContext2.SPECIFIC_FIELD,
+            ParserRuleContext2.COMPUTED_FIELD_NAME, ParserRuleContext2.ELLIPSIS, ParserRuleContext2.READONLY_KEYWORD };
 
-    private static final ParserRuleContext[] SPECIFIC_FIELD =
-            { ParserRuleContext.MAPPING_FIELD_NAME, ParserRuleContext.STRING_LITERAL };
+    private static final int[] SPECIFIC_FIELD =
+            { ParserRuleContext2.MAPPING_FIELD_NAME, ParserRuleContext2.STRING_LITERAL };
 
-    private static final ParserRuleContext[] SPECIFIC_FIELD_RHS =
-            { ParserRuleContext.COLON, ParserRuleContext.MAPPING_FIELD_END };
+    private static final int[] SPECIFIC_FIELD_RHS =
+            { ParserRuleContext2.COLON, ParserRuleContext2.MAPPING_FIELD_END };
 
-    private static final ParserRuleContext[] MAPPING_FIELD_END =
-            { ParserRuleContext.CLOSE_BRACE, ParserRuleContext.COMMA };
+    private static final int[] MAPPING_FIELD_END =
+            { ParserRuleContext2.CLOSE_BRACE, ParserRuleContext2.COMMA };
 
-    private static final ParserRuleContext[] OPTIONAL_SERVICE_NAME =
-            { ParserRuleContext.SERVICE_NAME, ParserRuleContext.ON_KEYWORD };
+    private static final int[] OPTIONAL_SERVICE_NAME =
+            { ParserRuleContext2.SERVICE_NAME, ParserRuleContext2.ON_KEYWORD };
 
-    private static final ParserRuleContext[] RESOURCE_DEF_START =
-            { ParserRuleContext.RESOURCE_KEYWORD, ParserRuleContext.FUNC_DEF, ParserRuleContext.CLOSE_BRACE };
+    private static final int[] RESOURCE_DEF_START =
+            { ParserRuleContext2.RESOURCE_KEYWORD, ParserRuleContext2.FUNC_DEF, ParserRuleContext2.CLOSE_BRACE };
 
-    private static final ParserRuleContext[] CONST_DECL_RHS =
-            { ParserRuleContext.TYPE_NAME_OR_VAR_NAME, ParserRuleContext.ASSIGN_OP };
+    private static final int[] CONST_DECL_RHS =
+            { ParserRuleContext2.TYPE_NAME_OR_VAR_NAME, ParserRuleContext2.ASSIGN_OP };
 
-    private static final ParserRuleContext[] ARRAY_LENGTH =
-            { ParserRuleContext.CLOSE_BRACKET, ParserRuleContext.DECIMAL_INTEGER_LITERAL,
-                    ParserRuleContext.HEX_INTEGER_LITERAL, ParserRuleContext.ASTERISK, ParserRuleContext.VARIABLE_REF };
+    private static final int[] ARRAY_LENGTH =
+            { ParserRuleContext2.CLOSE_BRACKET, ParserRuleContext2.DECIMAL_INTEGER_LITERAL,
+                    ParserRuleContext2.HEX_INTEGER_LITERAL, ParserRuleContext2.ASTERISK, ParserRuleContext2.VARIABLE_REF };
 
-    private static final ParserRuleContext[] PARAM_LIST =
-            { ParserRuleContext.CLOSE_PARENTHESIS, ParserRuleContext.REQUIRED_PARAM };
+    private static final int[] PARAM_LIST =
+            { ParserRuleContext2.CLOSE_PARENTHESIS, ParserRuleContext2.REQUIRED_PARAM };
 
-    private static final ParserRuleContext[] PARAMETER_START =
-            { ParserRuleContext.ANNOTATIONS, ParserRuleContext.PUBLIC_KEYWORD, ParserRuleContext.TYPE_DESC_IN_PARAM };
+    private static final int[] PARAMETER_START =
+            { ParserRuleContext2.ANNOTATIONS, ParserRuleContext2.PUBLIC_KEYWORD, ParserRuleContext2.TYPE_DESC_IN_PARAM };
 
-    private static final ParserRuleContext[] PARAMETER_WITHOUT_ANNOTS =
-            { ParserRuleContext.PUBLIC_KEYWORD, ParserRuleContext.TYPE_DESC_IN_PARAM };
+    private static final int[] PARAMETER_WITHOUT_ANNOTS =
+            { ParserRuleContext2.PUBLIC_KEYWORD, ParserRuleContext2.TYPE_DESC_IN_PARAM };
 
-    private static final ParserRuleContext[] REQUIRED_PARAM_NAME_RHS =
-            { ParserRuleContext.PARAM_END, ParserRuleContext.ASSIGN_OP };
+    private static final int[] REQUIRED_PARAM_NAME_RHS =
+            { ParserRuleContext2.PARAM_END, ParserRuleContext2.ASSIGN_OP };
 
-    private static final ParserRuleContext[] PARAM_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_PARENTHESIS };
+    private static final int[] PARAM_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_PARENTHESIS };
 
-    private static final ParserRuleContext[] STMT_START_WITH_EXPR_RHS = { ParserRuleContext.ASSIGN_OP,
-            ParserRuleContext.RIGHT_ARROW, ParserRuleContext.COMPOUND_BINARY_OPERATOR, ParserRuleContext.SEMICOLON };
+    private static final int[] STMT_START_WITH_EXPR_RHS = { ParserRuleContext2.ASSIGN_OP,
+            ParserRuleContext2.RIGHT_ARROW, ParserRuleContext2.COMPOUND_BINARY_OPERATOR, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] EXPR_STMT_RHS = { ParserRuleContext.SEMICOLON, ParserRuleContext.ASSIGN_OP,
-            ParserRuleContext.RIGHT_ARROW, ParserRuleContext.COMPOUND_BINARY_OPERATOR };
+    private static final int[] EXPR_STMT_RHS = { ParserRuleContext2.SEMICOLON, ParserRuleContext2.ASSIGN_OP,
+            ParserRuleContext2.RIGHT_ARROW, ParserRuleContext2.COMPOUND_BINARY_OPERATOR };
 
-    private static final ParserRuleContext[] EXPRESSION_STATEMENT_START =
-            { ParserRuleContext.VARIABLE_REF, ParserRuleContext.CHECKING_KEYWORD, ParserRuleContext.OPEN_PARENTHESIS,
-                    ParserRuleContext.START_KEYWORD, ParserRuleContext.FLUSH_KEYWORD };
+    private static final int[] EXPRESSION_STATEMENT_START =
+            { ParserRuleContext2.VARIABLE_REF, ParserRuleContext2.CHECKING_KEYWORD, ParserRuleContext2.OPEN_PARENTHESIS,
+                    ParserRuleContext2.START_KEYWORD, ParserRuleContext2.FLUSH_KEYWORD };
 
-    private static final ParserRuleContext[] ANNOT_DECL_OPTIONAL_TYPE =
-            { ParserRuleContext.TYPE_DESC_BEFORE_IDENTIFIER, ParserRuleContext.ANNOTATION_TAG };
+    private static final int[] ANNOT_DECL_OPTIONAL_TYPE =
+            { ParserRuleContext2.TYPE_DESC_BEFORE_IDENTIFIER, ParserRuleContext2.ANNOTATION_TAG };
 
-    private static final ParserRuleContext[] CONST_DECL_TYPE =
-            { ParserRuleContext.TYPE_DESC_BEFORE_IDENTIFIER, ParserRuleContext.VARIABLE_NAME };
+    private static final int[] CONST_DECL_TYPE =
+            { ParserRuleContext2.TYPE_DESC_BEFORE_IDENTIFIER, ParserRuleContext2.VARIABLE_NAME };
 
-    private static final ParserRuleContext[] ANNOT_DECL_RHS =
-            { ParserRuleContext.ANNOTATION_TAG, ParserRuleContext.ON_KEYWORD, ParserRuleContext.SEMICOLON };
+    private static final int[] ANNOT_DECL_RHS =
+            { ParserRuleContext2.ANNOTATION_TAG, ParserRuleContext2.ON_KEYWORD, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] ANNOT_OPTIONAL_ATTACH_POINTS =
-            { ParserRuleContext.ON_KEYWORD, ParserRuleContext.SEMICOLON };
+    private static final int[] ANNOT_OPTIONAL_ATTACH_POINTS =
+            { ParserRuleContext2.ON_KEYWORD, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] ATTACH_POINT =
-            { ParserRuleContext.SOURCE_KEYWORD, ParserRuleContext.ATTACH_POINT_IDENT };
+    private static final int[] ATTACH_POINT =
+            { ParserRuleContext2.SOURCE_KEYWORD, ParserRuleContext2.ATTACH_POINT_IDENT };
 
-    private static final ParserRuleContext[] ATTACH_POINT_IDENT = { ParserRuleContext.SINGLE_KEYWORD_ATTACH_POINT_IDENT,
-            ParserRuleContext.OBJECT_IDENT, ParserRuleContext.RESOURCE_IDENT, ParserRuleContext.RECORD_IDENT };
+    private static final int[] ATTACH_POINT_IDENT = { ParserRuleContext2.SINGLE_KEYWORD_ATTACH_POINT_IDENT,
+            ParserRuleContext2.OBJECT_IDENT, ParserRuleContext2.RESOURCE_IDENT, ParserRuleContext2.RECORD_IDENT };
 
-    private static final ParserRuleContext[] ATTACH_POINT_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.SEMICOLON };
+    private static final int[] ATTACH_POINT_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] XML_NAMESPACE_PREFIX_DECL =
-            { ParserRuleContext.AS_KEYWORD, ParserRuleContext.SEMICOLON };
+    private static final int[] XML_NAMESPACE_PREFIX_DECL =
+            { ParserRuleContext2.AS_KEYWORD, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] CONSTANT_EXPRESSION =
-            { ParserRuleContext.BASIC_LITERAL, ParserRuleContext.VARIABLE_REF, ParserRuleContext.PLUS_TOKEN,
-                    ParserRuleContext.MINUS_TOKEN, ParserRuleContext.NIL_LITERAL };
+    private static final int[] CONSTANT_EXPRESSION =
+            { ParserRuleContext2.BASIC_LITERAL, ParserRuleContext2.VARIABLE_REF, ParserRuleContext2.PLUS_TOKEN,
+                    ParserRuleContext2.MINUS_TOKEN, ParserRuleContext2.NIL_LITERAL };
 
-    private static final ParserRuleContext[] LIST_CONSTRUCTOR_RHS =
-            { ParserRuleContext.CLOSE_BRACKET, ParserRuleContext.EXPRESSION };
+    private static final int[] LIST_CONSTRUCTOR_RHS =
+            { ParserRuleContext2.CLOSE_BRACKET, ParserRuleContext2.EXPRESSION };
 
-    private static final ParserRuleContext[] TYPE_CAST_PARAM =
-            { ParserRuleContext.TYPE_DESC_IN_ANGLE_BRACKETS, ParserRuleContext.ANNOTATIONS };
+    private static final int[] TYPE_CAST_PARAM =
+            { ParserRuleContext2.TYPE_DESC_IN_ANGLE_BRACKETS, ParserRuleContext2.ANNOTATIONS };
 
-    private static final ParserRuleContext[] TYPE_CAST_PARAM_RHS =
-            { ParserRuleContext.TYPE_DESC_IN_ANGLE_BRACKETS, ParserRuleContext.GT };
+    private static final int[] TYPE_CAST_PARAM_RHS =
+            { ParserRuleContext2.TYPE_DESC_IN_ANGLE_BRACKETS, ParserRuleContext2.GT };
 
-    private static final ParserRuleContext[] TABLE_KEYWORD_RHS =
-            { ParserRuleContext.KEY_SPECIFIER, ParserRuleContext.TABLE_CONSTRUCTOR };
+    private static final int[] TABLE_KEYWORD_RHS =
+            { ParserRuleContext2.KEY_SPECIFIER, ParserRuleContext2.TABLE_CONSTRUCTOR };
 
-    private static final ParserRuleContext[] ROW_LIST_RHS =
-            { ParserRuleContext.CLOSE_BRACKET, ParserRuleContext.MAPPING_CONSTRUCTOR };
+    private static final int[] ROW_LIST_RHS =
+            { ParserRuleContext2.CLOSE_BRACKET, ParserRuleContext2.MAPPING_CONSTRUCTOR };
 
-    private static final ParserRuleContext[] TABLE_ROW_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_BRACKET };
+    private static final int[] TABLE_ROW_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_BRACKET };
 
-    private static final ParserRuleContext[] KEY_SPECIFIER_RHS =
-            { ParserRuleContext.CLOSE_PARENTHESIS, ParserRuleContext.VARIABLE_NAME };
+    private static final int[] KEY_SPECIFIER_RHS =
+            { ParserRuleContext2.CLOSE_PARENTHESIS, ParserRuleContext2.VARIABLE_NAME };
 
-    private static final ParserRuleContext[] TABLE_KEY_RHS =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_PARENTHESIS };
+    private static final int[] TABLE_KEY_RHS =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_PARENTHESIS };
 
-    private static final ParserRuleContext[] ERROR_TYPE_PARAMS =
-            { ParserRuleContext.INFERRED_TYPE_DESC, ParserRuleContext.TYPE_DESC_IN_ANGLE_BRACKETS };
+    private static final int[] ERROR_TYPE_PARAMS =
+            { ParserRuleContext2.INFERRED_TYPE_DESC, ParserRuleContext2.TYPE_DESC_IN_ANGLE_BRACKETS };
 
-    private static final ParserRuleContext[] LET_VAR_DECL_START =
-            { ParserRuleContext.TYPE_DESC_IN_TYPE_BINDING_PATTERN, ParserRuleContext.ANNOTATIONS };
+    private static final int[] LET_VAR_DECL_START =
+            { ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN, ParserRuleContext2.ANNOTATIONS };
 
-    private static final ParserRuleContext[] STREAM_TYPE_FIRST_PARAM_RHS =
-            { ParserRuleContext.COMMA, ParserRuleContext.GT };
+    private static final int[] STREAM_TYPE_FIRST_PARAM_RHS =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.GT };
 
-    private static final ParserRuleContext[] TEMPLATE_MEMBER = { ParserRuleContext.TEMPLATE_STRING,
-            ParserRuleContext.INTERPOLATION_START_TOKEN, ParserRuleContext.TEMPLATE_END };
+    private static final int[] TEMPLATE_MEMBER = { ParserRuleContext2.TEMPLATE_STRING,
+            ParserRuleContext2.INTERPOLATION_START_TOKEN, ParserRuleContext2.TEMPLATE_END };
 
-    private static final ParserRuleContext[] TEMPLATE_STRING_RHS =
-            { ParserRuleContext.INTERPOLATION_START_TOKEN, ParserRuleContext.TEMPLATE_END };
+    private static final int[] TEMPLATE_STRING_RHS =
+            { ParserRuleContext2.INTERPOLATION_START_TOKEN, ParserRuleContext2.TEMPLATE_END };
 
-    private static final ParserRuleContext[] KEY_CONSTRAINTS_RHS =
-            { ParserRuleContext.OPEN_PARENTHESIS, ParserRuleContext.LT };
+    private static final int[] KEY_CONSTRAINTS_RHS =
+            { ParserRuleContext2.OPEN_PARENTHESIS, ParserRuleContext2.LT };
 
-    private static final ParserRuleContext[] FUNCTION_KEYWORD_RHS =
-            { ParserRuleContext.FUNC_NAME, ParserRuleContext.OPEN_PARENTHESIS };
+    private static final int[] FUNCTION_KEYWORD_RHS =
+            { ParserRuleContext2.FUNC_NAME, ParserRuleContext2.OPEN_PARENTHESIS };
 
-    private static final ParserRuleContext[] TYPEDESC_RHS = { ParserRuleContext.END_OF_TYPE_DESC,
-            ParserRuleContext.ARRAY_TYPE_DESCRIPTOR, ParserRuleContext.OPTIONAL_TYPE_DESCRIPTOR, ParserRuleContext.PIPE,
-            ParserRuleContext.BITWISE_AND_OPERATOR };
+    private static final int[] TYPEDESC_RHS = { ParserRuleContext2.END_OF_TYPE_DESC,
+            ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR, ParserRuleContext2.OPTIONAL_TYPE_DESCRIPTOR, ParserRuleContext2.PIPE,
+            ParserRuleContext2.BITWISE_AND_OPERATOR };
 
-    private static final ParserRuleContext[] TABLE_TYPE_DESC_RHS =
-            { ParserRuleContext.KEY_KEYWORD, ParserRuleContext.TYPEDESC_RHS };
+    private static final int[] TABLE_TYPE_DESC_RHS =
+            { ParserRuleContext2.KEY_KEYWORD, ParserRuleContext2.TYPEDESC_RHS };
 
-    private static final ParserRuleContext[] NEW_KEYWORD_RHS =
-            { ParserRuleContext.TYPE_DESC_IN_NEW_EXPR, ParserRuleContext.EXPRESSION_RHS };
+    private static final int[] NEW_KEYWORD_RHS =
+            { ParserRuleContext2.TYPE_DESC_IN_NEW_EXPR, ParserRuleContext2.EXPRESSION_RHS };
 
-    private static final ParserRuleContext[] TABLE_CONSTRUCTOR_OR_QUERY_START =
-            { ParserRuleContext.TABLE_KEYWORD, ParserRuleContext.STREAM_KEYWORD, ParserRuleContext.QUERY_EXPRESSION };
+    private static final int[] TABLE_CONSTRUCTOR_OR_QUERY_START =
+            { ParserRuleContext2.TABLE_KEYWORD, ParserRuleContext2.STREAM_KEYWORD, ParserRuleContext2.QUERY_EXPRESSION };
 
-    private static final ParserRuleContext[] TABLE_CONSTRUCTOR_OR_QUERY_RHS =
-            { ParserRuleContext.TABLE_CONSTRUCTOR, ParserRuleContext.QUERY_EXPRESSION };
+    private static final int[] TABLE_CONSTRUCTOR_OR_QUERY_RHS =
+            { ParserRuleContext2.TABLE_CONSTRUCTOR, ParserRuleContext2.QUERY_EXPRESSION };
 
-    private static final ParserRuleContext[] QUERY_EXPRESSION_RHS =
-            { ParserRuleContext.SELECT_CLAUSE, ParserRuleContext.WHERE_CLAUSE, ParserRuleContext.FROM_CLAUSE,
-                    ParserRuleContext.LET_CLAUSE, ParserRuleContext.ORDER_BY_CLAUSE, ParserRuleContext.DO_CLAUSE,
-                    ParserRuleContext.QUERY_EXPRESSION_END };
+    private static final int[] QUERY_EXPRESSION_RHS =
+            { ParserRuleContext2.SELECT_CLAUSE, ParserRuleContext2.WHERE_CLAUSE, ParserRuleContext2.FROM_CLAUSE,
+                    ParserRuleContext2.LET_CLAUSE, ParserRuleContext2.ORDER_BY_CLAUSE, ParserRuleContext2.DO_CLAUSE,
+                    ParserRuleContext2.QUERY_EXPRESSION_END };
 
-    private static final ParserRuleContext[] BRACED_EXPR_OR_ANON_FUNC_PARAM_RHS =
-            { ParserRuleContext.CLOSE_PARENTHESIS, ParserRuleContext.COMMA };
+    private static final int[] BRACED_EXPR_OR_ANON_FUNC_PARAM_RHS =
+            { ParserRuleContext2.CLOSE_PARENTHESIS, ParserRuleContext2.COMMA };
 
-    private static final ParserRuleContext[] ANNOTATION_REF_RHS =
-            { ParserRuleContext.OPEN_PARENTHESIS, ParserRuleContext.ANNOTATION_END };
+    private static final int[] ANNOTATION_REF_RHS =
+            { ParserRuleContext2.OPEN_PARENTHESIS, ParserRuleContext2.ANNOTATION_END };
 
-    private static final ParserRuleContext[] INFER_PARAM_END_OR_PARENTHESIS_END =
-            { ParserRuleContext.CLOSE_PARENTHESIS, ParserRuleContext.EXPR_FUNC_BODY_START };
+    private static final int[] INFER_PARAM_END_OR_PARENTHESIS_END =
+            { ParserRuleContext2.CLOSE_PARENTHESIS, ParserRuleContext2.EXPR_FUNC_BODY_START };
 
-    private static final ParserRuleContext[] OPTIONAL_PEER_WORKER =
-            { ParserRuleContext.PEER_WORKER_NAME, ParserRuleContext.EXPRESSION_RHS };
+    private static final int[] OPTIONAL_PEER_WORKER =
+            { ParserRuleContext2.PEER_WORKER_NAME, ParserRuleContext2.EXPRESSION_RHS };
 
-    private static final ParserRuleContext[] TYPE_DESC_IN_TUPLE_RHS =
-            { ParserRuleContext.CLOSE_BRACKET, ParserRuleContext.COMMA, ParserRuleContext.ELLIPSIS };
+    private static final int[] TYPE_DESC_IN_TUPLE_RHS =
+            { ParserRuleContext2.CLOSE_BRACKET, ParserRuleContext2.COMMA, ParserRuleContext2.ELLIPSIS };
 
-    private static final ParserRuleContext[] LIST_CONSTRUCTOR_MEMBER_END =
-            { ParserRuleContext.CLOSE_BRACKET, ParserRuleContext.COMMA };
+    private static final int[] LIST_CONSTRUCTOR_MEMBER_END =
+            { ParserRuleContext2.CLOSE_BRACKET, ParserRuleContext2.COMMA };
 
-    private static final ParserRuleContext[] NIL_OR_PARENTHESISED_TYPE_DESC_RHS =
-            { ParserRuleContext.CLOSE_PARENTHESIS, ParserRuleContext.TYPE_DESCRIPTOR };
+    private static final int[] NIL_OR_PARENTHESISED_TYPE_DESC_RHS =
+            { ParserRuleContext2.CLOSE_PARENTHESIS, ParserRuleContext2.TYPE_DESCRIPTOR };
 
-    private static final ParserRuleContext[] BINDING_PATTERN =
-            { ParserRuleContext.BINDING_PATTERN_STARTING_IDENTIFIER, ParserRuleContext.LIST_BINDING_PATTERN,
-                    ParserRuleContext.MAPPING_BINDING_PATTERN, ParserRuleContext.FUNCTIONAL_BINDING_PATTERN };
+    private static final int[] BINDING_PATTERN =
+            { ParserRuleContext2.BINDING_PATTERN_STARTING_IDENTIFIER, ParserRuleContext2.LIST_BINDING_PATTERN,
+                    ParserRuleContext2.MAPPING_BINDING_PATTERN, ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN };
 
-    private static final ParserRuleContext[] LIST_BINDING_PATTERN_CONTENTS =
-            { ParserRuleContext.REST_BINDING_PATTERN, ParserRuleContext.BINDING_PATTERN };
+    private static final int[] LIST_BINDING_PATTERN_CONTENTS =
+            { ParserRuleContext2.REST_BINDING_PATTERN, ParserRuleContext2.BINDING_PATTERN };
 
-    private static final ParserRuleContext[] LIST_BINDING_PATTERN_MEMBER_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_BRACKET };
+    private static final int[] LIST_BINDING_PATTERN_MEMBER_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_BRACKET };
 
-    private static final ParserRuleContext[] MAPPING_BINDING_PATTERN_MEMBER =
-            { ParserRuleContext.REST_BINDING_PATTERN, ParserRuleContext.FIELD_BINDING_PATTERN };
+    private static final int[] MAPPING_BINDING_PATTERN_MEMBER =
+            { ParserRuleContext2.REST_BINDING_PATTERN, ParserRuleContext2.FIELD_BINDING_PATTERN };
 
-    private static final ParserRuleContext[] MAPPING_BINDING_PATTERN_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_BRACE };
+    private static final int[] MAPPING_BINDING_PATTERN_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_BRACE };
 
-    private static final ParserRuleContext[] FIELD_BINDING_PATTERN_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.COLON, ParserRuleContext.CLOSE_BRACE };
+    private static final int[] FIELD_BINDING_PATTERN_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.COLON, ParserRuleContext2.CLOSE_BRACE };
 
-    private static final ParserRuleContext[] ARG_BINDING_PATTERN = { ParserRuleContext.BINDING_PATTERN,
-            ParserRuleContext.NAMED_ARG_BINDING_PATTERN, ParserRuleContext.REST_BINDING_PATTERN };
+    private static final int[] ARG_BINDING_PATTERN = { ParserRuleContext2.BINDING_PATTERN,
+            ParserRuleContext2.NAMED_ARG_BINDING_PATTERN, ParserRuleContext2.REST_BINDING_PATTERN };
 
-    private static final ParserRuleContext[] ARG_BINDING_PATTERN_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_PARENTHESIS };
+    private static final int[] ARG_BINDING_PATTERN_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_PARENTHESIS };
 
-    private static final ParserRuleContext[] ARG_BINDING_PATTERN_START_IDENT =
-            { ParserRuleContext.NAMED_ARG_BINDING_PATTERN, ParserRuleContext.BINDING_PATTERN_STARTING_IDENTIFIER };
+    private static final int[] ARG_BINDING_PATTERN_START_IDENT =
+            { ParserRuleContext2.NAMED_ARG_BINDING_PATTERN, ParserRuleContext2.BINDING_PATTERN_STARTING_IDENTIFIER };
 
-    private static final ParserRuleContext[] REMOTE_CALL_OR_ASYNC_SEND_RHS =
-            { ParserRuleContext.WORKER_NAME_OR_METHOD_NAME, ParserRuleContext.DEFAULT_WORKER_NAME_IN_ASYNC_SEND };
+    private static final int[] REMOTE_CALL_OR_ASYNC_SEND_RHS =
+            { ParserRuleContext2.WORKER_NAME_OR_METHOD_NAME, ParserRuleContext2.DEFAULT_WORKER_NAME_IN_ASYNC_SEND };
 
-    private static final ParserRuleContext[] REMOTE_CALL_OR_ASYNC_SEND_END =
-            { ParserRuleContext.ARG_LIST_START, ParserRuleContext.SEMICOLON };
+    private static final int[] REMOTE_CALL_OR_ASYNC_SEND_END =
+            { ParserRuleContext2.ARG_LIST_START, ParserRuleContext2.SEMICOLON };
 
-    private static final ParserRuleContext[] RECEIVE_WORKERS =
-            { ParserRuleContext.PEER_WORKER_NAME, ParserRuleContext.MULTI_RECEIVE_WORKERS };
+    private static final int[] RECEIVE_WORKERS =
+            { ParserRuleContext2.PEER_WORKER_NAME, ParserRuleContext2.MULTI_RECEIVE_WORKERS };
 
-    private static final ParserRuleContext[] RECEIVE_FIELD =
-            { ParserRuleContext.PEER_WORKER_NAME, ParserRuleContext.RECEIVE_FIELD_NAME };
+    private static final int[] RECEIVE_FIELD =
+            { ParserRuleContext2.PEER_WORKER_NAME, ParserRuleContext2.RECEIVE_FIELD_NAME };
 
-    private static final ParserRuleContext[] RECEIVE_FIELD_END =
-            { ParserRuleContext.CLOSE_BRACE, ParserRuleContext.COMMA };
+    private static final int[] RECEIVE_FIELD_END =
+            { ParserRuleContext2.CLOSE_BRACE, ParserRuleContext2.COMMA };
 
-    private static final ParserRuleContext[] WAIT_KEYWORD_RHS =
-            { ParserRuleContext.MULTI_WAIT_FIELDS, ParserRuleContext.ALTERNATE_WAIT_EXPRS };
+    private static final int[] WAIT_KEYWORD_RHS =
+            { ParserRuleContext2.MULTI_WAIT_FIELDS, ParserRuleContext2.ALTERNATE_WAIT_EXPRS };
 
-    private static final ParserRuleContext[] WAIT_FIELD_NAME_RHS =
-            { ParserRuleContext.COLON, ParserRuleContext.WAIT_FIELD_END };
+    private static final int[] WAIT_FIELD_NAME_RHS =
+            { ParserRuleContext2.COLON, ParserRuleContext2.WAIT_FIELD_END };
 
-    private static final ParserRuleContext[] WAIT_FIELD_END =
-            { ParserRuleContext.CLOSE_BRACE, ParserRuleContext.COMMA };
+    private static final int[] WAIT_FIELD_END =
+            { ParserRuleContext2.CLOSE_BRACE, ParserRuleContext2.COMMA };
 
-    private static final ParserRuleContext[] WAIT_FUTURE_EXPR_END =
-            { ParserRuleContext.ALTERNATE_WAIT_EXPR_LIST_END, ParserRuleContext.PIPE };
+    private static final int[] WAIT_FUTURE_EXPR_END =
+            { ParserRuleContext2.ALTERNATE_WAIT_EXPR_LIST_END, ParserRuleContext2.PIPE };
 
-    private static final ParserRuleContext[] ENUM_MEMBER_START =
-            { ParserRuleContext.DOC_STRING, ParserRuleContext.ANNOTATIONS, ParserRuleContext.ENUM_MEMBER_NAME };
+    private static final int[] ENUM_MEMBER_START =
+            { ParserRuleContext2.DOC_STRING, ParserRuleContext2.ANNOTATIONS, ParserRuleContext2.ENUM_MEMBER_NAME };
 
-    private static final ParserRuleContext[] ENUM_MEMBER_RHS =
-            { ParserRuleContext.ASSIGN_OP, ParserRuleContext.ENUM_MEMBER_END };
+    private static final int[] ENUM_MEMBER_RHS =
+            { ParserRuleContext2.ASSIGN_OP, ParserRuleContext2.ENUM_MEMBER_END };
 
-    private static final ParserRuleContext[] ENUM_MEMBER_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_BRACE };
+    private static final int[] ENUM_MEMBER_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_BRACE };
 
-    private static final ParserRuleContext[] MEMBER_ACCESS_KEY_EXPR_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_BRACKET };
+    private static final int[] MEMBER_ACCESS_KEY_EXPR_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_BRACKET };
 
-    private static final ParserRuleContext[] ROLLBACK_RHS =
-            { ParserRuleContext.SEMICOLON, ParserRuleContext.EXPRESSION };
+    private static final int[] ROLLBACK_RHS =
+            { ParserRuleContext2.SEMICOLON, ParserRuleContext2.EXPRESSION };
 
-    private static final ParserRuleContext[] RETRY_KEYWORD_RHS =
-            { ParserRuleContext.LT, ParserRuleContext.RETRY_TYPE_PARAM_RHS };
+    private static final int[] RETRY_KEYWORD_RHS =
+            { ParserRuleContext2.LT, ParserRuleContext2.RETRY_TYPE_PARAM_RHS };
 
-    private static final ParserRuleContext[] RETRY_TYPE_PARAM_RHS =
-            { ParserRuleContext.ARG_LIST_START, ParserRuleContext.RETRY_BODY };
+    private static final int[] RETRY_TYPE_PARAM_RHS =
+            { ParserRuleContext2.ARG_LIST_START, ParserRuleContext2.RETRY_BODY };
 
-    private static final ParserRuleContext[] RETRY_BODY =
-            { ParserRuleContext.BLOCK_STMT, ParserRuleContext.TRANSACTION_STMT };
+    private static final int[] RETRY_BODY =
+            { ParserRuleContext2.BLOCK_STMT, ParserRuleContext2.TRANSACTION_STMT };
 
-    private static final ParserRuleContext[] LIST_BP_OR_TUPLE_TYPE_MEMBER =
-            { ParserRuleContext.TYPE_DESCRIPTOR, ParserRuleContext.LIST_BINDING_PATTERN_MEMBER };
+    private static final int[] LIST_BP_OR_TUPLE_TYPE_MEMBER =
+            { ParserRuleContext2.TYPE_DESCRIPTOR, ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER };
 
-    private static final ParserRuleContext[] LIST_BP_OR_TUPLE_TYPE_DESC_RHS =
-            { ParserRuleContext.ASSIGN_OP, ParserRuleContext.VARIABLE_NAME };
+    private static final int[] LIST_BP_OR_TUPLE_TYPE_DESC_RHS =
+            { ParserRuleContext2.ASSIGN_OP, ParserRuleContext2.VARIABLE_NAME };
 
-    private static final ParserRuleContext[] BRACKETED_LIST_MEMBER_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_BRACKET };
+    private static final int[] BRACKETED_LIST_MEMBER_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_BRACKET };
 
-    private static final ParserRuleContext[] BRACKETED_LIST_MEMBER =
+    private static final int[] BRACKETED_LIST_MEMBER =
             // array length is also an expression
-            { ParserRuleContext.EXPRESSION, ParserRuleContext.BINDING_PATTERN };
+            { ParserRuleContext2.EXPRESSION, ParserRuleContext2.BINDING_PATTERN };
 
-    private static final ParserRuleContext[] LIST_BINDING_MEMBER_OR_ARRAY_LENGTH =
-            { ParserRuleContext.ARRAY_LENGTH, ParserRuleContext.BINDING_PATTERN };
+    private static final int[] LIST_BINDING_MEMBER_OR_ARRAY_LENGTH =
+            { ParserRuleContext2.ARRAY_LENGTH, ParserRuleContext2.BINDING_PATTERN };
 
-    private static final ParserRuleContext[] BRACKETED_LIST_RHS = { ParserRuleContext.ASSIGN_OP,
-            ParserRuleContext.VARIABLE_NAME, ParserRuleContext.BINDING_PATTERN, ParserRuleContext.EXPRESSION_RHS };
+    private static final int[] BRACKETED_LIST_RHS = { ParserRuleContext2.ASSIGN_OP,
+            ParserRuleContext2.VARIABLE_NAME, ParserRuleContext2.BINDING_PATTERN, ParserRuleContext2.EXPRESSION_RHS };
 
-    private static final ParserRuleContext[] XML_NAVIGATE_EXPR =
-            { ParserRuleContext.XML_FILTER_EXPR, ParserRuleContext.XML_STEP_EXPR };
+    private static final int[] XML_NAVIGATE_EXPR =
+            { ParserRuleContext2.XML_FILTER_EXPR, ParserRuleContext2.XML_STEP_EXPR };
 
-    private static final ParserRuleContext[] XML_NAME_PATTERN_RHS = { ParserRuleContext.GT, ParserRuleContext.PIPE };
+    private static final int[] XML_NAME_PATTERN_RHS = { ParserRuleContext2.GT, ParserRuleContext2.PIPE };
 
-    private static final ParserRuleContext[] XML_ATOMIC_NAME_PATTERN_START =
-            { ParserRuleContext.ASTERISK, ParserRuleContext.XML_ATOMIC_NAME_IDENTIFIER };
+    private static final int[] XML_ATOMIC_NAME_PATTERN_START =
+            { ParserRuleContext2.ASTERISK, ParserRuleContext2.XML_ATOMIC_NAME_IDENTIFIER };
 
-    private static final ParserRuleContext[] XML_ATOMIC_NAME_IDENTIFIER_RHS =
-            { ParserRuleContext.ASTERISK, ParserRuleContext.IDENTIFIER };
+    private static final int[] XML_ATOMIC_NAME_IDENTIFIER_RHS =
+            { ParserRuleContext2.ASTERISK, ParserRuleContext2.IDENTIFIER };
 
-    private static final ParserRuleContext[] XML_STEP_START = { ParserRuleContext.SLASH_ASTERISK_TOKEN,
-            ParserRuleContext.DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN, ParserRuleContext.SLASH_LT_TOKEN };
+    private static final int[] XML_STEP_START = { ParserRuleContext2.SLASH_ASTERISK_TOKEN,
+            ParserRuleContext2.DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN, ParserRuleContext2.SLASH_LT_TOKEN };
 
-    private static final ParserRuleContext[] MATCH_PATTERN_RHS =
-            { ParserRuleContext.PIPE, ParserRuleContext.MATCH_PATTERN_END };
+    private static final int[] MATCH_PATTERN_RHS =
+            { ParserRuleContext2.PIPE, ParserRuleContext2.MATCH_PATTERN_END };
 
-    private static final ParserRuleContext[] OPTIONAL_MATCH_GUARD =
-            { ParserRuleContext.IF_KEYWORD, ParserRuleContext.RIGHT_DOUBLE_ARROW };
+    private static final int[] OPTIONAL_MATCH_GUARD =
+            { ParserRuleContext2.IF_KEYWORD, ParserRuleContext2.RIGHT_DOUBLE_ARROW };
 
-    private static final ParserRuleContext[] MATCH_PATTERN_START = { ParserRuleContext.CONSTANT_EXPRESSION,
-            ParserRuleContext.VAR_KEYWORD, ParserRuleContext.LIST_MATCH_PATTERN,
-            ParserRuleContext.MAPPING_MATCH_PATTERN, ParserRuleContext.FUNCTIONAL_MATCH_PATTERN };
+    private static final int[] MATCH_PATTERN_START = { ParserRuleContext2.CONSTANT_EXPRESSION,
+            ParserRuleContext2.VAR_KEYWORD, ParserRuleContext2.LIST_MATCH_PATTERN,
+            ParserRuleContext2.MAPPING_MATCH_PATTERN, ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN };
 
-    private static final ParserRuleContext[] LIST_MATCH_PATTERNS_START =
-            { ParserRuleContext.LIST_MATCH_PATTERN_MEMBER, ParserRuleContext.CLOSE_BRACKET };
+    private static final int[] LIST_MATCH_PATTERNS_START =
+            { ParserRuleContext2.LIST_MATCH_PATTERN_MEMBER, ParserRuleContext2.CLOSE_BRACKET };
 
-    private static final ParserRuleContext[] LIST_MATCH_PATTERN_MEMBER =
-            { ParserRuleContext.MATCH_PATTERN_START, ParserRuleContext.REST_MATCH_PATTERN };
+    private static final int[] LIST_MATCH_PATTERN_MEMBER =
+            { ParserRuleContext2.MATCH_PATTERN_START, ParserRuleContext2.REST_MATCH_PATTERN };
 
-    private static final ParserRuleContext[] LIST_MATCH_PATTERN_MEMBER_RHS =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_BRACKET };
+    private static final int[] LIST_MATCH_PATTERN_MEMBER_RHS =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_BRACKET };
 
-    private static final ParserRuleContext[] FIELD_MATCH_PATTERNS_START =
-            { ParserRuleContext.FIELD_MATCH_PATTERN_MEMBER, ParserRuleContext.CLOSE_BRACE };
+    private static final int[] FIELD_MATCH_PATTERNS_START =
+            { ParserRuleContext2.FIELD_MATCH_PATTERN_MEMBER, ParserRuleContext2.CLOSE_BRACE };
 
-    private static final ParserRuleContext[] FIELD_MATCH_PATTERN_MEMBER =
-            { ParserRuleContext.VARIABLE_NAME, ParserRuleContext.REST_MATCH_PATTERN };
+    private static final int[] FIELD_MATCH_PATTERN_MEMBER =
+            { ParserRuleContext2.VARIABLE_NAME, ParserRuleContext2.REST_MATCH_PATTERN };
 
-    private static final ParserRuleContext[] FIELD_MATCH_PATTERN_MEMBER_RHS =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_BRACE };
+    private static final int[] FIELD_MATCH_PATTERN_MEMBER_RHS =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_BRACE };
 
-    private static final ParserRuleContext[] FUNC_MATCH_PATTERN_OR_CONST_PATTERN =
-            { ParserRuleContext.OPEN_PARENTHESIS, ParserRuleContext.MATCH_PATTERN_END };
+    private static final int[] FUNC_MATCH_PATTERN_OR_CONST_PATTERN =
+            { ParserRuleContext2.OPEN_PARENTHESIS, ParserRuleContext2.MATCH_PATTERN_END };
 
-    private static final ParserRuleContext[] FUNCTIONAL_MATCH_PATTERN_START =
-            { ParserRuleContext.ERROR_KEYWORD, ParserRuleContext.TYPE_REFERENCE };
+    private static final int[] FUNCTIONAL_MATCH_PATTERN_START =
+            { ParserRuleContext2.ERROR_KEYWORD, ParserRuleContext2.TYPE_REFERENCE };
 
-    private static final ParserRuleContext[] ARG_LIST_MATCH_PATTERN_START =
-            { ParserRuleContext.ARG_MATCH_PATTERN, ParserRuleContext.CLOSE_PARENTHESIS };
+    private static final int[] ARG_LIST_MATCH_PATTERN_START =
+            { ParserRuleContext2.ARG_MATCH_PATTERN, ParserRuleContext2.CLOSE_PARENTHESIS };
 
-    private static final ParserRuleContext[] ARG_MATCH_PATTERN = { ParserRuleContext.MATCH_PATTERN,
-            ParserRuleContext.NAMED_ARG_MATCH_PATTERN, ParserRuleContext.REST_MATCH_PATTERN };
+    private static final int[] ARG_MATCH_PATTERN = { ParserRuleContext2.MATCH_PATTERN,
+            ParserRuleContext2.NAMED_ARG_MATCH_PATTERN, ParserRuleContext2.REST_MATCH_PATTERN };
 
-    private static final ParserRuleContext[] ARG_MATCH_PATTERN_RHS =
-            { ParserRuleContext.COMMA, ParserRuleContext.CLOSE_PARENTHESIS };
+    private static final int[] ARG_MATCH_PATTERN_RHS =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.CLOSE_PARENTHESIS };
 
-    private static final ParserRuleContext[] NAMED_ARG_MATCH_PATTERN_RHS =
-            { ParserRuleContext.NAMED_ARG_MATCH_PATTERN, ParserRuleContext.REST_MATCH_PATTERN };
+    private static final int[] NAMED_ARG_MATCH_PATTERN_RHS =
+            { ParserRuleContext2.NAMED_ARG_MATCH_PATTERN, ParserRuleContext2.REST_MATCH_PATTERN };
 
-    private static final ParserRuleContext[] ORDER_KEY_LIST_END =
-            { ParserRuleContext.COMMA, ParserRuleContext.ORDER_CLAUSE_END };
+    private static final int[] ORDER_KEY_LIST_END =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.ORDER_CLAUSE_END };
 
-    private static final ParserRuleContext[] ORDER_DIRECTION_RHS =
-            { ParserRuleContext.COMMA, ParserRuleContext.EXPRESSION, ParserRuleContext.ORDER_CLAUSE_END };
+    private static final int[] ORDER_DIRECTION_RHS =
+            { ParserRuleContext2.COMMA, ParserRuleContext2.EXPRESSION, ParserRuleContext2.ORDER_CLAUSE_END };
 
-    private static final ParserRuleContext[] LIST_BP_OR_LIST_CONSTRUCTOR_MEMBER =
-            { ParserRuleContext.LIST_BINDING_PATTERN_MEMBER, ParserRuleContext.LIST_CONSTRUCTOR_FIRST_MEMBER};
+    private static final int[] LIST_BP_OR_LIST_CONSTRUCTOR_MEMBER =
+            { ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER, ParserRuleContext2.LIST_CONSTRUCTOR_FIRST_MEMBER};
 
-    private static final ParserRuleContext[] TUPLE_TYPE_DESC_OR_LIST_CONST_MEMBER =
-            { ParserRuleContext.TYPE_DESCRIPTOR, ParserRuleContext.LIST_CONSTRUCTOR_FIRST_MEMBER};
+    private static final int[] TUPLE_TYPE_DESC_OR_LIST_CONST_MEMBER =
+            { ParserRuleContext2.TYPE_DESCRIPTOR, ParserRuleContext2.LIST_CONSTRUCTOR_FIRST_MEMBER};
 
     public BallerinaParserErrorHandler(AbstractTokenReader tokenReader) {
         super(tokenReader);
     }
 
     @Override
-    protected boolean isProductionWithAlternatives(ParserRuleContext currentCtx) {
+    protected boolean isProductionWithAlternatives(int currentCtx) {
         switch (currentCtx) {
-            case TOP_LEVEL_NODE:
-            case TOP_LEVEL_NODE_WITHOUT_MODIFIER:
-            case TOP_LEVEL_NODE_WITHOUT_METADATA:
-            case STATEMENT:
-            case STATEMENT_WITHOUT_ANNOTS:
-            case FUNC_BODY_OR_TYPE_DESC_RHS:
-            case VAR_DECL_STMT_RHS:
-            case EXPRESSION_RHS:
-            case PARAMETER_NAME_RHS:
-            case ASSIGNMENT_OR_VAR_DECL_STMT:
-            case AFTER_PARAMETER_TYPE:
-            case FIELD_DESCRIPTOR_RHS:
-            case RECORD_BODY_START:
-            case RECORD_BODY_END:
-            case TYPE_DESCRIPTOR:
-            case NAMED_OR_POSITIONAL_ARG_RHS:
-            case OBJECT_FIELD_RHS:
-            case OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY:
-            case OBJECT_MEMBER:
-            case OBJECT_TYPE_QUALIFIER:
-            case ELSE_BODY:
-            case IMPORT_DECL_RHS:
-            case IMPORT_SUB_VERSION:
-            case VERSION_NUMBER:
-            case IMPORT_VERSION_DECL:
-            case IMPORT_PREFIX_DECL:
-            case MAPPING_FIELD:
-            case FIRST_MAPPING_FIELD:
-            case SPECIFIC_FIELD_RHS:
-            case RESOURCE_DEF:
-            case PARAMETER_WITHOUT_ANNOTS:
-            case PARAMETER_START:
-            case STMT_START_WITH_EXPR_RHS:
-            case EXPR_STMT_RHS:
-            case RECORD_FIELD_OR_RECORD_END:
-            case CONST_DECL_TYPE:
-            case CONST_DECL_RHS:
-            case ANNOT_OPTIONAL_ATTACH_POINTS:
-            case XML_NAMESPACE_PREFIX_DECL:
-            case ANNOT_DECL_OPTIONAL_TYPE:
-            case ANNOT_DECL_RHS:
-            case TABLE_KEYWORD_RHS:
-            case ARRAY_LENGTH:
-            case TYPEDESC_RHS:
-            case ERROR_TYPE_PARAMS:
-            case STREAM_TYPE_FIRST_PARAM_RHS:
-            case KEY_CONSTRAINTS_RHS:
-            case TABLE_TYPE_DESC_RHS:
-            case FUNC_BODY:
-            case FUNC_OPTIONAL_RETURNS:
-            case TERMINAL_EXPRESSION:
-            case TABLE_CONSTRUCTOR_OR_QUERY_START:
-            case TABLE_CONSTRUCTOR_OR_QUERY_RHS:
-            case QUERY_PIPELINE_RHS:
-            case ANON_FUNC_BODY:
-            case BINDING_PATTERN:
-            case LIST_BINDING_PATTERN_MEMBER:
-            case LIST_BINDING_PATTERN_MEMBER_END:
-            case MAPPING_BINDING_PATTERN_MEMBER:
-            case MAPPING_BINDING_PATTERN_END:
-            case FIELD_BINDING_PATTERN_END:
-            case ARG_BINDING_PATTERN:
-            case ARG_BINDING_PATTERN_END:
-            case ARG_BINDING_PATTERN_START_IDENT:
-            case REMOTE_CALL_OR_ASYNC_SEND_RHS:
-            case REMOTE_CALL_OR_ASYNC_SEND_END:
-            case RECEIVE_FIELD_END:
-            case RECEIVE_WORKERS:
-            case WAIT_FIELD_NAME:
-            case WAIT_FIELD_NAME_RHS:
-            case WAIT_FIELD_END:
-            case WAIT_FUTURE_EXPR_END:
-            case MAPPING_FIELD_END:
-            case ENUM_MEMBER_START:
-            case ENUM_MEMBER_RHS:
-            case STMT_START_BRACKETED_LIST_MEMBER:
-            case STMT_START_BRACKETED_LIST_RHS:
-            case ENUM_MEMBER_END:
-            case BINDING_PATTERN_OR_EXPR_RHS:
-            case BRACKETED_LIST_RHS:
-            case BRACKETED_LIST_MEMBER:
-            case BRACKETED_LIST_MEMBER_END:
-            case AMBIGUOUS_STMT:
-            case TYPED_BINDING_PATTERN_TYPE_RHS:
-            case TYPE_DESC_IN_TUPLE_RHS:
-            case LIST_BINDING_MEMBER_OR_ARRAY_LENGTH:
-            case FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY:
-            case OPTIONAL_MATCH_GUARD:
-            case MATCH_PATTERN_RHS:
-            case MATCH_PATTERN_START:
-            case LIST_MATCH_PATTERNS_START:
-            case LIST_MATCH_PATTERN_MEMBER:
-            case LIST_MATCH_PATTERN_MEMBER_RHS:
-            case FIELD_MATCH_PATTERNS_START:
-            case FIELD_MATCH_PATTERN_MEMBER:
-            case FIELD_MATCH_PATTERN_MEMBER_RHS:
-            case FUNC_MATCH_PATTERN_OR_CONST_PATTERN:
-            case FUNCTIONAL_MATCH_PATTERN_START:
-            case ARG_LIST_MATCH_PATTERN_START:
-            case ARG_MATCH_PATTERN:
-            case ARG_MATCH_PATTERN_RHS:
-            case NAMED_ARG_MATCH_PATTERN_RHS:
-            case EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS:
-            case ORDER_KEY_LIST_END:
-            case ORDER_DIRECTION_RHS:
-            case LIST_BP_OR_LIST_CONSTRUCTOR_MEMBER:
-            case TUPLE_TYPE_DESC_OR_LIST_CONST_MEMBER:
+            case ParserRuleContext2.TOP_LEVEL_NODE:
+            case ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_MODIFIER:
+            case ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_METADATA:
+            case ParserRuleContext2.STATEMENT:
+            case ParserRuleContext2.STATEMENT_WITHOUT_ANNOTS:
+            case ParserRuleContext2.FUNC_BODY_OR_TYPE_DESC_RHS:
+            case ParserRuleContext2.VAR_DECL_STMT_RHS:
+            case ParserRuleContext2.EXPRESSION_RHS:
+            case ParserRuleContext2.PARAMETER_NAME_RHS:
+            case ParserRuleContext2.ASSIGNMENT_OR_VAR_DECL_STMT:
+            case ParserRuleContext2.AFTER_PARAMETER_TYPE:
+            case ParserRuleContext2.FIELD_DESCRIPTOR_RHS:
+            case ParserRuleContext2.RECORD_BODY_START:
+            case ParserRuleContext2.RECORD_BODY_END:
+            case ParserRuleContext2.TYPE_DESCRIPTOR:
+            case ParserRuleContext2.NAMED_OR_POSITIONAL_ARG_RHS:
+            case ParserRuleContext2.OBJECT_FIELD_RHS:
+            case ParserRuleContext2.OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY:
+            case ParserRuleContext2.OBJECT_MEMBER:
+            case ParserRuleContext2.OBJECT_TYPE_QUALIFIER:
+            case ParserRuleContext2.ELSE_BODY:
+            case ParserRuleContext2.IMPORT_DECL_RHS:
+            case ParserRuleContext2.IMPORT_SUB_VERSION:
+            case ParserRuleContext2.VERSION_NUMBER:
+            case ParserRuleContext2.IMPORT_VERSION_DECL:
+            case ParserRuleContext2.IMPORT_PREFIX_DECL:
+            case ParserRuleContext2.MAPPING_FIELD:
+            case ParserRuleContext2.FIRST_MAPPING_FIELD:
+            case ParserRuleContext2.SPECIFIC_FIELD_RHS:
+            case ParserRuleContext2.RESOURCE_DEF:
+            case ParserRuleContext2.PARAMETER_WITHOUT_ANNOTS:
+            case ParserRuleContext2.PARAMETER_START:
+            case ParserRuleContext2.STMT_START_WITH_EXPR_RHS:
+            case ParserRuleContext2.EXPR_STMT_RHS:
+            case ParserRuleContext2.RECORD_FIELD_OR_RECORD_END:
+            case ParserRuleContext2.CONST_DECL_TYPE:
+            case ParserRuleContext2.CONST_DECL_RHS:
+            case ParserRuleContext2.ANNOT_OPTIONAL_ATTACH_POINTS:
+            case ParserRuleContext2.XML_NAMESPACE_PREFIX_DECL:
+            case ParserRuleContext2.ANNOT_DECL_OPTIONAL_TYPE:
+            case ParserRuleContext2.ANNOT_DECL_RHS:
+            case ParserRuleContext2.TABLE_KEYWORD_RHS:
+            case ParserRuleContext2.ARRAY_LENGTH:
+            case ParserRuleContext2.TYPEDESC_RHS:
+            case ParserRuleContext2.ERROR_TYPE_PARAMS:
+            case ParserRuleContext2.STREAM_TYPE_FIRST_PARAM_RHS:
+            case ParserRuleContext2.KEY_CONSTRAINTS_RHS:
+            case ParserRuleContext2.TABLE_TYPE_DESC_RHS:
+            case ParserRuleContext2.FUNC_BODY:
+            case ParserRuleContext2.FUNC_OPTIONAL_RETURNS:
+            case ParserRuleContext2.TERMINAL_EXPRESSION:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_START:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_RHS:
+            case ParserRuleContext2.QUERY_PIPELINE_RHS:
+            case ParserRuleContext2.ANON_FUNC_BODY:
+            case ParserRuleContext2.BINDING_PATTERN:
+            case ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER:
+            case ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER_END:
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN_MEMBER:
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN_END:
+            case ParserRuleContext2.FIELD_BINDING_PATTERN_END:
+            case ParserRuleContext2.ARG_BINDING_PATTERN:
+            case ParserRuleContext2.ARG_BINDING_PATTERN_END:
+            case ParserRuleContext2.ARG_BINDING_PATTERN_START_IDENT:
+            case ParserRuleContext2.REMOTE_CALL_OR_ASYNC_SEND_RHS:
+            case ParserRuleContext2.REMOTE_CALL_OR_ASYNC_SEND_END:
+            case ParserRuleContext2.RECEIVE_FIELD_END:
+            case ParserRuleContext2.RECEIVE_WORKERS:
+            case ParserRuleContext2.WAIT_FIELD_NAME:
+            case ParserRuleContext2.WAIT_FIELD_NAME_RHS:
+            case ParserRuleContext2.WAIT_FIELD_END:
+            case ParserRuleContext2.WAIT_FUTURE_EXPR_END:
+            case ParserRuleContext2.MAPPING_FIELD_END:
+            case ParserRuleContext2.ENUM_MEMBER_START:
+            case ParserRuleContext2.ENUM_MEMBER_RHS:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST_MEMBER:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST_RHS:
+            case ParserRuleContext2.ENUM_MEMBER_END:
+            case ParserRuleContext2.BINDING_PATTERN_OR_EXPR_RHS:
+            case ParserRuleContext2.BRACKETED_LIST_RHS:
+            case ParserRuleContext2.BRACKETED_LIST_MEMBER:
+            case ParserRuleContext2.BRACKETED_LIST_MEMBER_END:
+            case ParserRuleContext2.AMBIGUOUS_STMT:
+            case ParserRuleContext2.TYPED_BINDING_PATTERN_TYPE_RHS:
+            case ParserRuleContext2.TYPE_DESC_IN_TUPLE_RHS:
+            case ParserRuleContext2.LIST_BINDING_MEMBER_OR_ARRAY_LENGTH:
+            case ParserRuleContext2.FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY:
+            case ParserRuleContext2.OPTIONAL_MATCH_GUARD:
+            case ParserRuleContext2.MATCH_PATTERN_RHS:
+            case ParserRuleContext2.MATCH_PATTERN_START:
+            case ParserRuleContext2.LIST_MATCH_PATTERNS_START:
+            case ParserRuleContext2.LIST_MATCH_PATTERN_MEMBER:
+            case ParserRuleContext2.LIST_MATCH_PATTERN_MEMBER_RHS:
+            case ParserRuleContext2.FIELD_MATCH_PATTERNS_START:
+            case ParserRuleContext2.FIELD_MATCH_PATTERN_MEMBER:
+            case ParserRuleContext2.FIELD_MATCH_PATTERN_MEMBER_RHS:
+            case ParserRuleContext2.FUNC_MATCH_PATTERN_OR_CONST_PATTERN:
+            case ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN_START:
+            case ParserRuleContext2.ARG_LIST_MATCH_PATTERN_START:
+            case ParserRuleContext2.ARG_MATCH_PATTERN:
+            case ParserRuleContext2.ARG_MATCH_PATTERN_RHS:
+            case ParserRuleContext2.NAMED_ARG_MATCH_PATTERN_RHS:
+            case ParserRuleContext2.EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS:
+            case ParserRuleContext2.ORDER_KEY_LIST_END:
+            case ParserRuleContext2.ORDER_DIRECTION_RHS:
+            case ParserRuleContext2.LIST_BP_OR_LIST_CONSTRUCTOR_MEMBER:
+            case ParserRuleContext2.TUPLE_TYPE_DESC_OR_LIST_CONST_MEMBER:
                 return true;
             default:
                 return false;
@@ -692,27 +693,28 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
     }
 
     private boolean isEndOfObjectTypeNode(int nextLookahead) {
-        STToken nextToken = this.tokenReader.peek(nextLookahead);
-        switch (nextToken.kind) {
-            case CLOSE_BRACE_TOKEN:
-            case EOF_TOKEN:
-            case CLOSE_BRACE_PIPE_TOKEN:
-            case TYPE_KEYWORD:
-            case SERVICE_KEYWORD:
-                return true;
-            default:
-                STToken nextNextToken = this.tokenReader.peek(nextLookahead + 1);
-                switch (nextNextToken.kind) {
-                    case CLOSE_BRACE_TOKEN:
-                    case EOF_TOKEN:
-                    case CLOSE_BRACE_PIPE_TOKEN:
-                    case TYPE_KEYWORD:
-                    case SERVICE_KEYWORD:
-                        return true;
-                    default:
-                        return false;
-                }
-        }
+//        STToken nextToken = this.tokenReader.peek(nextLookahead);
+//        switch (nextToken.kind) {
+//            case CLOSE_BRACE_TOKEN:
+//            case EOF_TOKEN:
+//            case CLOSE_BRACE_PIPE_TOKEN:
+//            case TYPE_KEYWORD:
+//            case SERVICE_KEYWORD:
+//                return true;
+//            default:
+//                STToken nextNextToken = this.tokenReader.peek(nextLookahead + 1);
+//                switch (nextNextToken.kind) {
+//                    case CLOSE_BRACE_TOKEN:
+//                    case EOF_TOKEN:
+//                    case CLOSE_BRACE_PIPE_TOKEN:
+//                    case TYPE_KEYWORD:
+//                    case SERVICE_KEYWORD:
+//                        return true;
+//                    default:
+//                        return false;
+//                }
+//        }
+        return false;
     }
 
     /**
@@ -725,7 +727,7 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @return Recovery result
      */
     @Override
-    protected Result seekMatch(ParserRuleContext currentCtx, int lookahead, int currentDepth, boolean isEntryPoint) {
+    protected Result seekMatch(int currentCtx, int lookahead, int currentDepth, boolean isEntryPoint) {
         boolean hasMatch;
         boolean skipRule;
         int matchingRulesCount = 0;
@@ -736,263 +738,263 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
             STToken nextToken = this.tokenReader.peek(lookahead);
 
             switch (currentCtx) {
-                case EOF:
-                    hasMatch = nextToken.kind == SyntaxKind.EOF_TOKEN;
+                case ParserRuleContext2.EOF:
+                    hasMatch = nextToken.kind == SyntaxKind2.EOF_TOKEN;
                     break;
-                case FUNC_NAME:
-                case VARIABLE_NAME:
-                case TYPE_NAME:
-                case IMPORT_ORG_OR_MODULE_NAME:
-                case IMPORT_MODULE_NAME:
-                case IMPORT_PREFIX:
-                case MAPPING_FIELD_NAME:
-                case SERVICE_NAME:
-                case QUALIFIED_IDENTIFIER:
-                case IDENTIFIER:
-                case ANNOTATION_TAG:
-                case NAMESPACE_PREFIX:
-                case WORKER_NAME:
-                case IMPLICIT_ANON_FUNC_PARAM:
-                case WORKER_NAME_OR_METHOD_NAME:
-                case RECEIVE_FIELD_NAME:
-                case WAIT_FIELD_NAME:
-                case FIELD_BINDING_PATTERN_NAME:
-                case XML_ATOMIC_NAME_IDENTIFIER:
-                    hasMatch = nextToken.kind == SyntaxKind.IDENTIFIER_TOKEN;
+                case ParserRuleContext2.FUNC_NAME:
+                case ParserRuleContext2.VARIABLE_NAME:
+                case ParserRuleContext2.TYPE_NAME:
+                case ParserRuleContext2.IMPORT_ORG_OR_MODULE_NAME:
+                case ParserRuleContext2.IMPORT_MODULE_NAME:
+                case ParserRuleContext2.IMPORT_PREFIX:
+                case ParserRuleContext2.MAPPING_FIELD_NAME:
+                case ParserRuleContext2.SERVICE_NAME:
+                case ParserRuleContext2.QUALIFIED_IDENTIFIER:
+                case ParserRuleContext2.IDENTIFIER:
+                case ParserRuleContext2.ANNOTATION_TAG:
+                case ParserRuleContext2.NAMESPACE_PREFIX:
+                case ParserRuleContext2.WORKER_NAME:
+                case ParserRuleContext2.IMPLICIT_ANON_FUNC_PARAM:
+                case ParserRuleContext2.WORKER_NAME_OR_METHOD_NAME:
+                case ParserRuleContext2.RECEIVE_FIELD_NAME:
+                case ParserRuleContext2.WAIT_FIELD_NAME:
+                case ParserRuleContext2.FIELD_BINDING_PATTERN_NAME:
+                case ParserRuleContext2.XML_ATOMIC_NAME_IDENTIFIER:
+                    hasMatch = nextToken.kind == SyntaxKind2.IDENTIFIER_TOKEN;
                     break;
-                case OPEN_PARENTHESIS:
-                case PARENTHESISED_TYPE_DESC_START:
-                    hasMatch = nextToken.kind == SyntaxKind.OPEN_PAREN_TOKEN;
+                case ParserRuleContext2.OPEN_PARENTHESIS:
+                case ParserRuleContext2.PARENTHESISED_TYPE_DESC_START:
+                    hasMatch = nextToken.kind == SyntaxKind2.OPEN_PAREN_TOKEN;
                     break;
-                case CLOSE_PARENTHESIS:
-                    hasMatch = nextToken.kind == SyntaxKind.CLOSE_PAREN_TOKEN;
+                case ParserRuleContext2.CLOSE_PARENTHESIS:
+                    hasMatch = nextToken.kind == SyntaxKind2.CLOSE_PAREN_TOKEN;
                     break;
-                case SIMPLE_TYPE_DESCRIPTOR:
+                case ParserRuleContext2.SIMPLE_TYPE_DESCRIPTOR:
                     hasMatch = BallerinaParser.isSimpleType(nextToken.kind) ||
-                            nextToken.kind == SyntaxKind.IDENTIFIER_TOKEN;
+                            nextToken.kind == SyntaxKind2.IDENTIFIER_TOKEN;
                     break;
-                case OPEN_BRACE:
-                    hasMatch = nextToken.kind == SyntaxKind.OPEN_BRACE_TOKEN;
+                case ParserRuleContext2.OPEN_BRACE:
+                    hasMatch = nextToken.kind == SyntaxKind2.OPEN_BRACE_TOKEN;
                     break;
-                case CLOSE_BRACE:
-                    hasMatch = nextToken.kind == SyntaxKind.CLOSE_BRACE_TOKEN;
+                case ParserRuleContext2.CLOSE_BRACE:
+                    hasMatch = nextToken.kind == SyntaxKind2.CLOSE_BRACE_TOKEN;
                     break;
-                case ASSIGN_OP:
-                    hasMatch = nextToken.kind == SyntaxKind.EQUAL_TOKEN;
+                case ParserRuleContext2.ASSIGN_OP:
+                    hasMatch = nextToken.kind == SyntaxKind2.EQUAL_TOKEN;
                     break;
-                case SEMICOLON:
-                    hasMatch = nextToken.kind == SyntaxKind.SEMICOLON_TOKEN;
+                case ParserRuleContext2.SEMICOLON:
+                    hasMatch = nextToken.kind == SyntaxKind2.SEMICOLON_TOKEN;
                     break;
-                case BINARY_OPERATOR:
+                case ParserRuleContext2.BINARY_OPERATOR:
                     hasMatch = isBinaryOperator(nextToken);
                     break;
-                case COMMA:
-                    hasMatch = nextToken.kind == SyntaxKind.COMMA_TOKEN;
+                case ParserRuleContext2.COMMA:
+                    hasMatch = nextToken.kind == SyntaxKind2.COMMA_TOKEN;
                     break;
-                case CLOSED_RECORD_BODY_END:
-                    hasMatch = nextToken.kind == SyntaxKind.CLOSE_BRACE_PIPE_TOKEN;
+                case ParserRuleContext2.CLOSED_RECORD_BODY_END:
+                    hasMatch = nextToken.kind == SyntaxKind2.CLOSE_BRACE_PIPE_TOKEN;
                     break;
-                case CLOSED_RECORD_BODY_START:
-                    hasMatch = nextToken.kind == SyntaxKind.OPEN_BRACE_PIPE_TOKEN;
+                case ParserRuleContext2.CLOSED_RECORD_BODY_START:
+                    hasMatch = nextToken.kind == SyntaxKind2.OPEN_BRACE_PIPE_TOKEN;
                     break;
-                case ELLIPSIS:
-                    hasMatch = nextToken.kind == SyntaxKind.ELLIPSIS_TOKEN;
+                case ParserRuleContext2.ELLIPSIS:
+                    hasMatch = nextToken.kind == SyntaxKind2.ELLIPSIS_TOKEN;
                     break;
-                case QUESTION_MARK:
-                    hasMatch = nextToken.kind == SyntaxKind.QUESTION_MARK_TOKEN;
+                case ParserRuleContext2.QUESTION_MARK:
+                    hasMatch = nextToken.kind == SyntaxKind2.QUESTION_MARK_TOKEN;
                     break;
-                case ARG_LIST_START:
-                    hasMatch = nextToken.kind == SyntaxKind.OPEN_PAREN_TOKEN;
+                case ParserRuleContext2.ARG_LIST_START:
+                    hasMatch = nextToken.kind == SyntaxKind2.OPEN_PAREN_TOKEN;
                     break;
-                case ARG_LIST_END:
-                    hasMatch = nextToken.kind == SyntaxKind.CLOSE_PAREN_TOKEN;
+                case ParserRuleContext2.ARG_LIST_END:
+                    hasMatch = nextToken.kind == SyntaxKind2.CLOSE_PAREN_TOKEN;
                     break;
-                case OBJECT_TYPE_QUALIFIER:
-                    hasMatch = nextToken.kind == SyntaxKind.ABSTRACT_KEYWORD ||
-                            nextToken.kind == SyntaxKind.CLIENT_KEYWORD ||
-                            nextToken.kind == SyntaxKind.READONLY_KEYWORD;
+                case ParserRuleContext2.OBJECT_TYPE_QUALIFIER:
+                    hasMatch = nextToken.kind == SyntaxKind2.ABSTRACT_KEYWORD ||
+                            nextToken.kind == SyntaxKind2.CLIENT_KEYWORD ||
+                            nextToken.kind == SyntaxKind2.READONLY_KEYWORD;
                     break;
-                case OPEN_BRACKET:
-                case TUPLE_TYPE_DESC_START:
-                    hasMatch = nextToken.kind == SyntaxKind.OPEN_BRACKET_TOKEN;
+                case ParserRuleContext2.OPEN_BRACKET:
+                case ParserRuleContext2.TUPLE_TYPE_DESC_START:
+                    hasMatch = nextToken.kind == SyntaxKind2.OPEN_BRACKET_TOKEN;
                     break;
-                case CLOSE_BRACKET:
-                    hasMatch = nextToken.kind == SyntaxKind.CLOSE_BRACKET_TOKEN;
+                case ParserRuleContext2.CLOSE_BRACKET:
+                    hasMatch = nextToken.kind == SyntaxKind2.CLOSE_BRACKET_TOKEN;
                     break;
-                case DOT:
-                    hasMatch = nextToken.kind == SyntaxKind.DOT_TOKEN;
+                case ParserRuleContext2.DOT:
+                    hasMatch = nextToken.kind == SyntaxKind2.DOT_TOKEN;
                     break;
-                case BOOLEAN_LITERAL:
-                    hasMatch = nextToken.kind == SyntaxKind.TRUE_KEYWORD || nextToken.kind == SyntaxKind.FALSE_KEYWORD;
+                case ParserRuleContext2.BOOLEAN_LITERAL:
+                    hasMatch = nextToken.kind == SyntaxKind2.TRUE_KEYWORD || nextToken.kind == SyntaxKind2.FALSE_KEYWORD;
                     break;
-                case DECIMAL_INTEGER_LITERAL:
-                case MAJOR_VERSION:
-                case MINOR_VERSION:
-                case PATCH_VERSION:
-                    hasMatch = nextToken.kind == SyntaxKind.DECIMAL_INTEGER_LITERAL;
+                case ParserRuleContext2.DECIMAL_INTEGER_LITERAL:
+                case ParserRuleContext2.MAJOR_VERSION:
+                case ParserRuleContext2.MINOR_VERSION:
+                case ParserRuleContext2.PATCH_VERSION:
+                    hasMatch = nextToken.kind == SyntaxKind2.DECIMAL_INTEGER_LITERAL;
                     break;
-                case SLASH:
-                    hasMatch = nextToken.kind == SyntaxKind.SLASH_TOKEN;
+                case ParserRuleContext2.SLASH:
+                    hasMatch = nextToken.kind == SyntaxKind2.SLASH_TOKEN;
                     break;
-                case BASIC_LITERAL:
+                case ParserRuleContext2.BASIC_LITERAL:
                     hasMatch = isBasicLiteral(nextToken.kind);
                     break;
-                case COLON:
-                    hasMatch = nextToken.kind == SyntaxKind.COLON_TOKEN;
+                case ParserRuleContext2.COLON:
+                    hasMatch = nextToken.kind == SyntaxKind2.COLON_TOKEN;
                     break;
-                case STRING_LITERAL:
-                    hasMatch = nextToken.kind == SyntaxKind.STRING_LITERAL;
+                case ParserRuleContext2.STRING_LITERAL:
+                    hasMatch = nextToken.kind == SyntaxKind2.STRING_LITERAL;
                     break;
-                case UNARY_OPERATOR:
+                case ParserRuleContext2.UNARY_OPERATOR:
                     hasMatch = isUnaryOperator(nextToken);
                     break;
-                case HEX_INTEGER_LITERAL:
-                    hasMatch = nextToken.kind == SyntaxKind.HEX_INTEGER_LITERAL;
+                case ParserRuleContext2.HEX_INTEGER_LITERAL:
+                    hasMatch = nextToken.kind == SyntaxKind2.HEX_INTEGER_LITERAL;
                     break;
-                case AT:
-                    hasMatch = nextToken.kind == SyntaxKind.AT_TOKEN;
+                case ParserRuleContext2.AT:
+                    hasMatch = nextToken.kind == SyntaxKind2.AT_TOKEN;
                     break;
-                case RIGHT_ARROW:
-                    hasMatch = nextToken.kind == SyntaxKind.RIGHT_ARROW_TOKEN;
+                case ParserRuleContext2.RIGHT_ARROW:
+                    hasMatch = nextToken.kind == SyntaxKind2.RIGHT_ARROW_TOKEN;
                     break;
-                case PARAMETERIZED_TYPE:
+                case ParserRuleContext2.PARAMETERIZED_TYPE:
                     hasMatch = isParameterizedTypeToken(nextToken.kind);
                     break;
-                case LT:
-                    hasMatch = nextToken.kind == SyntaxKind.LT_TOKEN;
+                case ParserRuleContext2.LT:
+                    hasMatch = nextToken.kind == SyntaxKind2.LT_TOKEN;
                     break;
-                case GT:
-                    hasMatch = nextToken.kind == SyntaxKind.GT_TOKEN;
+                case ParserRuleContext2.GT:
+                    hasMatch = nextToken.kind == SyntaxKind2.GT_TOKEN;
                     break;
-                case FIELD_IDENT:
-                    hasMatch = nextToken.kind == SyntaxKind.FIELD_KEYWORD;
+                case ParserRuleContext2.FIELD_IDENT:
+                    hasMatch = nextToken.kind == SyntaxKind2.FIELD_KEYWORD;
                     break;
-                case FUNCTION_IDENT:
-                    hasMatch = nextToken.kind == SyntaxKind.FUNCTION_KEYWORD;
+                case ParserRuleContext2.FUNCTION_IDENT:
+                    hasMatch = nextToken.kind == SyntaxKind2.FUNCTION_KEYWORD;
                     break;
-                case IDENT_AFTER_OBJECT_IDENT:
-                    hasMatch = nextToken.kind == SyntaxKind.TYPE_KEYWORD ||
-                            nextToken.kind == SyntaxKind.FUNCTION_KEYWORD || nextToken.kind == SyntaxKind.FIELD_KEYWORD;
+                case ParserRuleContext2.IDENT_AFTER_OBJECT_IDENT:
+                    hasMatch = nextToken.kind == SyntaxKind2.TYPE_KEYWORD ||
+                            nextToken.kind == SyntaxKind2.FUNCTION_KEYWORD || nextToken.kind == SyntaxKind2.FIELD_KEYWORD;
                     break;
-                case SINGLE_KEYWORD_ATTACH_POINT_IDENT:
+                case ParserRuleContext2.SINGLE_KEYWORD_ATTACH_POINT_IDENT:
                     hasMatch = isSingleKeywordAttachPointIdent(nextToken.kind);
                     break;
-                case OBJECT_IDENT:
-                    hasMatch = nextToken.kind == SyntaxKind.OBJECT_KEYWORD;
+                case ParserRuleContext2.OBJECT_IDENT:
+                    hasMatch = nextToken.kind == SyntaxKind2.OBJECT_KEYWORD;
                     break;
-                case RECORD_IDENT:
-                    hasMatch = nextToken.kind == SyntaxKind.RECORD_KEYWORD;
+                case ParserRuleContext2.RECORD_IDENT:
+                    hasMatch = nextToken.kind == SyntaxKind2.RECORD_KEYWORD;
                     break;
-                case RESOURCE_IDENT:
-                    hasMatch = nextToken.kind == SyntaxKind.RESOURCE_KEYWORD;
+                case ParserRuleContext2.RESOURCE_IDENT:
+                    hasMatch = nextToken.kind == SyntaxKind2.RESOURCE_KEYWORD;
                     break;
-                case DECIMAL_FLOATING_POINT_LITERAL:
-                    hasMatch = nextToken.kind == SyntaxKind.DECIMAL_FLOATING_POINT_LITERAL;
+                case ParserRuleContext2.DECIMAL_FLOATING_POINT_LITERAL:
+                    hasMatch = nextToken.kind == SyntaxKind2.DECIMAL_FLOATING_POINT_LITERAL;
                     break;
-                case HEX_FLOATING_POINT_LITERAL:
-                    hasMatch = nextToken.kind == SyntaxKind.HEX_FLOATING_POINT_LITERAL;
+                case ParserRuleContext2.HEX_FLOATING_POINT_LITERAL:
+                    hasMatch = nextToken.kind == SyntaxKind2.HEX_FLOATING_POINT_LITERAL;
                     break;
-                case PIPE:
-                    hasMatch = nextToken.kind == SyntaxKind.PIPE_TOKEN;
+                case ParserRuleContext2.PIPE:
+                    hasMatch = nextToken.kind == SyntaxKind2.PIPE_TOKEN;
                     break;
-                case TEMPLATE_START:
-                case TEMPLATE_END:
-                    hasMatch = nextToken.kind == SyntaxKind.BACKTICK_TOKEN;
+                case ParserRuleContext2.TEMPLATE_START:
+                case ParserRuleContext2.TEMPLATE_END:
+                    hasMatch = nextToken.kind == SyntaxKind2.BACKTICK_TOKEN;
                     break;
-                case ASTERISK:
-                case INFERRED_TYPE_DESC:
-                    hasMatch = nextToken.kind == SyntaxKind.ASTERISK_TOKEN;
+                case ParserRuleContext2.ASTERISK:
+                case ParserRuleContext2.INFERRED_TYPE_DESC:
+                    hasMatch = nextToken.kind == SyntaxKind2.ASTERISK_TOKEN;
                     break;
-                case BITWISE_AND_OPERATOR:
-                    hasMatch = nextToken.kind == SyntaxKind.BITWISE_AND_TOKEN;
+                case ParserRuleContext2.BITWISE_AND_OPERATOR:
+                    hasMatch = nextToken.kind == SyntaxKind2.BITWISE_AND_TOKEN;
                     break;
-                case EXPR_FUNC_BODY_START:
-                case RIGHT_DOUBLE_ARROW:
-                    hasMatch = nextToken.kind == SyntaxKind.RIGHT_DOUBLE_ARROW_TOKEN;
+                case ParserRuleContext2.EXPR_FUNC_BODY_START:
+                case ParserRuleContext2.RIGHT_DOUBLE_ARROW:
+                    hasMatch = nextToken.kind == SyntaxKind2.RIGHT_DOUBLE_ARROW_TOKEN;
                     break;
-                case PLUS_TOKEN:
-                    hasMatch = nextToken.kind == SyntaxKind.PLUS_TOKEN;
+                case ParserRuleContext2.PLUS_TOKEN:
+                    hasMatch = nextToken.kind == SyntaxKind2.PLUS_TOKEN;
                     break;
-                case MINUS_TOKEN:
-                    hasMatch = nextToken.kind == SyntaxKind.MINUS_TOKEN;
+                case ParserRuleContext2.MINUS_TOKEN:
+                    hasMatch = nextToken.kind == SyntaxKind2.MINUS_TOKEN;
                     break;
-                case SIGNED_INT_OR_FLOAT_RHS:
+                case ParserRuleContext2.SIGNED_INT_OR_FLOAT_RHS:
                     hasMatch = BallerinaParser.isIntOrFloat(nextToken);
                     break;
-                case SYNC_SEND_TOKEN:
-                    hasMatch = nextToken.kind == SyntaxKind.SYNC_SEND_TOKEN;
+                case ParserRuleContext2.SYNC_SEND_TOKEN:
+                    hasMatch = nextToken.kind == SyntaxKind2.SYNC_SEND_TOKEN;
                     break;
-                case PEER_WORKER_NAME:
-                    hasMatch = nextToken.kind == SyntaxKind.DEFAULT_KEYWORD ||
-                            nextToken.kind == SyntaxKind.IDENTIFIER_TOKEN;
+                case ParserRuleContext2.PEER_WORKER_NAME:
+                    hasMatch = nextToken.kind == SyntaxKind2.DEFAULT_KEYWORD ||
+                            nextToken.kind == SyntaxKind2.IDENTIFIER_TOKEN;
                     break;
-                case LEFT_ARROW_TOKEN:
-                    hasMatch = nextToken.kind == SyntaxKind.LEFT_ARROW_TOKEN;
+                case ParserRuleContext2.LEFT_ARROW_TOKEN:
+                    hasMatch = nextToken.kind == SyntaxKind2.LEFT_ARROW_TOKEN;
                     break;
-                case ANNOT_CHAINING_TOKEN:
-                    hasMatch = nextToken.kind == SyntaxKind.ANNOT_CHAINING_TOKEN;
+                case ParserRuleContext2.ANNOT_CHAINING_TOKEN:
+                    hasMatch = nextToken.kind == SyntaxKind2.ANNOT_CHAINING_TOKEN;
                     break;
-                case OPTIONAL_CHAINING_TOKEN:
-                    hasMatch = nextToken.kind == SyntaxKind.OPTIONAL_CHAINING_TOKEN;
+                case ParserRuleContext2.OPTIONAL_CHAINING_TOKEN:
+                    hasMatch = nextToken.kind == SyntaxKind2.OPTIONAL_CHAINING_TOKEN;
                     break;
-                case TRANSACTIONAL_KEYWORD:
-                    hasMatch = nextToken.kind == SyntaxKind.TRANSACTIONAL_KEYWORD;
+                case ParserRuleContext2.TRANSACTIONAL_KEYWORD:
+                    hasMatch = nextToken.kind == SyntaxKind2.TRANSACTIONAL_KEYWORD;
                     break;
-                case MODULE_ENUM_NAME:
-                case ENUM_MEMBER_NAME:
-                case NAMED_ARG_BINDING_PATTERN:
-                    hasMatch = nextToken.kind == SyntaxKind.IDENTIFIER_TOKEN;
+                case ParserRuleContext2.MODULE_ENUM_NAME:
+                case ParserRuleContext2.ENUM_MEMBER_NAME:
+                case ParserRuleContext2.NAMED_ARG_BINDING_PATTERN:
+                    hasMatch = nextToken.kind == SyntaxKind2.IDENTIFIER_TOKEN;
                     break;
-                case UNION_OR_INTERSECTION_TOKEN:
+                case ParserRuleContext2.UNION_OR_INTERSECTION_TOKEN:
                     hasMatch =
-                            nextToken.kind == SyntaxKind.PIPE_TOKEN || nextToken.kind == SyntaxKind.BITWISE_AND_TOKEN;
+                            nextToken.kind == SyntaxKind2.PIPE_TOKEN || nextToken.kind == SyntaxKind2.BITWISE_AND_TOKEN;
                     break;
-                case DOT_LT_TOKEN:
-                    hasMatch = nextToken.kind == SyntaxKind.DOT_LT_TOKEN;
+                case ParserRuleContext2.DOT_LT_TOKEN:
+                    hasMatch = nextToken.kind == SyntaxKind2.DOT_LT_TOKEN;
                     break;
-                case SLASH_LT_TOKEN:
-                    hasMatch = nextToken.kind == SyntaxKind.SLASH_LT_TOKEN;
+                case ParserRuleContext2.SLASH_LT_TOKEN:
+                    hasMatch = nextToken.kind == SyntaxKind2.SLASH_LT_TOKEN;
                     break;
-                case DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN:
-                    hasMatch = nextToken.kind == SyntaxKind.SLASH_ASTERISK_TOKEN;
+                case ParserRuleContext2.DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN:
+                    hasMatch = nextToken.kind == SyntaxKind2.SLASH_ASTERISK_TOKEN;
                     break;
-                case SLASH_ASTERISK_TOKEN:
-                    hasMatch = nextToken.kind == SyntaxKind.SLASH_ASTERISK_TOKEN;
+                case ParserRuleContext2.SLASH_ASTERISK_TOKEN:
+                    hasMatch = nextToken.kind == SyntaxKind2.SLASH_ASTERISK_TOKEN;
                     break;
-                case KEY_KEYWORD:
+                case ParserRuleContext2.KEY_KEYWORD:
                     hasMatch = BallerinaParser.isKeyKeyword(nextToken);
                     break;
-                case VAR_KEYWORD:
-                    hasMatch = nextToken.kind == SyntaxKind.VAR_KEYWORD;
+                case ParserRuleContext2.VAR_KEYWORD:
+                    hasMatch = nextToken.kind == SyntaxKind2.VAR_KEYWORD;
                     break;
-                case FUNCTIONAL_BINDING_PATTERN:
+                case ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN:
                     hasMatch =
-                            nextToken.kind == SyntaxKind.IDENTIFIER_TOKEN || nextToken.kind == SyntaxKind.ERROR_KEYWORD;
+                            nextToken.kind == SyntaxKind2.IDENTIFIER_TOKEN || nextToken.kind == SyntaxKind2.ERROR_KEYWORD;
                     break;
 
                 // start a context, so that we know where to fall back, and continue
                 // having the qualified-identifier as the next rule.
-                case VARIABLE_REF:
-                case TYPE_REFERENCE:
-                case ANNOT_REFERENCE:
-                case FIELD_ACCESS_IDENTIFIER:
+                case ParserRuleContext2.VARIABLE_REF:
+                case ParserRuleContext2.TYPE_REFERENCE:
+                case ParserRuleContext2.ANNOT_REFERENCE:
+                case ParserRuleContext2.FIELD_ACCESS_IDENTIFIER:
 
                     // Contexts that expect a type
-                case TYPE_DESC_IN_ANNOTATION_DECL:
-                case TYPE_DESC_BEFORE_IDENTIFIER:
-                case TYPE_DESC_IN_RECORD_FIELD:
-                case TYPE_DESC_IN_PARAM:
-                case TYPE_DESC_IN_TYPE_BINDING_PATTERN:
-                case TYPE_DESC_IN_TYPE_DEF:
-                case TYPE_DESC_IN_ANGLE_BRACKETS:
-                case TYPE_DESC_IN_RETURN_TYPE_DESC:
-                case TYPE_DESC_IN_EXPRESSION:
-                case TYPE_DESC_IN_STREAM_TYPE_DESC:
-                case TYPE_DESC_IN_PARENTHESIS:
-                case TYPE_DESC_IN_NEW_EXPR:
+                case ParserRuleContext2.TYPE_DESC_IN_ANNOTATION_DECL:
+                case ParserRuleContext2.TYPE_DESC_BEFORE_IDENTIFIER:
+                case ParserRuleContext2.TYPE_DESC_IN_RECORD_FIELD:
+                case ParserRuleContext2.TYPE_DESC_IN_PARAM:
+                case ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN:
+                case ParserRuleContext2.TYPE_DESC_IN_TYPE_DEF:
+                case ParserRuleContext2.TYPE_DESC_IN_ANGLE_BRACKETS:
+                case ParserRuleContext2.TYPE_DESC_IN_RETURN_TYPE_DESC:
+                case ParserRuleContext2.TYPE_DESC_IN_EXPRESSION:
+                case ParserRuleContext2.TYPE_DESC_IN_STREAM_TYPE_DESC:
+                case ParserRuleContext2.TYPE_DESC_IN_PARENTHESIS:
+                case ParserRuleContext2.TYPE_DESC_IN_NEW_EXPR:
                 default:
                     if (isKeyword(currentCtx)) {
-                        SyntaxKind expectedToken = getExpectedKeywordKind(currentCtx);
+                        int expectedToken = getExpectedKeywordKind(currentCtx);
                         hasMatch = nextToken.kind == expectedToken;
                         break;
                     }
@@ -1023,7 +1025,7 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
         }
 
         Result result = new Result(new ArrayDeque<>(), matchingRulesCount);
-        result.solution = new Solution(Action.KEEP, currentCtx, SyntaxKind.NONE, currentCtx.toString());
+        result.solution = new Solution(Action.KEEP, currentCtx, SyntaxKind2.NONE, String.valueOf(currentCtx));
         return result;
     }
 
@@ -1031,279 +1033,279 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @param currentCtx
      * @return
      */
-    private boolean isKeyword(ParserRuleContext currentCtx) {
+    private boolean isKeyword(int currentCtx) {
         switch (currentCtx) {
-            case EOF:
-            case PUBLIC_KEYWORD:
-            case PRIVATE_KEYWORD:
-            case REMOTE_KEYWORD:
-            case FUNCTION_KEYWORD:
-            case NEW_KEYWORD:
-            case SELECT_KEYWORD:
-            case WHERE_KEYWORD:
-            case FROM_KEYWORD:
-            case ORDER_KEYWORD:
-            case BY_KEYWORD:
-            case ASCENDING_KEYWORD:
-            case DESCENDING_KEYWORD:
-            case START_KEYWORD:
-            case FLUSH_KEYWORD:
-            case DEFAULT_KEYWORD:
-            case DEFAULT_WORKER_NAME_IN_ASYNC_SEND:
-            case WAIT_KEYWORD:
-            case CHECKING_KEYWORD:
-            case FAIL_KEYWORD:
-            case DO_KEYWORD:
-            case TRANSACTION_KEYWORD:
-            case COMMIT_KEYWORD:
-            case RETRY_KEYWORD:
-            case ROLLBACK_KEYWORD:
-            case ENUM_KEYWORD:
-            case MATCH_KEYWORD:
-            case RETURNS_KEYWORD:
-            case EXTERNAL_KEYWORD:
-            case RECORD_KEYWORD:
-            case TYPE_KEYWORD:
-            case OBJECT_KEYWORD:
-            case ABSTRACT_KEYWORD:
-            case CLIENT_KEYWORD:
-            case IF_KEYWORD:
-            case ELSE_KEYWORD:
-            case WHILE_KEYWORD:
-            case PANIC_KEYWORD:
-            case AS_KEYWORD:
-            case LOCK_KEYWORD:
-            case IMPORT_KEYWORD:
-            case VERSION_KEYWORD:
-            case CONTINUE_KEYWORD:
-            case BREAK_KEYWORD:
-            case RETURN_KEYWORD:
-            case SERVICE_KEYWORD:
-            case ON_KEYWORD:
-            case RESOURCE_KEYWORD:
-            case LISTENER_KEYWORD:
-            case CONST_KEYWORD:
-            case FINAL_KEYWORD:
-            case TYPEOF_KEYWORD:
-            case IS_KEYWORD:
-            case NULL_KEYWORD:
-            case ANNOTATION_KEYWORD:
-            case SOURCE_KEYWORD:
-            case XMLNS_KEYWORD:
-            case WORKER_KEYWORD:
-            case FORK_KEYWORD:
-            case TRAP_KEYWORD:
-            case FOREACH_KEYWORD:
-            case IN_KEYWORD:
-            case TABLE_KEYWORD:
-            case KEY_KEYWORD:
-            case ERROR_KEYWORD:
-            case LET_KEYWORD:
-            case STREAM_KEYWORD:
-            case XML_KEYWORD:
-            case STRING_KEYWORD:
-            case BASE16_KEYWORD:
-            case BASE64_KEYWORD:
-            case DISTINCT_KEYWORD:
+            case ParserRuleContext2.EOF:
+            case ParserRuleContext2.PUBLIC_KEYWORD:
+            case ParserRuleContext2.PRIVATE_KEYWORD:
+            case ParserRuleContext2.REMOTE_KEYWORD:
+            case ParserRuleContext2.FUNCTION_KEYWORD:
+            case ParserRuleContext2.NEW_KEYWORD:
+            case ParserRuleContext2.SELECT_KEYWORD:
+            case ParserRuleContext2.WHERE_KEYWORD:
+            case ParserRuleContext2.FROM_KEYWORD:
+            case ParserRuleContext2.ORDER_KEYWORD:
+            case ParserRuleContext2.BY_KEYWORD:
+            case ParserRuleContext2.ASCENDING_KEYWORD:
+            case ParserRuleContext2.DESCENDING_KEYWORD:
+            case ParserRuleContext2.START_KEYWORD:
+            case ParserRuleContext2.FLUSH_KEYWORD:
+            case ParserRuleContext2.DEFAULT_KEYWORD:
+            case ParserRuleContext2.DEFAULT_WORKER_NAME_IN_ASYNC_SEND:
+            case ParserRuleContext2.WAIT_KEYWORD:
+            case ParserRuleContext2.CHECKING_KEYWORD:
+            case ParserRuleContext2.FAIL_KEYWORD:
+            case ParserRuleContext2.DO_KEYWORD:
+            case ParserRuleContext2.TRANSACTION_KEYWORD:
+            case ParserRuleContext2.COMMIT_KEYWORD:
+            case ParserRuleContext2.RETRY_KEYWORD:
+            case ParserRuleContext2.ROLLBACK_KEYWORD:
+            case ParserRuleContext2.ENUM_KEYWORD:
+            case ParserRuleContext2.MATCH_KEYWORD:
+            case ParserRuleContext2.RETURNS_KEYWORD:
+            case ParserRuleContext2.EXTERNAL_KEYWORD:
+            case ParserRuleContext2.RECORD_KEYWORD:
+            case ParserRuleContext2.TYPE_KEYWORD:
+            case ParserRuleContext2.OBJECT_KEYWORD:
+            case ParserRuleContext2.ABSTRACT_KEYWORD:
+            case ParserRuleContext2.CLIENT_KEYWORD:
+            case ParserRuleContext2.IF_KEYWORD:
+            case ParserRuleContext2.ELSE_KEYWORD:
+            case ParserRuleContext2.WHILE_KEYWORD:
+            case ParserRuleContext2.PANIC_KEYWORD:
+            case ParserRuleContext2.AS_KEYWORD:
+            case ParserRuleContext2.LOCK_KEYWORD:
+            case ParserRuleContext2.IMPORT_KEYWORD:
+            case ParserRuleContext2.VERSION_KEYWORD:
+            case ParserRuleContext2.CONTINUE_KEYWORD:
+            case ParserRuleContext2.BREAK_KEYWORD:
+            case ParserRuleContext2.RETURN_KEYWORD:
+            case ParserRuleContext2.SERVICE_KEYWORD:
+            case ParserRuleContext2.ON_KEYWORD:
+            case ParserRuleContext2.RESOURCE_KEYWORD:
+            case ParserRuleContext2.LISTENER_KEYWORD:
+            case ParserRuleContext2.CONST_KEYWORD:
+            case ParserRuleContext2.FINAL_KEYWORD:
+            case ParserRuleContext2.TYPEOF_KEYWORD:
+            case ParserRuleContext2.IS_KEYWORD:
+            case ParserRuleContext2.NULL_KEYWORD:
+            case ParserRuleContext2.ANNOTATION_KEYWORD:
+            case ParserRuleContext2.SOURCE_KEYWORD:
+            case ParserRuleContext2.XMLNS_KEYWORD:
+            case ParserRuleContext2.WORKER_KEYWORD:
+            case ParserRuleContext2.FORK_KEYWORD:
+            case ParserRuleContext2.TRAP_KEYWORD:
+            case ParserRuleContext2.FOREACH_KEYWORD:
+            case ParserRuleContext2.IN_KEYWORD:
+            case ParserRuleContext2.TABLE_KEYWORD:
+            case ParserRuleContext2.KEY_KEYWORD:
+            case ParserRuleContext2.ERROR_KEYWORD:
+            case ParserRuleContext2.LET_KEYWORD:
+            case ParserRuleContext2.STREAM_KEYWORD:
+            case ParserRuleContext2.XML_KEYWORD:
+            case ParserRuleContext2.STRING_KEYWORD:
+            case ParserRuleContext2.BASE16_KEYWORD:
+            case ParserRuleContext2.BASE64_KEYWORD:
+            case ParserRuleContext2.DISTINCT_KEYWORD:
                 return true;
             default:
                 return false;
         }
     }
 
-    private boolean hasAlternativePaths(ParserRuleContext currentCtx) {
+    private boolean hasAlternativePaths(int currentCtx) {
         switch (currentCtx) {
-            case TOP_LEVEL_NODE:
-            case TOP_LEVEL_NODE_WITHOUT_MODIFIER:
-            case TOP_LEVEL_NODE_WITHOUT_METADATA:
-            case FUNC_OPTIONAL_RETURNS:
-            case FUNC_BODY_OR_TYPE_DESC_RHS:
-            case ANON_FUNC_BODY:
-            case FUNC_BODY:
-            case OBJECT_FUNC_BODY:
-            case EXPRESSION:
-            case TERMINAL_EXPRESSION:
-            case VAR_DECL_STMT_RHS:
-            case EXPRESSION_RHS:
-            case VARIABLE_REF_RHS:
-            case STATEMENT:
-            case STATEMENT_WITHOUT_ANNOTS:
-            case PARAM_LIST:
-            case REQUIRED_PARAM_NAME_RHS:
-            case TYPE_NAME_OR_VAR_NAME:
-            case ASSIGNMENT_OR_VAR_DECL_STMT_RHS:
-            case FIELD_DESCRIPTOR_RHS:
-            case FIELD_OR_REST_DESCIPTOR_RHS:
-            case RECORD_BODY_END:
-            case RECORD_BODY_START:
-            case TYPE_DESCRIPTOR:
-            case RECORD_FIELD_OR_RECORD_END:
-            case RECORD_FIELD_START:
-            case RECORD_FIELD_WITHOUT_METADATA:
-            case ARG_START:
-            case ARG_START_OR_ARG_LIST_END:
-            case NAMED_OR_POSITIONAL_ARG_RHS:
-            case ARG_END:
-            case OBJECT_MEMBER_START:
-            case OBJECT_MEMBER_WITHOUT_METADATA:
-            case OBJECT_FIELD_RHS:
-            case OBJECT_METHOD_START:
-            case OBJECT_FUNC_OR_FIELD:
-            case OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY:
-            case OBJECT_TYPE_DESCRIPTOR_START:
-            case ELSE_BLOCK:
-            case ELSE_BODY:
-            case CALL_STMT_START:
-            case IMPORT_PREFIX_DECL:
-            case IMPORT_VERSION_DECL:
-            case IMPORT_DECL_RHS:
-            case AFTER_IMPORT_MODULE_NAME:
-            case MAJOR_MINOR_VERSION_END:
-            case RETURN_STMT_RHS:
-            case ACCESS_EXPRESSION:
-            case FIRST_MAPPING_FIELD:
-            case MAPPING_FIELD:
-            case SPECIFIC_FIELD:
-            case SPECIFIC_FIELD_RHS:
-            case MAPPING_FIELD_END:
-            case OPTIONAL_SERVICE_NAME:
-            case RESOURCE_DEF:
-            case CONST_DECL_TYPE:
-            case CONST_DECL_RHS:
-            case ARRAY_LENGTH:
-            case PARAMETER_START:
-            case PARAMETER_WITHOUT_ANNOTS:
-            case STMT_START_WITH_EXPR_RHS:
-            case EXPR_STMT_RHS:
-            case EXPRESSION_STATEMENT_START:
-            case ANNOT_DECL_OPTIONAL_TYPE:
-            case ANNOT_DECL_RHS:
-            case ANNOT_OPTIONAL_ATTACH_POINTS:
-            case ATTACH_POINT:
-            case ATTACH_POINT_IDENT:
-            case ATTACH_POINT_END:
-            case XML_NAMESPACE_PREFIX_DECL:
-            case CONSTANT_EXPRESSION_START:
-            case TYPEDESC_RHS:
-            case LIST_CONSTRUCTOR_FIRST_MEMBER:
-            case TYPE_CAST_PARAM:
-            case TYPE_CAST_PARAM_RHS:
-            case TABLE_KEYWORD_RHS:
-            case ROW_LIST_RHS:
-            case TABLE_ROW_END:
-            case KEY_SPECIFIER_RHS:
-            case TABLE_KEY_RHS:
-            case ERROR_TYPE_PARAMS:
-            case LET_VAR_DECL_START:
-            case ORDER_KEY_LIST_END:
-            case ORDER_DIRECTION_RHS:
-            case STREAM_TYPE_FIRST_PARAM_RHS:
-            case TEMPLATE_MEMBER:
-            case TEMPLATE_STRING_RHS:
-            case FUNCTION_KEYWORD_RHS:
-            case WORKER_NAME_RHS:
-            case BINDING_PATTERN:
-            case LIST_BINDING_PATTERN_MEMBER_END:
-            case FIELD_BINDING_PATTERN_END:
-            case LIST_BINDING_PATTERN_MEMBER:
-            case MAPPING_BINDING_PATTERN_END:
-            case MAPPING_BINDING_PATTERN_MEMBER:
-            case KEY_CONSTRAINTS_RHS:
-            case TABLE_TYPE_DESC_RHS:
-            case NEW_KEYWORD_RHS:
-            case TABLE_CONSTRUCTOR_OR_QUERY_START:
-            case TABLE_CONSTRUCTOR_OR_QUERY_RHS:
-            case QUERY_PIPELINE_RHS:
-            case BRACED_EXPR_OR_ANON_FUNC_PARAM_RHS:
-            case ANON_FUNC_PARAM_RHS:
-            case PARAM_END:
-            case ANNOTATION_REF_RHS:
-            case INFER_PARAM_END_OR_PARENTHESIS_END:
-            case TYPE_DESC_IN_TUPLE_RHS:
-            case LIST_CONSTRUCTOR_MEMBER_END:
-            case NIL_OR_PARENTHESISED_TYPE_DESC_RHS:
-            case REMOTE_CALL_OR_ASYNC_SEND_RHS:
-            case REMOTE_CALL_OR_ASYNC_SEND_END:
-            case RECEIVE_WORKERS:
-            case RECEIVE_FIELD:
-            case RECEIVE_FIELD_END:
-            case WAIT_KEYWORD_RHS:
-            case WAIT_FIELD_NAME_RHS:
-            case WAIT_FIELD_END:
-            case WAIT_FUTURE_EXPR_END:
-            case OPTIONAL_PEER_WORKER:
-            case ENUM_MEMBER_START:
-            case ENUM_MEMBER_RHS:
-            case ENUM_MEMBER_END:
-            case MEMBER_ACCESS_KEY_EXPR_END:
-            case ROLLBACK_RHS:
-            case RETRY_KEYWORD_RHS:
-            case RETRY_TYPE_PARAM_RHS:
-            case RETRY_BODY:
-            case STMT_START_BRACKETED_LIST_MEMBER:
-            case STMT_START_BRACKETED_LIST_RHS:
-            case BINDING_PATTERN_OR_EXPR_RHS:
-            case BRACKETED_LIST_RHS:
-            case BRACKETED_LIST_MEMBER:
-            case BRACKETED_LIST_MEMBER_END:
-            case AMBIGUOUS_STMT:
-            case LIST_BINDING_MEMBER_OR_ARRAY_LENGTH:
-            case XML_NAVIGATE_EXPR:
-            case XML_NAME_PATTERN_RHS:
-            case XML_ATOMIC_NAME_PATTERN_START:
-            case XML_ATOMIC_NAME_IDENTIFIER_RHS:
-            case XML_STEP_START:
-            case FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY:
-            case OPTIONAL_MATCH_GUARD:
-            case MATCH_PATTERN_RHS:
-            case MATCH_PATTERN_START:
-            case LIST_MATCH_PATTERNS_START:
-            case LIST_MATCH_PATTERN_MEMBER:
-            case LIST_MATCH_PATTERN_MEMBER_RHS:
-            case ARG_BINDING_PATTERN:
-            case ARG_BINDING_PATTERN_END:
-            case ARG_BINDING_PATTERN_START_IDENT:
-            case FIELD_MATCH_PATTERNS_START:
-            case FIELD_MATCH_PATTERN_MEMBER:
-            case FIELD_MATCH_PATTERN_MEMBER_RHS:
-            case FUNC_MATCH_PATTERN_OR_CONST_PATTERN:
-            case FUNCTIONAL_MATCH_PATTERN_START:
-            case ARG_LIST_MATCH_PATTERN_START:
-            case ARG_MATCH_PATTERN:
-            case ARG_MATCH_PATTERN_RHS:
-            case NAMED_ARG_MATCH_PATTERN_RHS:
-            case EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS:
-            case LIST_BP_OR_LIST_CONSTRUCTOR_MEMBER:
-            case TUPLE_TYPE_DESC_OR_LIST_CONST_MEMBER:
+            case ParserRuleContext2.TOP_LEVEL_NODE:
+            case ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_MODIFIER:
+            case ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_METADATA:
+            case ParserRuleContext2.FUNC_OPTIONAL_RETURNS:
+            case ParserRuleContext2.FUNC_BODY_OR_TYPE_DESC_RHS:
+            case ParserRuleContext2.ANON_FUNC_BODY:
+            case ParserRuleContext2.FUNC_BODY:
+            case ParserRuleContext2.OBJECT_FUNC_BODY:
+            case ParserRuleContext2.EXPRESSION:
+            case ParserRuleContext2.TERMINAL_EXPRESSION:
+            case ParserRuleContext2.VAR_DECL_STMT_RHS:
+            case ParserRuleContext2.EXPRESSION_RHS:
+            case ParserRuleContext2.VARIABLE_REF_RHS:
+            case ParserRuleContext2.STATEMENT:
+            case ParserRuleContext2.STATEMENT_WITHOUT_ANNOTS:
+            case ParserRuleContext2.PARAM_LIST:
+            case ParserRuleContext2.REQUIRED_PARAM_NAME_RHS:
+            case ParserRuleContext2.TYPE_NAME_OR_VAR_NAME:
+            case ParserRuleContext2.ASSIGNMENT_OR_VAR_DECL_STMT_RHS:
+            case ParserRuleContext2.FIELD_DESCRIPTOR_RHS:
+            case ParserRuleContext2.FIELD_OR_REST_DESCIPTOR_RHS:
+            case ParserRuleContext2.RECORD_BODY_END:
+            case ParserRuleContext2.RECORD_BODY_START:
+            case ParserRuleContext2.TYPE_DESCRIPTOR:
+            case ParserRuleContext2.RECORD_FIELD_OR_RECORD_END:
+            case ParserRuleContext2.RECORD_FIELD_START:
+            case ParserRuleContext2.RECORD_FIELD_WITHOUT_METADATA:
+            case ParserRuleContext2.ARG_START:
+            case ParserRuleContext2.ARG_START_OR_ARG_LIST_END:
+            case ParserRuleContext2.NAMED_OR_POSITIONAL_ARG_RHS:
+            case ParserRuleContext2.ARG_END:
+            case ParserRuleContext2.OBJECT_MEMBER_START:
+            case ParserRuleContext2.OBJECT_MEMBER_WITHOUT_METADATA:
+            case ParserRuleContext2.OBJECT_FIELD_RHS:
+            case ParserRuleContext2.OBJECT_METHOD_START:
+            case ParserRuleContext2.OBJECT_FUNC_OR_FIELD:
+            case ParserRuleContext2.OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY:
+            case ParserRuleContext2.OBJECT_TYPE_DESCRIPTOR_START:
+            case ParserRuleContext2.ELSE_BLOCK:
+            case ParserRuleContext2.ELSE_BODY:
+            case ParserRuleContext2.CALL_STMT_START:
+            case ParserRuleContext2.IMPORT_PREFIX_DECL:
+            case ParserRuleContext2.IMPORT_VERSION_DECL:
+            case ParserRuleContext2.IMPORT_DECL_RHS:
+            case ParserRuleContext2.AFTER_IMPORT_MODULE_NAME:
+            case ParserRuleContext2.MAJOR_MINOR_VERSION_END:
+            case ParserRuleContext2.RETURN_STMT_RHS:
+            case ParserRuleContext2.ACCESS_EXPRESSION:
+            case ParserRuleContext2.FIRST_MAPPING_FIELD:
+            case ParserRuleContext2.MAPPING_FIELD:
+            case ParserRuleContext2.SPECIFIC_FIELD:
+            case ParserRuleContext2.SPECIFIC_FIELD_RHS:
+            case ParserRuleContext2.MAPPING_FIELD_END:
+            case ParserRuleContext2.OPTIONAL_SERVICE_NAME:
+            case ParserRuleContext2.RESOURCE_DEF:
+            case ParserRuleContext2.CONST_DECL_TYPE:
+            case ParserRuleContext2.CONST_DECL_RHS:
+            case ParserRuleContext2.ARRAY_LENGTH:
+            case ParserRuleContext2.PARAMETER_START:
+            case ParserRuleContext2.PARAMETER_WITHOUT_ANNOTS:
+            case ParserRuleContext2.STMT_START_WITH_EXPR_RHS:
+            case ParserRuleContext2.EXPR_STMT_RHS:
+            case ParserRuleContext2.EXPRESSION_STATEMENT_START:
+            case ParserRuleContext2.ANNOT_DECL_OPTIONAL_TYPE:
+            case ParserRuleContext2.ANNOT_DECL_RHS:
+            case ParserRuleContext2.ANNOT_OPTIONAL_ATTACH_POINTS:
+            case ParserRuleContext2.ATTACH_POINT:
+            case ParserRuleContext2.ATTACH_POINT_IDENT:
+            case ParserRuleContext2.ATTACH_POINT_END:
+            case ParserRuleContext2.XML_NAMESPACE_PREFIX_DECL:
+            case ParserRuleContext2.CONSTANT_EXPRESSION_START:
+            case ParserRuleContext2.TYPEDESC_RHS:
+            case ParserRuleContext2.LIST_CONSTRUCTOR_FIRST_MEMBER:
+            case ParserRuleContext2.TYPE_CAST_PARAM:
+            case ParserRuleContext2.TYPE_CAST_PARAM_RHS:
+            case ParserRuleContext2.TABLE_KEYWORD_RHS:
+            case ParserRuleContext2.ROW_LIST_RHS:
+            case ParserRuleContext2.TABLE_ROW_END:
+            case ParserRuleContext2.KEY_SPECIFIER_RHS:
+            case ParserRuleContext2.TABLE_KEY_RHS:
+            case ParserRuleContext2.ERROR_TYPE_PARAMS:
+            case ParserRuleContext2.LET_VAR_DECL_START:
+            case ParserRuleContext2.ORDER_KEY_LIST_END:
+            case ParserRuleContext2.ORDER_DIRECTION_RHS:
+            case ParserRuleContext2.STREAM_TYPE_FIRST_PARAM_RHS:
+            case ParserRuleContext2.TEMPLATE_MEMBER:
+            case ParserRuleContext2.TEMPLATE_STRING_RHS:
+            case ParserRuleContext2.FUNCTION_KEYWORD_RHS:
+            case ParserRuleContext2.WORKER_NAME_RHS:
+            case ParserRuleContext2.BINDING_PATTERN:
+            case ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER_END:
+            case ParserRuleContext2.FIELD_BINDING_PATTERN_END:
+            case ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER:
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN_END:
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN_MEMBER:
+            case ParserRuleContext2.KEY_CONSTRAINTS_RHS:
+            case ParserRuleContext2.TABLE_TYPE_DESC_RHS:
+            case ParserRuleContext2.NEW_KEYWORD_RHS:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_START:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_RHS:
+            case ParserRuleContext2.QUERY_PIPELINE_RHS:
+            case ParserRuleContext2.BRACED_EXPR_OR_ANON_FUNC_PARAM_RHS:
+            case ParserRuleContext2.ANON_FUNC_PARAM_RHS:
+            case ParserRuleContext2.PARAM_END:
+            case ParserRuleContext2.ANNOTATION_REF_RHS:
+            case ParserRuleContext2.INFER_PARAM_END_OR_PARENTHESIS_END:
+            case ParserRuleContext2.TYPE_DESC_IN_TUPLE_RHS:
+            case ParserRuleContext2.LIST_CONSTRUCTOR_MEMBER_END:
+            case ParserRuleContext2.NIL_OR_PARENTHESISED_TYPE_DESC_RHS:
+            case ParserRuleContext2.REMOTE_CALL_OR_ASYNC_SEND_RHS:
+            case ParserRuleContext2.REMOTE_CALL_OR_ASYNC_SEND_END:
+            case ParserRuleContext2.RECEIVE_WORKERS:
+            case ParserRuleContext2.RECEIVE_FIELD:
+            case ParserRuleContext2.RECEIVE_FIELD_END:
+            case ParserRuleContext2.WAIT_KEYWORD_RHS:
+            case ParserRuleContext2.WAIT_FIELD_NAME_RHS:
+            case ParserRuleContext2.WAIT_FIELD_END:
+            case ParserRuleContext2.WAIT_FUTURE_EXPR_END:
+            case ParserRuleContext2.OPTIONAL_PEER_WORKER:
+            case ParserRuleContext2.ENUM_MEMBER_START:
+            case ParserRuleContext2.ENUM_MEMBER_RHS:
+            case ParserRuleContext2.ENUM_MEMBER_END:
+            case ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR_END:
+            case ParserRuleContext2.ROLLBACK_RHS:
+            case ParserRuleContext2.RETRY_KEYWORD_RHS:
+            case ParserRuleContext2.RETRY_TYPE_PARAM_RHS:
+            case ParserRuleContext2.RETRY_BODY:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST_MEMBER:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST_RHS:
+            case ParserRuleContext2.BINDING_PATTERN_OR_EXPR_RHS:
+            case ParserRuleContext2.BRACKETED_LIST_RHS:
+            case ParserRuleContext2.BRACKETED_LIST_MEMBER:
+            case ParserRuleContext2.BRACKETED_LIST_MEMBER_END:
+            case ParserRuleContext2.AMBIGUOUS_STMT:
+            case ParserRuleContext2.LIST_BINDING_MEMBER_OR_ARRAY_LENGTH:
+            case ParserRuleContext2.XML_NAVIGATE_EXPR:
+            case ParserRuleContext2.XML_NAME_PATTERN_RHS:
+            case ParserRuleContext2.XML_ATOMIC_NAME_PATTERN_START:
+            case ParserRuleContext2.XML_ATOMIC_NAME_IDENTIFIER_RHS:
+            case ParserRuleContext2.XML_STEP_START:
+            case ParserRuleContext2.FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY:
+            case ParserRuleContext2.OPTIONAL_MATCH_GUARD:
+            case ParserRuleContext2.MATCH_PATTERN_RHS:
+            case ParserRuleContext2.MATCH_PATTERN_START:
+            case ParserRuleContext2.LIST_MATCH_PATTERNS_START:
+            case ParserRuleContext2.LIST_MATCH_PATTERN_MEMBER:
+            case ParserRuleContext2.LIST_MATCH_PATTERN_MEMBER_RHS:
+            case ParserRuleContext2.ARG_BINDING_PATTERN:
+            case ParserRuleContext2.ARG_BINDING_PATTERN_END:
+            case ParserRuleContext2.ARG_BINDING_PATTERN_START_IDENT:
+            case ParserRuleContext2.FIELD_MATCH_PATTERNS_START:
+            case ParserRuleContext2.FIELD_MATCH_PATTERN_MEMBER:
+            case ParserRuleContext2.FIELD_MATCH_PATTERN_MEMBER_RHS:
+            case ParserRuleContext2.FUNC_MATCH_PATTERN_OR_CONST_PATTERN:
+            case ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN_START:
+            case ParserRuleContext2.ARG_LIST_MATCH_PATTERN_START:
+            case ParserRuleContext2.ARG_MATCH_PATTERN:
+            case ParserRuleContext2.ARG_MATCH_PATTERN_RHS:
+            case ParserRuleContext2.NAMED_ARG_MATCH_PATTERN_RHS:
+            case ParserRuleContext2.EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS:
+            case ParserRuleContext2.LIST_BP_OR_LIST_CONSTRUCTOR_MEMBER:
+            case ParserRuleContext2.TUPLE_TYPE_DESC_OR_LIST_CONST_MEMBER:
                 return true;
             default:
                 return false;
         }
     }
 
-    private Result seekMatchInAlternativePaths(ParserRuleContext currentCtx, int lookahead, int currentDepth,
+    private Result seekMatchInAlternativePaths(int currentCtx, int lookahead, int currentDepth,
                                                int matchingRulesCount, boolean isEntryPoint) {
-        ParserRuleContext[] alternativeRules;
+        int[] alternativeRules;
         switch (currentCtx) {
-            case TOP_LEVEL_NODE:
+            case ParserRuleContext2.TOP_LEVEL_NODE:
                 alternativeRules = TOP_LEVEL_NODE;
                 break;
-            case TOP_LEVEL_NODE_WITHOUT_MODIFIER:
+            case ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_MODIFIER:
                 alternativeRules = TOP_LEVEL_NODE_WITHOUT_MODIFIER;
                 break;
-            case TOP_LEVEL_NODE_WITHOUT_METADATA:
+            case ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_METADATA:
                 alternativeRules = TOP_LEVEL_NODE_WITHOUT_METADATA;
                 break;
-            case FUNC_OPTIONAL_RETURNS:
-                ParserRuleContext parentCtx = getParentContext();
-                ParserRuleContext[] alternatives;
-                if (parentCtx == ParserRuleContext.FUNC_DEF) {
+            case ParserRuleContext2.FUNC_OPTIONAL_RETURNS:
+                int parentCtx = getParentContext();
+                int[] alternatives;
+                if (parentCtx == ParserRuleContext2.FUNC_DEF) {
                     alternatives = FUNC_DEF_OPTIONAL_RETURNS;
-                } else if (parentCtx == ParserRuleContext.ANON_FUNC_EXPRESSION) {
+                } else if (parentCtx == ParserRuleContext2.ANON_FUNC_EXPRESSION) {
                     alternatives = ANNON_FUNC_OPTIONAL_RETURNS;
-                } else if (parentCtx == ParserRuleContext.FUNC_TYPE_DESC) {
+                } else if (parentCtx == ParserRuleContext2.FUNC_TYPE_DESC) {
                     alternatives = FUNC_TYPE_OPTIONAL_RETURNS;
-                } else if (parentCtx == ParserRuleContext.FUNC_TYPE_DESC_OR_ANON_FUNC) {
+                } else if (parentCtx == ParserRuleContext2.FUNC_TYPE_DESC_OR_ANON_FUNC) {
                     alternatives = FUNC_TYPE_OR_ANON_FUNC_OPTIONAL_RETURNS;
                 } else {
                     alternatives = FUNC_TYPE_OR_DEF_OPTIONAL_RETURNS;
@@ -1311,144 +1313,144 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
 
                 alternativeRules = alternatives;
                 break;
-            case FUNC_BODY_OR_TYPE_DESC_RHS:
+            case ParserRuleContext2.FUNC_BODY_OR_TYPE_DESC_RHS:
                 alternativeRules = FUNC_BODY_OR_TYPE_DESC_RHS;
                 break;
-            case FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY:
+            case ParserRuleContext2.FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY:
                 alternativeRules = FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY;
                 break;
-            case ANON_FUNC_BODY:
+            case ParserRuleContext2.ANON_FUNC_BODY:
                 alternativeRules = ANON_FUNC_BODY;
                 break;
-            case FUNC_BODY:
-            case OBJECT_FUNC_BODY:
-                if (getGrandParentContext() == ParserRuleContext.OBJECT_MEMBER) {
+            case ParserRuleContext2.FUNC_BODY:
+            case ParserRuleContext2.OBJECT_FUNC_BODY:
+                if (getGrandParentContext() == ParserRuleContext2.OBJECT_MEMBER) {
                     alternativeRules = OBJECT_FUNC_BODY;
                 } else {
                     alternativeRules = FUNC_BODY;
                 }
                 break;
-            case PARAM_LIST:
+            case ParserRuleContext2.PARAM_LIST:
                 alternativeRules = PARAM_LIST;
                 break;
-            case REQUIRED_PARAM_NAME_RHS:
+            case ParserRuleContext2.REQUIRED_PARAM_NAME_RHS:
                 alternativeRules = REQUIRED_PARAM_NAME_RHS;
                 break;
-            case FIELD_DESCRIPTOR_RHS:
+            case ParserRuleContext2.FIELD_DESCRIPTOR_RHS:
                 alternativeRules = FIELD_DESCRIPTOR_RHS;
                 break;
-            case FIELD_OR_REST_DESCIPTOR_RHS:
+            case ParserRuleContext2.FIELD_OR_REST_DESCIPTOR_RHS:
                 alternativeRules = FIELD_OR_REST_DESCIPTOR_RHS;
                 break;
-            case RECORD_BODY_END:
+            case ParserRuleContext2.RECORD_BODY_END:
                 alternativeRules = RECORD_BODY_END;
                 break;
-            case RECORD_BODY_START:
+            case ParserRuleContext2.RECORD_BODY_START:
                 alternativeRules = RECORD_BODY_START;
                 break;
-            case TYPE_DESCRIPTOR:
+            case ParserRuleContext2.TYPE_DESCRIPTOR:
                 alternativeRules = TYPE_DESCRIPTORS;
                 break;
-            case RECORD_FIELD_OR_RECORD_END:
+            case ParserRuleContext2.RECORD_FIELD_OR_RECORD_END:
                 alternativeRules = RECORD_FIELD_OR_RECORD_END;
                 break;
-            case RECORD_FIELD_START:
+            case ParserRuleContext2.RECORD_FIELD_START:
                 alternativeRules = RECORD_FIELD_START;
                 break;
-            case RECORD_FIELD_WITHOUT_METADATA:
+            case ParserRuleContext2.RECORD_FIELD_WITHOUT_METADATA:
                 alternativeRules = RECORD_FIELD_WITHOUT_METADATA;
                 break;
-            case OBJECT_MEMBER_START:
+            case ParserRuleContext2.OBJECT_MEMBER_START:
                 alternativeRules = OBJECT_MEMBER_START;
                 break;
-            case OBJECT_MEMBER_WITHOUT_METADATA:
+            case ParserRuleContext2.OBJECT_MEMBER_WITHOUT_METADATA:
                 alternativeRules = OBJECT_MEMBER_WITHOUT_METADATA;
                 break;
-            case OBJECT_FIELD_RHS:
+            case ParserRuleContext2.OBJECT_FIELD_RHS:
                 alternativeRules = OBJECT_FIELD_RHS;
                 break;
-            case OBJECT_METHOD_START:
+            case ParserRuleContext2.OBJECT_METHOD_START:
                 alternativeRules = OBJECT_METHOD_START;
                 break;
-            case OBJECT_FUNC_OR_FIELD:
+            case ParserRuleContext2.OBJECT_FUNC_OR_FIELD:
                 alternativeRules = OBJECT_FUNC_OR_FIELD;
                 break;
-            case OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY:
+            case ParserRuleContext2.OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY:
                 alternativeRules = OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY;
                 break;
-            case OBJECT_TYPE_DESCRIPTOR_START:
+            case ParserRuleContext2.OBJECT_TYPE_DESCRIPTOR_START:
                 alternativeRules = OBJECT_TYPE_DESCRIPTOR_START;
                 break;
-            case IMPORT_PREFIX_DECL:
+            case ParserRuleContext2.IMPORT_PREFIX_DECL:
                 alternativeRules = IMPORT_PREFIX_DECL;
                 break;
-            case IMPORT_VERSION_DECL:
+            case ParserRuleContext2.IMPORT_VERSION_DECL:
                 alternativeRules = IMPORT_VERSION;
                 break;
-            case IMPORT_DECL_RHS:
+            case ParserRuleContext2.IMPORT_DECL_RHS:
                 alternativeRules = IMPORT_DECL_RHS;
                 break;
-            case AFTER_IMPORT_MODULE_NAME:
+            case ParserRuleContext2.AFTER_IMPORT_MODULE_NAME:
                 alternativeRules = AFTER_IMPORT_MODULE_NAME;
                 break;
-            case MAJOR_MINOR_VERSION_END:
+            case ParserRuleContext2.MAJOR_MINOR_VERSION_END:
                 alternativeRules = MAJOR_MINOR_VERSION_END;
                 break;
-            case OPTIONAL_SERVICE_NAME:
+            case ParserRuleContext2.OPTIONAL_SERVICE_NAME:
                 alternativeRules = OPTIONAL_SERVICE_NAME;
                 break;
-            case RESOURCE_DEF:
+            case ParserRuleContext2.RESOURCE_DEF:
                 alternativeRules = RESOURCE_DEF_START;
                 break;
-            case CONST_DECL_TYPE:
+            case ParserRuleContext2.CONST_DECL_TYPE:
                 alternativeRules = CONST_DECL_TYPE;
                 break;
-            case CONST_DECL_RHS:
+            case ParserRuleContext2.CONST_DECL_RHS:
                 alternativeRules = CONST_DECL_RHS;
                 break;
-            case PARAMETER_START:
+            case ParserRuleContext2.PARAMETER_START:
                 alternativeRules = PARAMETER_START;
                 break;
-            case PARAMETER_WITHOUT_ANNOTS:
+            case ParserRuleContext2.PARAMETER_WITHOUT_ANNOTS:
                 alternativeRules = PARAMETER_WITHOUT_ANNOTS;
                 break;
-            case ANNOT_DECL_OPTIONAL_TYPE:
+            case ParserRuleContext2.ANNOT_DECL_OPTIONAL_TYPE:
                 alternativeRules = ANNOT_DECL_OPTIONAL_TYPE;
                 break;
-            case ANNOT_DECL_RHS:
+            case ParserRuleContext2.ANNOT_DECL_RHS:
                 alternativeRules = ANNOT_DECL_RHS;
                 break;
-            case ANNOT_OPTIONAL_ATTACH_POINTS:
+            case ParserRuleContext2.ANNOT_OPTIONAL_ATTACH_POINTS:
                 alternativeRules = ANNOT_OPTIONAL_ATTACH_POINTS;
                 break;
-            case ATTACH_POINT:
+            case ParserRuleContext2.ATTACH_POINT:
                 alternativeRules = ATTACH_POINT;
                 break;
-            case ATTACH_POINT_IDENT:
+            case ParserRuleContext2.ATTACH_POINT_IDENT:
                 alternativeRules = ATTACH_POINT_IDENT;
                 break;
-            case ATTACH_POINT_END:
+            case ParserRuleContext2.ATTACH_POINT_END:
                 alternativeRules = ATTACH_POINT_END;
                 break;
-            case XML_NAMESPACE_PREFIX_DECL:
+            case ParserRuleContext2.XML_NAMESPACE_PREFIX_DECL:
                 alternativeRules = XML_NAMESPACE_PREFIX_DECL;
                 break;
-            case ENUM_MEMBER_START:
+            case ParserRuleContext2.ENUM_MEMBER_START:
                 alternativeRules = ENUM_MEMBER_START;
                 break;
-            case ENUM_MEMBER_RHS:
+            case ParserRuleContext2.ENUM_MEMBER_RHS:
                 alternativeRules = ENUM_MEMBER_RHS;
                 break;
-            case ENUM_MEMBER_END:
+            case ParserRuleContext2.ENUM_MEMBER_END:
                 alternativeRules = ENUM_MEMBER_END;
                 break;
-            case EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS:
+            case ParserRuleContext2.EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS:
                 alternativeRules = EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS;
                 break;
-            case LIST_BP_OR_LIST_CONSTRUCTOR_MEMBER:
+            case ParserRuleContext2.LIST_BP_OR_LIST_CONSTRUCTOR_MEMBER:
                 alternativeRules = LIST_BP_OR_LIST_CONSTRUCTOR_MEMBER;
                 break;
-            case TUPLE_TYPE_DESC_OR_LIST_CONST_MEMBER:
+            case ParserRuleContext2.TUPLE_TYPE_DESC_OR_LIST_CONST_MEMBER:
                 alternativeRules = TUPLE_TYPE_DESC_OR_LIST_CONST_MEMBER;
                 break;
             default:
@@ -1459,204 +1461,204 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
         return seekInAlternativesPaths(lookahead, currentDepth, matchingRulesCount, alternativeRules, isEntryPoint);
     }
 
-    private Result seekMatchInStmtRelatedAlternativePaths(ParserRuleContext currentCtx, int lookahead, int currentDepth,
+    private Result seekMatchInStmtRelatedAlternativePaths(int currentCtx, int lookahead, int currentDepth,
                                                           int matchingRulesCount, boolean isEntryPoint) {
-        ParserRuleContext[] alternativeRules;
+        int[] alternativeRules;
         switch (currentCtx) {
-            case VAR_DECL_STMT_RHS:
+            case ParserRuleContext2.VAR_DECL_STMT_RHS:
                 alternativeRules = VAR_DECL_RHS;
                 break;
-            case STATEMENT:
-            case STATEMENT_WITHOUT_ANNOTS:
+            case ParserRuleContext2.STATEMENT:
+            case ParserRuleContext2.STATEMENT_WITHOUT_ANNOTS:
                 return seekInStatements(currentCtx, lookahead, currentDepth, matchingRulesCount, isEntryPoint);
-            case TYPE_NAME_OR_VAR_NAME:
+            case ParserRuleContext2.TYPE_NAME_OR_VAR_NAME:
                 alternativeRules = TYPE_OR_VAR_NAME;
                 break;
-            case ASSIGNMENT_OR_VAR_DECL_STMT_RHS:
+            case ParserRuleContext2.ASSIGNMENT_OR_VAR_DECL_STMT_RHS:
                 alternativeRules = ASSIGNMENT_OR_VAR_DECL_SECOND_TOKEN;
                 break;
-            case ELSE_BLOCK:
+            case ParserRuleContext2.ELSE_BLOCK:
                 alternativeRules = ELSE_BLOCK;
                 break;
-            case ELSE_BODY:
+            case ParserRuleContext2.ELSE_BODY:
                 alternativeRules = ELSE_BODY;
                 break;
-            case CALL_STMT_START:
+            case ParserRuleContext2.CALL_STMT_START:
                 alternativeRules = CALL_STATEMENT;
                 break;
-            case RETURN_STMT_RHS:
+            case ParserRuleContext2.RETURN_STMT_RHS:
                 alternativeRules = RETURN_RHS;
                 break;
-            case ARRAY_LENGTH:
+            case ParserRuleContext2.ARRAY_LENGTH:
                 alternativeRules = ARRAY_LENGTH;
                 break;
-            case STMT_START_WITH_EXPR_RHS:
+            case ParserRuleContext2.STMT_START_WITH_EXPR_RHS:
                 alternativeRules = STMT_START_WITH_EXPR_RHS;
                 break;
-            case EXPR_STMT_RHS:
+            case ParserRuleContext2.EXPR_STMT_RHS:
                 alternativeRules = EXPR_STMT_RHS;
                 break;
-            case EXPRESSION_STATEMENT_START:
+            case ParserRuleContext2.EXPRESSION_STATEMENT_START:
                 alternativeRules = EXPRESSION_STATEMENT_START;
                 break;
-            case TYPEDESC_RHS:
+            case ParserRuleContext2.TYPEDESC_RHS:
                 alternativeRules = TYPEDESC_RHS;
                 break;
-            case ERROR_TYPE_PARAMS:
+            case ParserRuleContext2.ERROR_TYPE_PARAMS:
                 alternativeRules = ERROR_TYPE_PARAMS;
                 break;
-            case STREAM_TYPE_FIRST_PARAM_RHS:
+            case ParserRuleContext2.STREAM_TYPE_FIRST_PARAM_RHS:
                 alternativeRules = STREAM_TYPE_FIRST_PARAM_RHS;
                 break;
-            case FUNCTION_KEYWORD_RHS:
+            case ParserRuleContext2.FUNCTION_KEYWORD_RHS:
                 alternativeRules = FUNCTION_KEYWORD_RHS;
                 break;
-            case WORKER_NAME_RHS:
+            case ParserRuleContext2.WORKER_NAME_RHS:
                 alternativeRules = WORKER_NAME_RHS;
                 break;
-            case BINDING_PATTERN:
+            case ParserRuleContext2.BINDING_PATTERN:
                 alternativeRules = BINDING_PATTERN;
                 break;
-            case LIST_BINDING_PATTERN_MEMBER_END:
+            case ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER_END:
                 alternativeRules = LIST_BINDING_PATTERN_MEMBER_END;
                 break;
-            case LIST_BINDING_PATTERN_MEMBER:
+            case ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER:
                 alternativeRules = LIST_BINDING_PATTERN_CONTENTS;
                 break;
-            case MAPPING_BINDING_PATTERN_END:
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN_END:
                 alternativeRules = MAPPING_BINDING_PATTERN_END;
                 break;
-            case FIELD_BINDING_PATTERN_END:
+            case ParserRuleContext2.FIELD_BINDING_PATTERN_END:
                 alternativeRules = FIELD_BINDING_PATTERN_END;
                 break;
-            case MAPPING_BINDING_PATTERN_MEMBER:
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN_MEMBER:
                 alternativeRules = MAPPING_BINDING_PATTERN_MEMBER;
                 break;
-            case ARG_BINDING_PATTERN:
+            case ParserRuleContext2.ARG_BINDING_PATTERN:
                 alternativeRules = ARG_BINDING_PATTERN;
                 break;
-            case ARG_BINDING_PATTERN_END:
+            case ParserRuleContext2.ARG_BINDING_PATTERN_END:
                 alternativeRules = ARG_BINDING_PATTERN_END;
                 break;
-            case ARG_BINDING_PATTERN_START_IDENT:
+            case ParserRuleContext2.ARG_BINDING_PATTERN_START_IDENT:
                 alternativeRules = ARG_BINDING_PATTERN_START_IDENT;
                 break;
-            case KEY_CONSTRAINTS_RHS:
+            case ParserRuleContext2.KEY_CONSTRAINTS_RHS:
                 alternativeRules = KEY_CONSTRAINTS_RHS;
                 break;
-            case TABLE_TYPE_DESC_RHS:
+            case ParserRuleContext2.TABLE_TYPE_DESC_RHS:
                 alternativeRules = TABLE_TYPE_DESC_RHS;
                 break;
-            case TYPE_DESC_IN_TUPLE_RHS:
+            case ParserRuleContext2.TYPE_DESC_IN_TUPLE_RHS:
                 alternativeRules = TYPE_DESC_IN_TUPLE_RHS;
                 break;
-            case LIST_CONSTRUCTOR_MEMBER_END:
+            case ParserRuleContext2.LIST_CONSTRUCTOR_MEMBER_END:
                 alternativeRules = LIST_CONSTRUCTOR_MEMBER_END;
                 break;
-            case NIL_OR_PARENTHESISED_TYPE_DESC_RHS:
+            case ParserRuleContext2.NIL_OR_PARENTHESISED_TYPE_DESC_RHS:
                 alternativeRules = NIL_OR_PARENTHESISED_TYPE_DESC_RHS;
                 break;
-            case REMOTE_CALL_OR_ASYNC_SEND_RHS:
+            case ParserRuleContext2.REMOTE_CALL_OR_ASYNC_SEND_RHS:
                 alternativeRules = REMOTE_CALL_OR_ASYNC_SEND_RHS;
                 break;
-            case REMOTE_CALL_OR_ASYNC_SEND_END:
+            case ParserRuleContext2.REMOTE_CALL_OR_ASYNC_SEND_END:
                 alternativeRules = REMOTE_CALL_OR_ASYNC_SEND_END;
                 break;
-            case RECEIVE_WORKERS:
+            case ParserRuleContext2.RECEIVE_WORKERS:
                 alternativeRules = RECEIVE_WORKERS;
                 break;
-            case RECEIVE_FIELD:
+            case ParserRuleContext2.RECEIVE_FIELD:
                 alternativeRules = RECEIVE_FIELD;
                 break;
-            case RECEIVE_FIELD_END:
+            case ParserRuleContext2.RECEIVE_FIELD_END:
                 alternativeRules = RECEIVE_FIELD_END;
                 break;
-            case WAIT_KEYWORD_RHS:
+            case ParserRuleContext2.WAIT_KEYWORD_RHS:
                 alternativeRules = WAIT_KEYWORD_RHS;
                 break;
-            case WAIT_FIELD_NAME_RHS:
+            case ParserRuleContext2.WAIT_FIELD_NAME_RHS:
                 alternativeRules = WAIT_FIELD_NAME_RHS;
                 break;
-            case WAIT_FIELD_END:
+            case ParserRuleContext2.WAIT_FIELD_END:
                 alternativeRules = WAIT_FIELD_END;
                 break;
-            case WAIT_FUTURE_EXPR_END:
+            case ParserRuleContext2.WAIT_FUTURE_EXPR_END:
                 alternativeRules = WAIT_FUTURE_EXPR_END;
                 break;
-            case OPTIONAL_PEER_WORKER:
+            case ParserRuleContext2.OPTIONAL_PEER_WORKER:
                 alternativeRules = OPTIONAL_PEER_WORKER;
                 break;
-            case ROLLBACK_RHS:
+            case ParserRuleContext2.ROLLBACK_RHS:
                 alternativeRules = ROLLBACK_RHS;
                 break;
-            case RETRY_KEYWORD_RHS:
+            case ParserRuleContext2.RETRY_KEYWORD_RHS:
                 alternativeRules = RETRY_KEYWORD_RHS;
                 break;
-            case RETRY_TYPE_PARAM_RHS:
+            case ParserRuleContext2.RETRY_TYPE_PARAM_RHS:
                 alternativeRules = RETRY_TYPE_PARAM_RHS;
                 break;
-            case RETRY_BODY:
+            case ParserRuleContext2.RETRY_BODY:
                 alternativeRules = RETRY_BODY;
                 break;
-            case STMT_START_BRACKETED_LIST_MEMBER:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST_MEMBER:
                 alternativeRules = LIST_BP_OR_TUPLE_TYPE_MEMBER;
                 break;
-            case STMT_START_BRACKETED_LIST_RHS:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST_RHS:
                 alternativeRules = LIST_BP_OR_TUPLE_TYPE_DESC_RHS;
                 break;
-            case BRACKETED_LIST_MEMBER_END:
+            case ParserRuleContext2.BRACKETED_LIST_MEMBER_END:
                 alternativeRules = BRACKETED_LIST_MEMBER_END;
                 break;
-            case BRACKETED_LIST_MEMBER:
+            case ParserRuleContext2.BRACKETED_LIST_MEMBER:
                 alternativeRules = BRACKETED_LIST_MEMBER;
                 break;
-            case BRACKETED_LIST_RHS:
-            case BINDING_PATTERN_OR_EXPR_RHS:
+            case ParserRuleContext2.BRACKETED_LIST_RHS:
+            case ParserRuleContext2.BINDING_PATTERN_OR_EXPR_RHS:
                 alternativeRules = BRACKETED_LIST_RHS;
                 break;
-            case LIST_BINDING_MEMBER_OR_ARRAY_LENGTH:
+            case ParserRuleContext2.LIST_BINDING_MEMBER_OR_ARRAY_LENGTH:
                 alternativeRules = LIST_BINDING_MEMBER_OR_ARRAY_LENGTH;
                 break;
-            case MATCH_PATTERN_RHS:
+            case ParserRuleContext2.MATCH_PATTERN_RHS:
                 alternativeRules = MATCH_PATTERN_RHS;
                 break;
-            case MATCH_PATTERN_START:
+            case ParserRuleContext2.MATCH_PATTERN_START:
                 alternativeRules = MATCH_PATTERN_START;
                 break;
-            case LIST_MATCH_PATTERNS_START:
+            case ParserRuleContext2.LIST_MATCH_PATTERNS_START:
                 alternativeRules = LIST_MATCH_PATTERNS_START;
                 break;
-            case LIST_MATCH_PATTERN_MEMBER:
+            case ParserRuleContext2.LIST_MATCH_PATTERN_MEMBER:
                 alternativeRules = LIST_MATCH_PATTERN_MEMBER;
                 break;
-            case LIST_MATCH_PATTERN_MEMBER_RHS:
+            case ParserRuleContext2.LIST_MATCH_PATTERN_MEMBER_RHS:
                 alternativeRules = LIST_MATCH_PATTERN_MEMBER_RHS;
                 break;
-            case FIELD_MATCH_PATTERNS_START:
+            case ParserRuleContext2.FIELD_MATCH_PATTERNS_START:
                 alternativeRules = FIELD_MATCH_PATTERNS_START;
                 break;
-            case FIELD_MATCH_PATTERN_MEMBER:
+            case ParserRuleContext2.FIELD_MATCH_PATTERN_MEMBER:
                 alternativeRules = FIELD_MATCH_PATTERN_MEMBER;
                 break;
-            case FIELD_MATCH_PATTERN_MEMBER_RHS:
+            case ParserRuleContext2.FIELD_MATCH_PATTERN_MEMBER_RHS:
                 alternativeRules = FIELD_MATCH_PATTERN_MEMBER_RHS;
                 break;
-            case FUNC_MATCH_PATTERN_OR_CONST_PATTERN:
+            case ParserRuleContext2.FUNC_MATCH_PATTERN_OR_CONST_PATTERN:
                 alternativeRules = FUNC_MATCH_PATTERN_OR_CONST_PATTERN;
                 break;
-            case FUNCTIONAL_MATCH_PATTERN_START:
+            case ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN_START:
                 alternativeRules = FUNCTIONAL_MATCH_PATTERN_START;
                 break;
-            case ARG_LIST_MATCH_PATTERN_START:
+            case ParserRuleContext2.ARG_LIST_MATCH_PATTERN_START:
                 alternativeRules = ARG_LIST_MATCH_PATTERN_START;
                 break;
-            case ARG_MATCH_PATTERN:
+            case ParserRuleContext2.ARG_MATCH_PATTERN:
                 alternativeRules = ARG_MATCH_PATTERN;
                 break;
-            case ARG_MATCH_PATTERN_RHS:
+            case ParserRuleContext2.ARG_MATCH_PATTERN_RHS:
                 alternativeRules = ARG_MATCH_PATTERN_RHS;
                 break;
-            case NAMED_ARG_MATCH_PATTERN_RHS:
+            case ParserRuleContext2.NAMED_ARG_MATCH_PATTERN_RHS:
                 alternativeRules = NAMED_ARG_MATCH_PATTERN_RHS;
                 break;
             default:
@@ -1667,137 +1669,137 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
         return seekInAlternativesPaths(lookahead, currentDepth, matchingRulesCount, alternativeRules, isEntryPoint);
     }
 
-    private Result seekMatchInExprRelatedAlternativePaths(ParserRuleContext currentCtx, int lookahead, int currentDepth,
+    private Result seekMatchInExprRelatedAlternativePaths(int currentCtx, int lookahead, int currentDepth,
                                                           int matchingRulesCount, boolean isEntryPoint) {
-        ParserRuleContext[] alternativeRules;
+        int[] alternativeRules;
         switch (currentCtx) {
-            case EXPRESSION:
-            case TERMINAL_EXPRESSION:
+            case ParserRuleContext2.EXPRESSION:
+            case ParserRuleContext2.TERMINAL_EXPRESSION:
                 alternativeRules = EXPRESSION_START;
                 break;
-            case ARG_START:
+            case ParserRuleContext2.ARG_START:
                 alternativeRules = ARG_START;
                 break;
-            case ARG_START_OR_ARG_LIST_END:
+            case ParserRuleContext2.ARG_START_OR_ARG_LIST_END:
                 alternativeRules = ARG_START_OR_ARG_LIST_END;
                 break;
-            case NAMED_OR_POSITIONAL_ARG_RHS:
+            case ParserRuleContext2.NAMED_OR_POSITIONAL_ARG_RHS:
                 alternativeRules = NAMED_OR_POSITIONAL_ARG_RHS;
                 break;
-            case ARG_END:
+            case ParserRuleContext2.ARG_END:
                 alternativeRules = ARG_END;
                 break;
-            case ACCESS_EXPRESSION:
+            case ParserRuleContext2.ACCESS_EXPRESSION:
                 return seekInAccessExpression(currentCtx, lookahead, currentDepth, matchingRulesCount, isEntryPoint);
-            case FIRST_MAPPING_FIELD:
+            case ParserRuleContext2.FIRST_MAPPING_FIELD:
                 alternativeRules = FIRST_MAPPING_FIELD_START;
                 break;
-            case MAPPING_FIELD:
+            case ParserRuleContext2.MAPPING_FIELD:
                 alternativeRules = MAPPING_FIELD_START;
                 break;
-            case SPECIFIC_FIELD:
+            case ParserRuleContext2.SPECIFIC_FIELD:
                 alternativeRules = SPECIFIC_FIELD;
                 break;
-            case SPECIFIC_FIELD_RHS:
+            case ParserRuleContext2.SPECIFIC_FIELD_RHS:
                 alternativeRules = SPECIFIC_FIELD_RHS;
                 break;
-            case MAPPING_FIELD_END:
+            case ParserRuleContext2.MAPPING_FIELD_END:
                 alternativeRules = MAPPING_FIELD_END;
                 break;
-            case LET_VAR_DECL_START:
+            case ParserRuleContext2.LET_VAR_DECL_START:
                 alternativeRules = LET_VAR_DECL_START;
                 break;
-            case ORDER_KEY_LIST_END:
+            case ParserRuleContext2.ORDER_KEY_LIST_END:
                 alternativeRules = ORDER_KEY_LIST_END;
                 break;
-            case ORDER_DIRECTION_RHS:
+            case ParserRuleContext2.ORDER_DIRECTION_RHS:
                 alternativeRules = ORDER_DIRECTION_RHS;
                 break;
-            case TEMPLATE_MEMBER:
+            case ParserRuleContext2.TEMPLATE_MEMBER:
                 alternativeRules = TEMPLATE_MEMBER;
                 break;
-            case TEMPLATE_STRING_RHS:
+            case ParserRuleContext2.TEMPLATE_STRING_RHS:
                 alternativeRules = TEMPLATE_STRING_RHS;
                 break;
-            case CONSTANT_EXPRESSION_START:
+            case ParserRuleContext2.CONSTANT_EXPRESSION_START:
                 alternativeRules = CONSTANT_EXPRESSION;
                 break;
-            case LIST_CONSTRUCTOR_FIRST_MEMBER:
+            case ParserRuleContext2.LIST_CONSTRUCTOR_FIRST_MEMBER:
                 alternativeRules = LIST_CONSTRUCTOR_RHS;
                 break;
-            case TYPE_CAST_PARAM:
+            case ParserRuleContext2.TYPE_CAST_PARAM:
                 alternativeRules = TYPE_CAST_PARAM;
                 break;
-            case TYPE_CAST_PARAM_RHS:
+            case ParserRuleContext2.TYPE_CAST_PARAM_RHS:
                 alternativeRules = TYPE_CAST_PARAM_RHS;
                 break;
-            case TABLE_KEYWORD_RHS:
+            case ParserRuleContext2.TABLE_KEYWORD_RHS:
                 alternativeRules = TABLE_KEYWORD_RHS;
                 break;
-            case ROW_LIST_RHS:
+            case ParserRuleContext2.ROW_LIST_RHS:
                 alternativeRules = ROW_LIST_RHS;
                 break;
-            case TABLE_ROW_END:
+            case ParserRuleContext2.TABLE_ROW_END:
                 alternativeRules = TABLE_ROW_END;
                 break;
-            case KEY_SPECIFIER_RHS:
+            case ParserRuleContext2.KEY_SPECIFIER_RHS:
                 alternativeRules = KEY_SPECIFIER_RHS;
                 break;
-            case TABLE_KEY_RHS:
+            case ParserRuleContext2.TABLE_KEY_RHS:
                 alternativeRules = TABLE_KEY_RHS;
                 break;
-            case NEW_KEYWORD_RHS:
+            case ParserRuleContext2.NEW_KEYWORD_RHS:
                 alternativeRules = NEW_KEYWORD_RHS;
                 break;
-            case TABLE_CONSTRUCTOR_OR_QUERY_START:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_START:
                 alternativeRules = TABLE_CONSTRUCTOR_OR_QUERY_START;
                 break;
-            case TABLE_CONSTRUCTOR_OR_QUERY_RHS:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_RHS:
                 alternativeRules = TABLE_CONSTRUCTOR_OR_QUERY_RHS;
                 break;
-            case QUERY_PIPELINE_RHS:
+            case ParserRuleContext2.QUERY_PIPELINE_RHS:
                 alternativeRules = QUERY_EXPRESSION_RHS;
                 break;
-            case BRACED_EXPR_OR_ANON_FUNC_PARAM_RHS:
-            case ANON_FUNC_PARAM_RHS:
+            case ParserRuleContext2.BRACED_EXPR_OR_ANON_FUNC_PARAM_RHS:
+            case ParserRuleContext2.ANON_FUNC_PARAM_RHS:
                 alternativeRules = BRACED_EXPR_OR_ANON_FUNC_PARAM_RHS;
                 break;
-            case PARAM_END:
+            case ParserRuleContext2.PARAM_END:
                 alternativeRules = PARAM_END;
                 break;
-            case ANNOTATION_REF_RHS:
+            case ParserRuleContext2.ANNOTATION_REF_RHS:
                 alternativeRules = ANNOTATION_REF_RHS;
                 break;
-            case INFER_PARAM_END_OR_PARENTHESIS_END:
+            case ParserRuleContext2.INFER_PARAM_END_OR_PARENTHESIS_END:
                 alternativeRules = INFER_PARAM_END_OR_PARENTHESIS_END;
                 break;
-            case XML_NAVIGATE_EXPR:
+            case ParserRuleContext2.XML_NAVIGATE_EXPR:
                 alternativeRules = XML_NAVIGATE_EXPR;
                 break;
-            case XML_NAME_PATTERN_RHS:
+            case ParserRuleContext2.XML_NAME_PATTERN_RHS:
                 alternativeRules = XML_NAME_PATTERN_RHS;
                 break;
-            case XML_ATOMIC_NAME_PATTERN_START:
+            case ParserRuleContext2.XML_ATOMIC_NAME_PATTERN_START:
                 alternativeRules = XML_ATOMIC_NAME_PATTERN_START;
                 break;
-            case XML_ATOMIC_NAME_IDENTIFIER_RHS:
+            case ParserRuleContext2.XML_ATOMIC_NAME_IDENTIFIER_RHS:
                 alternativeRules = XML_ATOMIC_NAME_IDENTIFIER_RHS;
                 break;
-            case XML_STEP_START:
+            case ParserRuleContext2.XML_STEP_START:
                 alternativeRules = XML_STEP_START;
                 break;
-            case OPTIONAL_MATCH_GUARD:
+            case ParserRuleContext2.OPTIONAL_MATCH_GUARD:
                 alternativeRules = OPTIONAL_MATCH_GUARD;
                 break;
-            case MEMBER_ACCESS_KEY_EXPR_END:
+            case ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR_END:
                 alternativeRules = MEMBER_ACCESS_KEY_EXPR_END;
                 break;
-            case EXPRESSION_RHS:
+            case ParserRuleContext2.EXPRESSION_RHS:
                 return seekMatchInExpressionRhs(lookahead, currentDepth, matchingRulesCount, isEntryPoint, false);
-            case VARIABLE_REF_RHS:
+            case ParserRuleContext2.VARIABLE_REF_RHS:
                 return seekMatchInExpressionRhs(lookahead, currentDepth, matchingRulesCount, isEntryPoint, true);
             default:
-                throw new IllegalStateException(currentCtx.toString());
+                throw new IllegalStateException(String.valueOf(currentCtx));
         }
 
         return seekInAlternativesPaths(lookahead, currentDepth, matchingRulesCount, alternativeRules, isEntryPoint);
@@ -1813,13 +1815,13 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @param fixes Fixes made so far
      * @return Recovery result
      */
-    private Result seekInStatements(ParserRuleContext currentCtx, int lookahead, int currentDepth, int currentMatches,
+    private Result seekInStatements(int currentCtx, int lookahead, int currentDepth, int currentMatches,
                                     boolean isEntryPoint) {
         STToken nextToken = this.tokenReader.peek(lookahead);
-        if (nextToken.kind == SyntaxKind.SEMICOLON_TOKEN) {
+        if (nextToken.kind == SyntaxKind2.SEMICOLON_TOKEN) {
             // Semicolon at the start of a statement is a special case. This is equivalent to an empty
             // statement. So assume the fix for this is a REMOVE operation and continue from the next token.
-            Result result = seekMatchInSubTree(ParserRuleContext.STATEMENT, lookahead + 1, currentDepth, isEntryPoint);
+            Result result = seekMatchInSubTree(ParserRuleContext2.STATEMENT, lookahead + 1, currentDepth, isEntryPoint);
             result.fixes.push(new Solution(Action.REMOVE, currentCtx, nextToken.kind, nextToken.toString()));
             return getFinalResult(currentMatches, result);
         }
@@ -1839,31 +1841,32 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @param isEntryPoint
      * @return Recovery result
      */
-    private Result seekInAccessExpression(ParserRuleContext currentCtx, int lookahead, int currentDepth,
+    private Result seekInAccessExpression(int currentCtx, int lookahead, int currentDepth,
                                           int currentMatches, boolean isEntryPoint) {
         // TODO: Remove this method
         STToken nextToken = this.tokenReader.peek(lookahead);
         currentDepth++;
-        if (nextToken.kind != SyntaxKind.IDENTIFIER_TOKEN) {
+        if (nextToken.kind != SyntaxKind2.IDENTIFIER_TOKEN) {
             return fixAndContinue(currentCtx, lookahead, currentDepth, currentMatches, isEntryPoint);
         }
 
-        ParserRuleContext nextContext;
+        int nextContext;
         STToken nextNextToken = this.tokenReader.peek(lookahead + 1);
-        switch (nextNextToken.kind) {
-            case OPEN_PAREN_TOKEN:
-                nextContext = ParserRuleContext.OPEN_PARENTHESIS;
-                break;
-            case DOT_TOKEN:
-                nextContext = ParserRuleContext.DOT;
-                break;
-            case OPEN_BRACKET_TOKEN:
-                nextContext = ParserRuleContext.MEMBER_ACCESS_KEY_EXPR;
-                break;
-            default:
-                nextContext = getNextRuleForExpr();
-                break;
-        }
+//        switch (nextNextToken.kind) {
+//            case OPEN_PAREN_TOKEN:
+//                nextContext = ParserRuleContext2.OPEN_PARENTHESIS;
+//                break;
+//            case DOT_TOKEN:
+//                nextContext = ParserRuleContext2.DOT;
+//                break;
+//            case OPEN_BRACKET_TOKEN:
+//                nextContext = ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR;
+//                break;
+//            default:
+//                nextContext = getNextRuleForExpr();
+//                break;
+//        }
+        nextContext = getNextRuleForExpr();
 
         currentMatches++;
         lookahead++;
@@ -1884,85 +1887,85 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      */
     private Result seekMatchInExpressionRhs(int lookahead, int currentDepth, int currentMatches, boolean isEntryPoint,
                                             boolean allowFuncCall) {
-        ParserRuleContext parentCtx = getParentContext();
-        ParserRuleContext[] alternatives = null;
+        int parentCtx = getParentContext();
+        int[] alternatives = null;
         switch (parentCtx) {
-            case ARG_LIST:
-                alternatives = new ParserRuleContext[] { ParserRuleContext.BINARY_OPERATOR, ParserRuleContext.DOT,
-                        ParserRuleContext.ANNOT_CHAINING_TOKEN, ParserRuleContext.OPTIONAL_CHAINING_TOKEN,
-                        ParserRuleContext.CONDITIONAL_EXPRESSION, ParserRuleContext.XML_NAVIGATE_EXPR,
-                        ParserRuleContext.MEMBER_ACCESS_KEY_EXPR, ParserRuleContext.COMMA,
-                        ParserRuleContext.ARG_LIST_END };
+            case ParserRuleContext2.ARG_LIST:
+                alternatives = new int[] { ParserRuleContext2.BINARY_OPERATOR, ParserRuleContext2.DOT,
+                        ParserRuleContext2.ANNOT_CHAINING_TOKEN, ParserRuleContext2.OPTIONAL_CHAINING_TOKEN,
+                        ParserRuleContext2.CONDITIONAL_EXPRESSION, ParserRuleContext2.XML_NAVIGATE_EXPR,
+                        ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR, ParserRuleContext2.COMMA,
+                        ParserRuleContext2.ARG_LIST_END };
                 break;
-            case MAPPING_CONSTRUCTOR:
-            case MULTI_WAIT_FIELDS:
-            case MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
-                alternatives = new ParserRuleContext[] { ParserRuleContext.CLOSE_BRACE, ParserRuleContext.COMMA,
-                        ParserRuleContext.BINARY_OPERATOR, ParserRuleContext.DOT,
-                        ParserRuleContext.ANNOT_CHAINING_TOKEN, ParserRuleContext.OPTIONAL_CHAINING_TOKEN,
-                        ParserRuleContext.CONDITIONAL_EXPRESSION, ParserRuleContext.XML_NAVIGATE_EXPR,
-                        ParserRuleContext.MEMBER_ACCESS_KEY_EXPR };
+            case ParserRuleContext2.MAPPING_CONSTRUCTOR:
+            case ParserRuleContext2.MULTI_WAIT_FIELDS:
+            case ParserRuleContext2.MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
+                alternatives = new int[] { ParserRuleContext2.CLOSE_BRACE, ParserRuleContext2.COMMA,
+                        ParserRuleContext2.BINARY_OPERATOR, ParserRuleContext2.DOT,
+                        ParserRuleContext2.ANNOT_CHAINING_TOKEN, ParserRuleContext2.OPTIONAL_CHAINING_TOKEN,
+                        ParserRuleContext2.CONDITIONAL_EXPRESSION, ParserRuleContext2.XML_NAVIGATE_EXPR,
+                        ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR };
                 break;
-            case COMPUTED_FIELD_NAME:
+            case ParserRuleContext2.COMPUTED_FIELD_NAME:
                 // Here we give high priority to the comma. Therefore order of the below array matters.
-                alternatives = new ParserRuleContext[] { ParserRuleContext.CLOSE_BRACKET,
-                        ParserRuleContext.BINARY_OPERATOR, ParserRuleContext.DOT,
-                        ParserRuleContext.ANNOT_CHAINING_TOKEN, ParserRuleContext.OPTIONAL_CHAINING_TOKEN,
-                        ParserRuleContext.CONDITIONAL_EXPRESSION, ParserRuleContext.XML_NAVIGATE_EXPR,
-                        ParserRuleContext.MEMBER_ACCESS_KEY_EXPR, ParserRuleContext.OPEN_BRACKET };
+                alternatives = new int[] { ParserRuleContext2.CLOSE_BRACKET,
+                        ParserRuleContext2.BINARY_OPERATOR, ParserRuleContext2.DOT,
+                        ParserRuleContext2.ANNOT_CHAINING_TOKEN, ParserRuleContext2.OPTIONAL_CHAINING_TOKEN,
+                        ParserRuleContext2.CONDITIONAL_EXPRESSION, ParserRuleContext2.XML_NAVIGATE_EXPR,
+                        ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR, ParserRuleContext2.OPEN_BRACKET };
                 break;
-            case LISTENERS_LIST:
-                alternatives = new ParserRuleContext[] { ParserRuleContext.COMMA, ParserRuleContext.BINARY_OPERATOR,
-                        ParserRuleContext.DOT, ParserRuleContext.ANNOT_CHAINING_TOKEN,
-                        ParserRuleContext.OPTIONAL_CHAINING_TOKEN, ParserRuleContext.CONDITIONAL_EXPRESSION,
-                        ParserRuleContext.XML_NAVIGATE_EXPR, ParserRuleContext.MEMBER_ACCESS_KEY_EXPR,
-                        ParserRuleContext.OPEN_BRACE };
+            case ParserRuleContext2.LISTENERS_LIST:
+                alternatives = new int[] { ParserRuleContext2.COMMA, ParserRuleContext2.BINARY_OPERATOR,
+                        ParserRuleContext2.DOT, ParserRuleContext2.ANNOT_CHAINING_TOKEN,
+                        ParserRuleContext2.OPTIONAL_CHAINING_TOKEN, ParserRuleContext2.CONDITIONAL_EXPRESSION,
+                        ParserRuleContext2.XML_NAVIGATE_EXPR, ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR,
+                        ParserRuleContext2.OPEN_BRACE };
                 break;
-            case LIST_CONSTRUCTOR:
-            case MEMBER_ACCESS_KEY_EXPR:
-            case BRACKETED_LIST:
-            case STMT_START_BRACKETED_LIST:
-                alternatives = new ParserRuleContext[] { ParserRuleContext.COMMA, ParserRuleContext.BINARY_OPERATOR,
-                        ParserRuleContext.DOT, ParserRuleContext.ANNOT_CHAINING_TOKEN,
-                        ParserRuleContext.OPTIONAL_CHAINING_TOKEN, ParserRuleContext.CONDITIONAL_EXPRESSION,
-                        ParserRuleContext.XML_NAVIGATE_EXPR, ParserRuleContext.MEMBER_ACCESS_KEY_EXPR,
-                        ParserRuleContext.CLOSE_BRACKET };
+            case ParserRuleContext2.LIST_CONSTRUCTOR:
+            case ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR:
+            case ParserRuleContext2.BRACKETED_LIST:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST:
+                alternatives = new int[] { ParserRuleContext2.COMMA, ParserRuleContext2.BINARY_OPERATOR,
+                        ParserRuleContext2.DOT, ParserRuleContext2.ANNOT_CHAINING_TOKEN,
+                        ParserRuleContext2.OPTIONAL_CHAINING_TOKEN, ParserRuleContext2.CONDITIONAL_EXPRESSION,
+                        ParserRuleContext2.XML_NAVIGATE_EXPR, ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR,
+                        ParserRuleContext2.CLOSE_BRACKET };
                 break;
-            case LET_EXPR_LET_VAR_DECL:
-                alternatives = new ParserRuleContext[] { ParserRuleContext.COMMA, ParserRuleContext.BINARY_OPERATOR,
-                        ParserRuleContext.DOT, ParserRuleContext.ANNOT_CHAINING_TOKEN,
-                        ParserRuleContext.OPTIONAL_CHAINING_TOKEN, ParserRuleContext.CONDITIONAL_EXPRESSION,
-                        ParserRuleContext.XML_NAVIGATE_EXPR, ParserRuleContext.MEMBER_ACCESS_KEY_EXPR,
-                        ParserRuleContext.IN_KEYWORD };
+            case ParserRuleContext2.LET_EXPR_LET_VAR_DECL:
+                alternatives = new int[] { ParserRuleContext2.COMMA, ParserRuleContext2.BINARY_OPERATOR,
+                        ParserRuleContext2.DOT, ParserRuleContext2.ANNOT_CHAINING_TOKEN,
+                        ParserRuleContext2.OPTIONAL_CHAINING_TOKEN, ParserRuleContext2.CONDITIONAL_EXPRESSION,
+                        ParserRuleContext2.XML_NAVIGATE_EXPR, ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR,
+                        ParserRuleContext2.IN_KEYWORD };
                 break;
-            case LET_CLAUSE_LET_VAR_DECL:
-                alternatives = new ParserRuleContext[] { ParserRuleContext.COMMA, ParserRuleContext.BINARY_OPERATOR,
-                        ParserRuleContext.DOT, ParserRuleContext.ANNOT_CHAINING_TOKEN,
-                        ParserRuleContext.OPTIONAL_CHAINING_TOKEN, ParserRuleContext.CONDITIONAL_EXPRESSION,
-                        ParserRuleContext.XML_NAVIGATE_EXPR, ParserRuleContext.MEMBER_ACCESS_KEY_EXPR,
-                        ParserRuleContext.LET_CLAUSE_END };
+            case ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL:
+                alternatives = new int[] { ParserRuleContext2.COMMA, ParserRuleContext2.BINARY_OPERATOR,
+                        ParserRuleContext2.DOT, ParserRuleContext2.ANNOT_CHAINING_TOKEN,
+                        ParserRuleContext2.OPTIONAL_CHAINING_TOKEN, ParserRuleContext2.CONDITIONAL_EXPRESSION,
+                        ParserRuleContext2.XML_NAVIGATE_EXPR, ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR,
+                        ParserRuleContext2.LET_CLAUSE_END };
                 break;
-            case ORDER_KEY:
-                alternatives = new ParserRuleContext[] {ParserRuleContext.ASCENDING_KEYWORD,
-                        ParserRuleContext.DESCENDING_KEYWORD, ParserRuleContext.ORDER_KEY_LIST_END,
-                        ParserRuleContext.BINARY_OPERATOR, ParserRuleContext.DOT,
-                        ParserRuleContext.ANNOT_CHAINING_TOKEN, ParserRuleContext.OPTIONAL_CHAINING_TOKEN,
-                        ParserRuleContext.CONDITIONAL_EXPRESSION, ParserRuleContext.XML_NAVIGATE_EXPR,
-                        ParserRuleContext.MEMBER_ACCESS_KEY_EXPR };
+            case ParserRuleContext2.ORDER_KEY:
+                alternatives = new int[] {ParserRuleContext2.ASCENDING_KEYWORD,
+                        ParserRuleContext2.DESCENDING_KEYWORD, ParserRuleContext2.ORDER_KEY_LIST_END,
+                        ParserRuleContext2.BINARY_OPERATOR, ParserRuleContext2.DOT,
+                        ParserRuleContext2.ANNOT_CHAINING_TOKEN, ParserRuleContext2.OPTIONAL_CHAINING_TOKEN,
+                        ParserRuleContext2.CONDITIONAL_EXPRESSION, ParserRuleContext2.XML_NAVIGATE_EXPR,
+                        ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR };
                 break;
-            case QUERY_EXPRESSION:
-                alternatives = new ParserRuleContext[] { ParserRuleContext.BINARY_OPERATOR, ParserRuleContext.DOT,
-                        ParserRuleContext.ANNOT_CHAINING_TOKEN, ParserRuleContext.OPTIONAL_CHAINING_TOKEN,
-                        ParserRuleContext.CONDITIONAL_EXPRESSION, ParserRuleContext.XML_NAVIGATE_EXPR,
-                        ParserRuleContext.MEMBER_ACCESS_KEY_EXPR, ParserRuleContext.QUERY_PIPELINE_RHS };
+            case ParserRuleContext2.QUERY_EXPRESSION:
+                alternatives = new int[] { ParserRuleContext2.BINARY_OPERATOR, ParserRuleContext2.DOT,
+                        ParserRuleContext2.ANNOT_CHAINING_TOKEN, ParserRuleContext2.OPTIONAL_CHAINING_TOKEN,
+                        ParserRuleContext2.CONDITIONAL_EXPRESSION, ParserRuleContext2.XML_NAVIGATE_EXPR,
+                        ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR, ParserRuleContext2.QUERY_PIPELINE_RHS };
                 break;
             default:
                 if (isParameter(parentCtx)) {
-                    alternatives = new ParserRuleContext[] { ParserRuleContext.CLOSE_PARENTHESIS,
-                            ParserRuleContext.BINARY_OPERATOR, ParserRuleContext.DOT,
-                            ParserRuleContext.ANNOT_CHAINING_TOKEN, ParserRuleContext.OPTIONAL_CHAINING_TOKEN,
-                            ParserRuleContext.CONDITIONAL_EXPRESSION, ParserRuleContext.XML_NAVIGATE_EXPR,
-                            ParserRuleContext.MEMBER_ACCESS_KEY_EXPR, ParserRuleContext.COMMA };
+                    alternatives = new int[] { ParserRuleContext2.CLOSE_PARENTHESIS,
+                            ParserRuleContext2.BINARY_OPERATOR, ParserRuleContext2.DOT,
+                            ParserRuleContext2.ANNOT_CHAINING_TOKEN, ParserRuleContext2.OPTIONAL_CHAINING_TOKEN,
+                            ParserRuleContext2.CONDITIONAL_EXPRESSION, ParserRuleContext2.XML_NAVIGATE_EXPR,
+                            ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR, ParserRuleContext2.COMMA };
                 }
                 break;
         }
@@ -1974,44 +1977,44 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
             return seekInAlternativesPaths(lookahead, currentDepth, currentMatches, alternatives, isEntryPoint);
         }
 
-        ParserRuleContext nextContext;
-        if (parentCtx == ParserRuleContext.IF_BLOCK || parentCtx == ParserRuleContext.WHILE_BLOCK ||
-                parentCtx == ParserRuleContext.FOREACH_STMT) {
-            nextContext = ParserRuleContext.BLOCK_STMT;
-        } else if (isStatement(parentCtx) || parentCtx == ParserRuleContext.RECORD_FIELD ||
-                parentCtx == ParserRuleContext.OBJECT_MEMBER || parentCtx == ParserRuleContext.LISTENER_DECL ||
-                parentCtx == ParserRuleContext.CONSTANT_DECL) {
-            nextContext = ParserRuleContext.SEMICOLON;
-        } else if (parentCtx == ParserRuleContext.ANNOTATIONS) {
-            nextContext = ParserRuleContext.ANNOTATION_END;
-        } else if (parentCtx == ParserRuleContext.ARRAY_TYPE_DESCRIPTOR) {
-            nextContext = ParserRuleContext.CLOSE_BRACKET;
-        } else if (parentCtx == ParserRuleContext.INTERPOLATION) {
-            nextContext = ParserRuleContext.CLOSE_BRACE;
-        } else if (parentCtx == ParserRuleContext.BRACED_EXPR_OR_ANON_FUNC_PARAMS) {
-            nextContext = ParserRuleContext.CLOSE_PARENTHESIS;
-        } else if (parentCtx == ParserRuleContext.FUNC_DEF) {
+        int nextContext;
+        if (parentCtx == ParserRuleContext2.IF_BLOCK || parentCtx == ParserRuleContext2.WHILE_BLOCK ||
+                parentCtx == ParserRuleContext2.FOREACH_STMT) {
+            nextContext = ParserRuleContext2.BLOCK_STMT;
+        } else if (isStatement(parentCtx) || parentCtx == ParserRuleContext2.RECORD_FIELD ||
+                parentCtx == ParserRuleContext2.OBJECT_MEMBER || parentCtx == ParserRuleContext2.LISTENER_DECL ||
+                parentCtx == ParserRuleContext2.CONSTANT_DECL) {
+            nextContext = ParserRuleContext2.SEMICOLON;
+        } else if (parentCtx == ParserRuleContext2.ANNOTATIONS) {
+            nextContext = ParserRuleContext2.ANNOTATION_END;
+        } else if (parentCtx == ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR) {
+            nextContext = ParserRuleContext2.CLOSE_BRACKET;
+        } else if (parentCtx == ParserRuleContext2.INTERPOLATION) {
+            nextContext = ParserRuleContext2.CLOSE_BRACE;
+        } else if (parentCtx == ParserRuleContext2.BRACED_EXPR_OR_ANON_FUNC_PARAMS) {
+            nextContext = ParserRuleContext2.CLOSE_PARENTHESIS;
+        } else if (parentCtx == ParserRuleContext2.FUNC_DEF) {
             // expression bodied func in module level
-            nextContext = ParserRuleContext.SEMICOLON;
-        } else if (parentCtx == ParserRuleContext.ALTERNATE_WAIT_EXPRS) {
-            nextContext = ParserRuleContext.ALTERNATE_WAIT_EXPR_LIST_END;
-        } else if (parentCtx == ParserRuleContext.CONDITIONAL_EXPRESSION) {
-            nextContext = ParserRuleContext.COLON;
-        } else if (parentCtx == ParserRuleContext.ENUM_MEMBER_LIST) {
-            nextContext = ParserRuleContext.ENUM_MEMBER_END;
-        } else if (parentCtx == ParserRuleContext.MATCH_STMT) {
-            nextContext = ParserRuleContext.MATCH_BODY;
-        } else if (parentCtx == ParserRuleContext.MATCH_BODY) {
-            nextContext = ParserRuleContext.RIGHT_DOUBLE_ARROW;
+            nextContext = ParserRuleContext2.SEMICOLON;
+        } else if (parentCtx == ParserRuleContext2.ALTERNATE_WAIT_EXPRS) {
+            nextContext = ParserRuleContext2.ALTERNATE_WAIT_EXPR_LIST_END;
+        } else if (parentCtx == ParserRuleContext2.CONDITIONAL_EXPRESSION) {
+            nextContext = ParserRuleContext2.COLON;
+        } else if (parentCtx == ParserRuleContext2.ENUM_MEMBER_LIST) {
+            nextContext = ParserRuleContext2.ENUM_MEMBER_END;
+        } else if (parentCtx == ParserRuleContext2.MATCH_STMT) {
+            nextContext = ParserRuleContext2.MATCH_BODY;
+        } else if (parentCtx == ParserRuleContext2.MATCH_BODY) {
+            nextContext = ParserRuleContext2.RIGHT_DOUBLE_ARROW;
         } else {
-            throw new IllegalStateException(parentCtx.toString());
+            throw new IllegalStateException(String.valueOf(parentCtx));
         }
 
-        alternatives = new ParserRuleContext[] { ParserRuleContext.BINARY_OPERATOR, ParserRuleContext.IS_KEYWORD,
-                ParserRuleContext.DOT, ParserRuleContext.ANNOT_CHAINING_TOKEN,
-                ParserRuleContext.OPTIONAL_CHAINING_TOKEN, ParserRuleContext.CONDITIONAL_EXPRESSION,
-                ParserRuleContext.XML_NAVIGATE_EXPR, ParserRuleContext.MEMBER_ACCESS_KEY_EXPR,
-                ParserRuleContext.RIGHT_ARROW, ParserRuleContext.SYNC_SEND_TOKEN, nextContext };
+        alternatives = new int[] { ParserRuleContext2.BINARY_OPERATOR, ParserRuleContext2.IS_KEYWORD,
+                ParserRuleContext2.DOT, ParserRuleContext2.ANNOT_CHAINING_TOKEN,
+                ParserRuleContext2.OPTIONAL_CHAINING_TOKEN, ParserRuleContext2.CONDITIONAL_EXPRESSION,
+                ParserRuleContext2.XML_NAVIGATE_EXPR, ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR,
+                ParserRuleContext2.RIGHT_ARROW, ParserRuleContext2.SYNC_SEND_TOKEN, nextContext };
 
         if (allowFuncCall) {
             alternatives = modifyAlternativesWithArgListStart(alternatives);
@@ -2019,10 +2022,10 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
         return seekInAlternativesPaths(lookahead, currentDepth, currentMatches, alternatives, isEntryPoint);
     }
 
-    private ParserRuleContext[] modifyAlternativesWithArgListStart(ParserRuleContext[] alternatives) {
-        ParserRuleContext[] newAlternatives = new ParserRuleContext[alternatives.length + 1];
+    private int[] modifyAlternativesWithArgListStart(int[] alternatives) {
+        int[] newAlternatives = new int[alternatives.length + 1];
         System.arraycopy(alternatives, 0, newAlternatives, 0, alternatives.length);
-        newAlternatives[alternatives.length] = ParserRuleContext.ARG_LIST_START;
+        newAlternatives[alternatives.length] = ParserRuleContext2.ARG_LIST_START;
         return newAlternatives;
     }
 
@@ -2034,880 +2037,880 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @return Next parser context
      */
     @Override
-    protected ParserRuleContext getNextRule(ParserRuleContext currentCtx, int nextLookahead) {
+    protected int getNextRule(int currentCtx, int nextLookahead) {
         // If this is a production, then push the context to the stack.
-        // We can do this within the same switch-case that follows after this one.
+        // We can do this within the same switch-case ParserRuleContext2.that follows after this one.
         // But doing it separately for the sake of readability/maintainability.
         startContextIfRequired(currentCtx);
 
-        ParserRuleContext parentCtx;
+        int parentCtx;
         STToken nextToken;
         switch (currentCtx) {
-            case EOF:
-                return ParserRuleContext.EOF;
-            case COMP_UNIT:
-                return ParserRuleContext.TOP_LEVEL_NODE;
-            case FUNC_DEF:
-            case FUNC_DEF_OR_FUNC_TYPE:
-            case FUNC_TYPE_DESC:
-            case ANON_FUNC_EXPRESSION:
-                return ParserRuleContext.FUNCTION_KEYWORD;
-            case EXTERNAL_FUNC_BODY:
-                return ParserRuleContext.ASSIGN_OP;
-            case FUNC_BODY_BLOCK:
-                return ParserRuleContext.OPEN_BRACE;
-            case STATEMENT:
-            case STATEMENT_WITHOUT_ANNOTS:
+            case ParserRuleContext2.EOF:
+                return ParserRuleContext2.EOF;
+            case ParserRuleContext2.COMP_UNIT:
+                return ParserRuleContext2.TOP_LEVEL_NODE;
+            case ParserRuleContext2.FUNC_DEF:
+            case ParserRuleContext2.FUNC_DEF_OR_FUNC_TYPE:
+            case ParserRuleContext2.FUNC_TYPE_DESC:
+            case ParserRuleContext2.ANON_FUNC_EXPRESSION:
+                return ParserRuleContext2.FUNCTION_KEYWORD;
+            case ParserRuleContext2.EXTERNAL_FUNC_BODY:
+                return ParserRuleContext2.ASSIGN_OP;
+            case ParserRuleContext2.FUNC_BODY_BLOCK:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.STATEMENT:
+            case ParserRuleContext2.STATEMENT_WITHOUT_ANNOTS:
                 // We reach here only if an end of a block is reached.
                 endContext(); // end statement
-                return ParserRuleContext.CLOSE_BRACE;
-            case ASSIGN_OP:
+                return ParserRuleContext2.CLOSE_BRACE;
+            case ParserRuleContext2.ASSIGN_OP:
                 return getNextRuleForEqualOp();
-            case COMPOUND_BINARY_OPERATOR:
-                return ParserRuleContext.ASSIGN_OP;
-            case CLOSE_BRACE:
+            case ParserRuleContext2.COMPOUND_BINARY_OPERATOR:
+                return ParserRuleContext2.ASSIGN_OP;
+            case ParserRuleContext2.CLOSE_BRACE:
                 return getNextRuleForCloseBrace(nextLookahead);
-            case CLOSE_PARENTHESIS:
+            case ParserRuleContext2.CLOSE_PARENTHESIS:
                 return getNextRuleForCloseParenthsis();
-            case EXPRESSION:
-            case BASIC_LITERAL:
-            case TERMINAL_EXPRESSION:
+            case ParserRuleContext2.EXPRESSION:
+            case ParserRuleContext2.BASIC_LITERAL:
+            case ParserRuleContext2.TERMINAL_EXPRESSION:
                 return getNextRuleForExpr();
-            case FUNC_NAME:
-                return ParserRuleContext.OPEN_PARENTHESIS;
-            case OPEN_BRACE:
+            case ParserRuleContext2.FUNC_NAME:
+                return ParserRuleContext2.OPEN_PARENTHESIS;
+            case ParserRuleContext2.OPEN_BRACE:
                 return getNextRuleForOpenBrace(nextLookahead);
-            case OPEN_PARENTHESIS:
+            case ParserRuleContext2.OPEN_PARENTHESIS:
                 return getNextRuleForOpenParenthesis();
-            case SEMICOLON:
+            case ParserRuleContext2.SEMICOLON:
                 return getNextRuleForSemicolon(nextLookahead);
-            case SIMPLE_TYPE_DESCRIPTOR:
-                return ParserRuleContext.TYPEDESC_RHS;
-            case VARIABLE_NAME:
-            case PARAMETER_NAME_RHS:
+            case ParserRuleContext2.SIMPLE_TYPE_DESCRIPTOR:
+                return ParserRuleContext2.TYPEDESC_RHS;
+            case ParserRuleContext2.VARIABLE_NAME:
+            case ParserRuleContext2.PARAMETER_NAME_RHS:
                 return getNextRuleForVarName();
-            case TOP_LEVEL_NODE_WITHOUT_MODIFIER:
-                return ParserRuleContext.FUNC_DEF_OR_FUNC_TYPE;
-            case REQUIRED_PARAM:
-            case DEFAULTABLE_PARAM:
-            case REST_PARAM:
-                return ParserRuleContext.TYPE_DESC_IN_PARAM;
-            case ASSIGNMENT_STMT:
-                return ParserRuleContext.VARIABLE_NAME;
-            case COMPOUND_ASSIGNMENT_STMT:
-                return ParserRuleContext.VARIABLE_NAME;
-            case VAR_DECL_STMT:
-                return ParserRuleContext.TYPE_DESC_IN_TYPE_BINDING_PATTERN;
-            case EXPRESSION_RHS:
-                return ParserRuleContext.BINARY_OPERATOR;
-            case BINARY_OPERATOR:
-                return ParserRuleContext.EXPRESSION;
-            case COMMA:
+            case ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_MODIFIER:
+                return ParserRuleContext2.FUNC_DEF_OR_FUNC_TYPE;
+            case ParserRuleContext2.REQUIRED_PARAM:
+            case ParserRuleContext2.DEFAULTABLE_PARAM:
+            case ParserRuleContext2.REST_PARAM:
+                return ParserRuleContext2.TYPE_DESC_IN_PARAM;
+            case ParserRuleContext2.ASSIGNMENT_STMT:
+                return ParserRuleContext2.VARIABLE_NAME;
+            case ParserRuleContext2.COMPOUND_ASSIGNMENT_STMT:
+                return ParserRuleContext2.VARIABLE_NAME;
+            case ParserRuleContext2.VAR_DECL_STMT:
+                return ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN;
+            case ParserRuleContext2.EXPRESSION_RHS:
+                return ParserRuleContext2.BINARY_OPERATOR;
+            case ParserRuleContext2.BINARY_OPERATOR:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.COMMA:
                 return getNextRuleForComma();
-            case AFTER_PARAMETER_TYPE:
+            case ParserRuleContext2.AFTER_PARAMETER_TYPE:
                 return getNextRuleForParamType();
-            case MODULE_TYPE_DEFINITION:
-                return ParserRuleContext.TYPE_KEYWORD;
-            case CLOSED_RECORD_BODY_END:
+            case ParserRuleContext2.MODULE_TYPE_DEFINITION:
+                return ParserRuleContext2.TYPE_KEYWORD;
+            case ParserRuleContext2.CLOSED_RECORD_BODY_END:
                 endContext();
                 nextToken = this.tokenReader.peek(nextLookahead);
-                if (nextToken.kind == SyntaxKind.EOF_TOKEN) {
-                    return ParserRuleContext.EOF;
+                if (nextToken.kind == SyntaxKind2.EOF_TOKEN) {
+                    return ParserRuleContext2.EOF;
                 }
-                return ParserRuleContext.TYPEDESC_RHS;
-            case CLOSED_RECORD_BODY_START:
-                return ParserRuleContext.RECORD_FIELD_OR_RECORD_END;
-            case ELLIPSIS:
+                return ParserRuleContext2.TYPEDESC_RHS;
+            case ParserRuleContext2.CLOSED_RECORD_BODY_START:
+                return ParserRuleContext2.RECORD_FIELD_OR_RECORD_END;
+            case ParserRuleContext2.ELLIPSIS:
                 parentCtx = getParentContext();
                 switch (parentCtx) {
-                    case MAPPING_CONSTRUCTOR:
-                    case ARG_LIST:
-                        return ParserRuleContext.EXPRESSION;
-                    case TYPE_DESC_IN_TUPLE:
-                    case STMT_START_BRACKETED_LIST:
-                    case BRACKETED_LIST:
-                        return ParserRuleContext.CLOSE_BRACKET;
-                    case REST_MATCH_PATTERN:
-                        return ParserRuleContext.VAR_KEYWORD;
+                    case ParserRuleContext2.MAPPING_CONSTRUCTOR:
+                    case ParserRuleContext2.ARG_LIST:
+                        return ParserRuleContext2.EXPRESSION;
+                    case ParserRuleContext2.TYPE_DESC_IN_TUPLE:
+                    case ParserRuleContext2.STMT_START_BRACKETED_LIST:
+                    case ParserRuleContext2.BRACKETED_LIST:
+                        return ParserRuleContext2.CLOSE_BRACKET;
+                    case ParserRuleContext2.REST_MATCH_PATTERN:
+                        return ParserRuleContext2.VAR_KEYWORD;
                     default:
-                        return ParserRuleContext.VARIABLE_NAME;
+                        return ParserRuleContext2.VARIABLE_NAME;
                 }
-            case QUESTION_MARK:
+            case ParserRuleContext2.QUESTION_MARK:
                 return getNextRuleForQuestionMark();
-            case RECORD_TYPE_DESCRIPTOR:
-                return ParserRuleContext.RECORD_KEYWORD;
-            case ASTERISK:
+            case ParserRuleContext2.RECORD_TYPE_DESCRIPTOR:
+                return ParserRuleContext2.RECORD_KEYWORD;
+            case ParserRuleContext2.ASTERISK:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.ARRAY_TYPE_DESCRIPTOR) {
-                    return ParserRuleContext.CLOSE_BRACKET;
-                } else if (parentCtx == ParserRuleContext.XML_ATOMIC_NAME_PATTERN) {
+                if (parentCtx == ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR) {
+                    return ParserRuleContext2.CLOSE_BRACKET;
+                } else if (parentCtx == ParserRuleContext2.XML_ATOMIC_NAME_PATTERN) {
                     endContext();
-                    return ParserRuleContext.XML_NAME_PATTERN_RHS;
+                    return ParserRuleContext2.XML_NAME_PATTERN_RHS;
                 }
-                return ParserRuleContext.TYPE_REFERENCE;
-            case TYPE_NAME:
-                return ParserRuleContext.TYPE_DESC_IN_TYPE_DEF;
-            case OBJECT_TYPE_DESCRIPTOR:
-                return ParserRuleContext.OBJECT_TYPE_DESCRIPTOR_START;
-            case OBJECT_TYPE_QUALIFIER:
-                return ParserRuleContext.OBJECT_KEYWORD;
-            case OPEN_BRACKET:
+                return ParserRuleContext2.TYPE_REFERENCE;
+            case ParserRuleContext2.TYPE_NAME:
+                return ParserRuleContext2.TYPE_DESC_IN_TYPE_DEF;
+            case ParserRuleContext2.OBJECT_TYPE_DESCRIPTOR:
+                return ParserRuleContext2.OBJECT_TYPE_DESCRIPTOR_START;
+            case ParserRuleContext2.OBJECT_TYPE_QUALIFIER:
+                return ParserRuleContext2.OBJECT_KEYWORD;
+            case ParserRuleContext2.OPEN_BRACKET:
                 return getNextRuleForOpenBracket();
-            case CLOSE_BRACKET:
+            case ParserRuleContext2.CLOSE_BRACKET:
                 return getNextRuleForCloseBracket();
-            case DOT:
+            case ParserRuleContext2.DOT:
                 return getNextRuleForDot();
-            case BLOCK_STMT:
-                return ParserRuleContext.OPEN_BRACE;
-            case IF_BLOCK:
-                return ParserRuleContext.IF_KEYWORD;
-            case WHILE_BLOCK:
-                return ParserRuleContext.WHILE_KEYWORD;
-            case CALL_STMT:
-                return ParserRuleContext.CALL_STMT_START;
-            case PANIC_STMT:
-                return ParserRuleContext.PANIC_KEYWORD;
-            case FUNC_CALL:
+            case ParserRuleContext2.BLOCK_STMT:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.IF_BLOCK:
+                return ParserRuleContext2.IF_KEYWORD;
+            case ParserRuleContext2.WHILE_BLOCK:
+                return ParserRuleContext2.WHILE_KEYWORD;
+            case ParserRuleContext2.CALL_STMT:
+                return ParserRuleContext2.CALL_STMT_START;
+            case ParserRuleContext2.PANIC_STMT:
+                return ParserRuleContext2.PANIC_KEYWORD;
+            case ParserRuleContext2.FUNC_CALL:
                 // TODO: check this again
-                return ParserRuleContext.IMPORT_PREFIX;
-            case IMPORT_PREFIX:
-            case NAMESPACE_PREFIX:
-                return ParserRuleContext.SEMICOLON;
-            case VERSION_NUMBER:
-            case VERSION_KEYWORD:
-                return ParserRuleContext.MAJOR_VERSION;
-            case SLASH:
-                return ParserRuleContext.IMPORT_MODULE_NAME;
-            case IMPORT_ORG_OR_MODULE_NAME:
-                return ParserRuleContext.IMPORT_DECL_RHS;
-            case IMPORT_MODULE_NAME:
-                return ParserRuleContext.AFTER_IMPORT_MODULE_NAME;
-            case MAJOR_VERSION:
-            case MINOR_VERSION:
-            case IMPORT_SUB_VERSION:
-                return ParserRuleContext.MAJOR_MINOR_VERSION_END;
-            case PATCH_VERSION:
-                return ParserRuleContext.IMPORT_PREFIX_DECL;
-            case IMPORT_DECL:
-                return ParserRuleContext.IMPORT_KEYWORD;
-            case CONTINUE_STATEMENT:
-                return ParserRuleContext.CONTINUE_KEYWORD;
-            case BREAK_STATEMENT:
-                return ParserRuleContext.BREAK_KEYWORD;
-            case RETURN_STMT:
-                return ParserRuleContext.RETURN_KEYWORD;
-            case ACCESS_EXPRESSION:
-                return ParserRuleContext.VARIABLE_REF;
-            case MAPPING_FIELD_NAME:
-                return ParserRuleContext.SPECIFIC_FIELD_RHS;
-            case COLON:
+                return ParserRuleContext2.IMPORT_PREFIX;
+            case ParserRuleContext2.IMPORT_PREFIX:
+            case ParserRuleContext2.NAMESPACE_PREFIX:
+                return ParserRuleContext2.SEMICOLON;
+            case ParserRuleContext2.VERSION_NUMBER:
+            case ParserRuleContext2.VERSION_KEYWORD:
+                return ParserRuleContext2.MAJOR_VERSION;
+            case ParserRuleContext2.SLASH:
+                return ParserRuleContext2.IMPORT_MODULE_NAME;
+            case ParserRuleContext2.IMPORT_ORG_OR_MODULE_NAME:
+                return ParserRuleContext2.IMPORT_DECL_RHS;
+            case ParserRuleContext2.IMPORT_MODULE_NAME:
+                return ParserRuleContext2.AFTER_IMPORT_MODULE_NAME;
+            case ParserRuleContext2.MAJOR_VERSION:
+            case ParserRuleContext2.MINOR_VERSION:
+            case ParserRuleContext2.IMPORT_SUB_VERSION:
+                return ParserRuleContext2.MAJOR_MINOR_VERSION_END;
+            case ParserRuleContext2.PATCH_VERSION:
+                return ParserRuleContext2.IMPORT_PREFIX_DECL;
+            case ParserRuleContext2.IMPORT_DECL:
+                return ParserRuleContext2.IMPORT_KEYWORD;
+            case ParserRuleContext2.CONTINUE_STATEMENT:
+                return ParserRuleContext2.CONTINUE_KEYWORD;
+            case ParserRuleContext2.BREAK_STATEMENT:
+                return ParserRuleContext2.BREAK_KEYWORD;
+            case ParserRuleContext2.RETURN_STMT:
+                return ParserRuleContext2.RETURN_KEYWORD;
+            case ParserRuleContext2.ACCESS_EXPRESSION:
+                return ParserRuleContext2.VARIABLE_REF;
+            case ParserRuleContext2.MAPPING_FIELD_NAME:
+                return ParserRuleContext2.SPECIFIC_FIELD_RHS;
+            case ParserRuleContext2.COLON:
                 return getNextRuleForColon();
-            case STRING_LITERAL:
+            case ParserRuleContext2.STRING_LITERAL:
                 // We assume string literal is specifically used only in the mapping constructor key.
-                return ParserRuleContext.COLON;
-            case COMPUTED_FIELD_NAME:
-                return ParserRuleContext.OPEN_BRACKET;
-            case LISTENERS_LIST:
-                return ParserRuleContext.EXPRESSION;
-            case SERVICE_DECL:
-                return ParserRuleContext.SERVICE_KEYWORD;
-            case SERVICE_NAME:
-                return ParserRuleContext.ON_KEYWORD;
-            case LISTENER_DECL:
-                return ParserRuleContext.LISTENER_KEYWORD;
-            case CONSTANT_DECL:
-                return ParserRuleContext.CONST_KEYWORD;
-            case CONST_DECL_TYPE:
-                return ParserRuleContext.CONST_DECL_RHS;
-            case NIL_TYPE_DESCRIPTOR:
-                return ParserRuleContext.OPEN_PARENTHESIS;
-            case TYPEOF_EXPRESSION:
-                return ParserRuleContext.TYPEOF_KEYWORD;
-            case OPTIONAL_TYPE_DESCRIPTOR:
-                return ParserRuleContext.QUESTION_MARK;
-            case UNARY_EXPRESSION:
-                return ParserRuleContext.UNARY_OPERATOR;
-            case UNARY_OPERATOR:
-                return ParserRuleContext.EXPRESSION;
-            case ARRAY_TYPE_DESCRIPTOR:
-                return ParserRuleContext.OPEN_BRACKET;
-            case ARRAY_LENGTH:
-                return ParserRuleContext.CLOSE_BRACKET;
-            case AT:
-                return ParserRuleContext.ANNOT_REFERENCE;
-            case DOC_STRING:
-                return ParserRuleContext.ANNOTATIONS;
-            case ANNOTATIONS:
-                return ParserRuleContext.AT;
-            case MAPPING_CONSTRUCTOR:
-                return ParserRuleContext.OPEN_BRACE;
-            case VARIABLE_REF:
-            case TYPE_REFERENCE:
-            case ANNOT_REFERENCE:
-            case FIELD_ACCESS_IDENTIFIER:
-                return ParserRuleContext.QUALIFIED_IDENTIFIER;
-            case QUALIFIED_IDENTIFIER:
-            case XML_ATOMIC_NAME_IDENTIFIER:
+                return ParserRuleContext2.COLON;
+            case ParserRuleContext2.COMPUTED_FIELD_NAME:
+                return ParserRuleContext2.OPEN_BRACKET;
+            case ParserRuleContext2.LISTENERS_LIST:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.SERVICE_DECL:
+                return ParserRuleContext2.SERVICE_KEYWORD;
+            case ParserRuleContext2.SERVICE_NAME:
+                return ParserRuleContext2.ON_KEYWORD;
+            case ParserRuleContext2.LISTENER_DECL:
+                return ParserRuleContext2.LISTENER_KEYWORD;
+            case ParserRuleContext2.CONSTANT_DECL:
+                return ParserRuleContext2.CONST_KEYWORD;
+            case ParserRuleContext2.CONST_DECL_TYPE:
+                return ParserRuleContext2.CONST_DECL_RHS;
+            case ParserRuleContext2.NIL_TYPE_DESCRIPTOR:
+                return ParserRuleContext2.OPEN_PARENTHESIS;
+            case ParserRuleContext2.TYPEOF_EXPRESSION:
+                return ParserRuleContext2.TYPEOF_KEYWORD;
+            case ParserRuleContext2.OPTIONAL_TYPE_DESCRIPTOR:
+                return ParserRuleContext2.QUESTION_MARK;
+            case ParserRuleContext2.UNARY_EXPRESSION:
+                return ParserRuleContext2.UNARY_OPERATOR;
+            case ParserRuleContext2.UNARY_OPERATOR:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR:
+                return ParserRuleContext2.OPEN_BRACKET;
+            case ParserRuleContext2.ARRAY_LENGTH:
+                return ParserRuleContext2.CLOSE_BRACKET;
+            case ParserRuleContext2.AT:
+                return ParserRuleContext2.ANNOT_REFERENCE;
+            case ParserRuleContext2.DOC_STRING:
+                return ParserRuleContext2.ANNOTATIONS;
+            case ParserRuleContext2.ANNOTATIONS:
+                return ParserRuleContext2.AT;
+            case ParserRuleContext2.MAPPING_CONSTRUCTOR:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.VARIABLE_REF:
+            case ParserRuleContext2.TYPE_REFERENCE:
+            case ParserRuleContext2.ANNOT_REFERENCE:
+            case ParserRuleContext2.FIELD_ACCESS_IDENTIFIER:
+                return ParserRuleContext2.QUALIFIED_IDENTIFIER;
+            case ParserRuleContext2.QUALIFIED_IDENTIFIER:
+            case ParserRuleContext2.XML_ATOMIC_NAME_IDENTIFIER:
                 nextToken = this.tokenReader.peek(nextLookahead);
-                if (nextToken.kind == SyntaxKind.COLON_TOKEN) {
-                    return ParserRuleContext.COLON;
+                if (nextToken.kind == SyntaxKind2.COLON_TOKEN) {
+                    return ParserRuleContext2.COLON;
                 }
                 // Else this is a simple identifier. Hence fall through.
-            case IDENTIFIER:
+            case ParserRuleContext2.IDENTIFIER:
                 return getNextRuleForIdentifier();
-            case NIL_LITERAL:
-                return ParserRuleContext.OPEN_PARENTHESIS;
-            case LOCAL_TYPE_DEFINITION_STMT:
-                return ParserRuleContext.TYPE_KEYWORD;
-            case RIGHT_ARROW:
-                return ParserRuleContext.EXPRESSION;
-            case DECIMAL_INTEGER_LITERAL:
-            case HEX_INTEGER_LITERAL:
-            case TYPE_NAME_OR_VAR_NAME:
+            case ParserRuleContext2.NIL_LITERAL:
+                return ParserRuleContext2.OPEN_PARENTHESIS;
+            case ParserRuleContext2.LOCAL_TYPE_DEFINITION_STMT:
+                return ParserRuleContext2.TYPE_KEYWORD;
+            case ParserRuleContext2.RIGHT_ARROW:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.DECIMAL_INTEGER_LITERAL:
+            case ParserRuleContext2.HEX_INTEGER_LITERAL:
+            case ParserRuleContext2.TYPE_NAME_OR_VAR_NAME:
                 return getNextRuleForDecimalIntegerLiteral();
-            case EXPRESSION_STATEMENT:
-                return ParserRuleContext.EXPRESSION_STATEMENT_START;
-            case MAP_KEYWORD:
-            case FUTURE_KEYWORD:
-            case LOCK_STMT:
-                return ParserRuleContext.LOCK_KEYWORD;
-            case LOCK_KEYWORD:
-                return ParserRuleContext.BLOCK_STMT;
-            case RECORD_FIELD:
-                return ParserRuleContext.RECORD_FIELD_START;
-            case ANNOTATION_TAG:
-                return ParserRuleContext.ANNOT_OPTIONAL_ATTACH_POINTS;
-            case ANNOT_ATTACH_POINTS_LIST:
-                return ParserRuleContext.ATTACH_POINT;
-            case FIELD_IDENT:
-            case FUNCTION_IDENT:
-            case IDENT_AFTER_OBJECT_IDENT:
-            case SINGLE_KEYWORD_ATTACH_POINT_IDENT:
-            case ATTACH_POINT:
-                return ParserRuleContext.ATTACH_POINT_END;
-            case RECORD_FIELD_OR_RECORD_END:
-                return ParserRuleContext.RECORD_BODY_END;
-            case OBJECT_IDENT:
-                return ParserRuleContext.IDENT_AFTER_OBJECT_IDENT;
-            case RECORD_IDENT:
-                return ParserRuleContext.FIELD_IDENT;
-            case RESOURCE_IDENT:
-                return ParserRuleContext.FUNCTION_IDENT;
-            case ANNOTATION_DECL:
-                return ParserRuleContext.ANNOTATION_KEYWORD;
-            case XML_NAMESPACE_DECLARATION:
-                return ParserRuleContext.XMLNS_KEYWORD;
-            case CONSTANT_EXPRESSION:
-                return ParserRuleContext.CONSTANT_EXPRESSION_START;
-            case XML_NAMESPACE_PREFIX_DECL:
-                return ParserRuleContext.SEMICOLON;
-            case NAMED_WORKER_DECL:
-                return ParserRuleContext.WORKER_KEYWORD;
-            case WORKER_NAME:
-                return ParserRuleContext.WORKER_NAME_RHS;
-            case FORK_STMT:
-                return ParserRuleContext.FORK_KEYWORD;
-            case SERVICE_CONSTRUCTOR_EXPRESSION:
-                return ParserRuleContext.SERVICE_KEYWORD;
-            case XML_FILTER_EXPR:
-                return ParserRuleContext.DOT_LT_TOKEN;
-            case DOT_LT_TOKEN:
-                return ParserRuleContext.XML_NAME_PATTERN;
-            case XML_NAME_PATTERN:
-                return ParserRuleContext.XML_ATOMIC_NAME_PATTERN;
-            case XML_ATOMIC_NAME_PATTERN:
-                return ParserRuleContext.XML_ATOMIC_NAME_PATTERN_START;
-            case XML_STEP_EXPR:
-                return ParserRuleContext.XML_STEP_START;
-            case SLASH_ASTERISK_TOKEN:
-                return ParserRuleContext.EXPRESSION_RHS;
-            case DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN:
-            case SLASH_LT_TOKEN:
-                return ParserRuleContext.XML_NAME_PATTERN;
+            case ParserRuleContext2.EXPRESSION_STATEMENT:
+                return ParserRuleContext2.EXPRESSION_STATEMENT_START;
+            case ParserRuleContext2.MAP_KEYWORD:
+            case ParserRuleContext2.FUTURE_KEYWORD:
+            case ParserRuleContext2.LOCK_STMT:
+                return ParserRuleContext2.LOCK_KEYWORD;
+            case ParserRuleContext2.LOCK_KEYWORD:
+                return ParserRuleContext2.BLOCK_STMT;
+            case ParserRuleContext2.RECORD_FIELD:
+                return ParserRuleContext2.RECORD_FIELD_START;
+            case ParserRuleContext2.ANNOTATION_TAG:
+                return ParserRuleContext2.ANNOT_OPTIONAL_ATTACH_POINTS;
+            case ParserRuleContext2.ANNOT_ATTACH_POINTS_LIST:
+                return ParserRuleContext2.ATTACH_POINT;
+            case ParserRuleContext2.FIELD_IDENT:
+            case ParserRuleContext2.FUNCTION_IDENT:
+            case ParserRuleContext2.IDENT_AFTER_OBJECT_IDENT:
+            case ParserRuleContext2.SINGLE_KEYWORD_ATTACH_POINT_IDENT:
+            case ParserRuleContext2.ATTACH_POINT:
+                return ParserRuleContext2.ATTACH_POINT_END;
+            case ParserRuleContext2.RECORD_FIELD_OR_RECORD_END:
+                return ParserRuleContext2.RECORD_BODY_END;
+            case ParserRuleContext2.OBJECT_IDENT:
+                return ParserRuleContext2.IDENT_AFTER_OBJECT_IDENT;
+            case ParserRuleContext2.RECORD_IDENT:
+                return ParserRuleContext2.FIELD_IDENT;
+            case ParserRuleContext2.RESOURCE_IDENT:
+                return ParserRuleContext2.FUNCTION_IDENT;
+            case ParserRuleContext2.ANNOTATION_DECL:
+                return ParserRuleContext2.ANNOTATION_KEYWORD;
+            case ParserRuleContext2.XML_NAMESPACE_DECLARATION:
+                return ParserRuleContext2.XMLNS_KEYWORD;
+            case ParserRuleContext2.CONSTANT_EXPRESSION:
+                return ParserRuleContext2.CONSTANT_EXPRESSION_START;
+            case ParserRuleContext2.XML_NAMESPACE_PREFIX_DECL:
+                return ParserRuleContext2.SEMICOLON;
+            case ParserRuleContext2.NAMED_WORKER_DECL:
+                return ParserRuleContext2.WORKER_KEYWORD;
+            case ParserRuleContext2.WORKER_NAME:
+                return ParserRuleContext2.WORKER_NAME_RHS;
+            case ParserRuleContext2.FORK_STMT:
+                return ParserRuleContext2.FORK_KEYWORD;
+            case ParserRuleContext2.SERVICE_CONSTRUCTOR_EXPRESSION:
+                return ParserRuleContext2.SERVICE_KEYWORD;
+            case ParserRuleContext2.XML_FILTER_EXPR:
+                return ParserRuleContext2.DOT_LT_TOKEN;
+            case ParserRuleContext2.DOT_LT_TOKEN:
+                return ParserRuleContext2.XML_NAME_PATTERN;
+            case ParserRuleContext2.XML_NAME_PATTERN:
+                return ParserRuleContext2.XML_ATOMIC_NAME_PATTERN;
+            case ParserRuleContext2.XML_ATOMIC_NAME_PATTERN:
+                return ParserRuleContext2.XML_ATOMIC_NAME_PATTERN_START;
+            case ParserRuleContext2.XML_STEP_EXPR:
+                return ParserRuleContext2.XML_STEP_START;
+            case ParserRuleContext2.SLASH_ASTERISK_TOKEN:
+                return ParserRuleContext2.EXPRESSION_RHS;
+            case ParserRuleContext2.DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN:
+            case ParserRuleContext2.SLASH_LT_TOKEN:
+                return ParserRuleContext2.XML_NAME_PATTERN;
             default:
                 return getNextRuleInternal(currentCtx, nextLookahead);
 
         }
     }
 
-    private ParserRuleContext getNextRuleInternal(ParserRuleContext currentCtx, int nextLookahead) {
-        ParserRuleContext parentCtx;
+    private int getNextRuleInternal(int currentCtx, int nextLookahead) {
+        int parentCtx;
         switch (currentCtx) {
-            case LIST_CONSTRUCTOR:
-                return ParserRuleContext.OPEN_BRACKET;
-            case FOREACH_STMT:
-                return ParserRuleContext.FOREACH_KEYWORD;
-            case TYPE_CAST:
-                return ParserRuleContext.LT;
-            case PIPE:
+            case ParserRuleContext2.LIST_CONSTRUCTOR:
+                return ParserRuleContext2.OPEN_BRACKET;
+            case ParserRuleContext2.FOREACH_STMT:
+                return ParserRuleContext2.FOREACH_KEYWORD;
+            case ParserRuleContext2.TYPE_CAST:
+                return ParserRuleContext2.LT;
+            case ParserRuleContext2.PIPE:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.ALTERNATE_WAIT_EXPRS) {
-                    return ParserRuleContext.EXPRESSION;
-                } else if (parentCtx == ParserRuleContext.XML_NAME_PATTERN) {
-                    return ParserRuleContext.XML_ATOMIC_NAME_PATTERN;
-                } else if (parentCtx == ParserRuleContext.MATCH_PATTERN) {
-                    return ParserRuleContext.MATCH_PATTERN_START;
+                if (parentCtx == ParserRuleContext2.ALTERNATE_WAIT_EXPRS) {
+                    return ParserRuleContext2.EXPRESSION;
+                } else if (parentCtx == ParserRuleContext2.XML_NAME_PATTERN) {
+                    return ParserRuleContext2.XML_ATOMIC_NAME_PATTERN;
+                } else if (parentCtx == ParserRuleContext2.MATCH_PATTERN) {
+                    return ParserRuleContext2.MATCH_PATTERN_START;
                 }
-                return ParserRuleContext.TYPE_DESCRIPTOR;
-            case TABLE_CONSTRUCTOR:
-                return ParserRuleContext.OPEN_BRACKET;
-            case KEY_SPECIFIER:
-                return ParserRuleContext.KEY_KEYWORD;
-            case ERROR_TYPE_PARAM_START:
-                return ParserRuleContext.ERROR_TYPE_PARAMS;
-            case LET_EXPRESSION:
-                return ParserRuleContext.LET_KEYWORD;
-            case LET_EXPR_LET_VAR_DECL:
-            case LET_CLAUSE_LET_VAR_DECL:
-                return ParserRuleContext.LET_VAR_DECL_START;
-            case ORDER_KEY:
-                return ParserRuleContext.EXPRESSION;
-            case END_OF_TYPE_DESC:
+                return ParserRuleContext2.TYPE_DESCRIPTOR;
+            case ParserRuleContext2.TABLE_CONSTRUCTOR:
+                return ParserRuleContext2.OPEN_BRACKET;
+            case ParserRuleContext2.KEY_SPECIFIER:
+                return ParserRuleContext2.KEY_KEYWORD;
+            case ParserRuleContext2.ERROR_TYPE_PARAM_START:
+                return ParserRuleContext2.ERROR_TYPE_PARAMS;
+            case ParserRuleContext2.LET_EXPRESSION:
+                return ParserRuleContext2.LET_KEYWORD;
+            case ParserRuleContext2.LET_EXPR_LET_VAR_DECL:
+            case ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL:
+                return ParserRuleContext2.LET_VAR_DECL_START;
+            case ParserRuleContext2.ORDER_KEY:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.END_OF_TYPE_DESC:
                 return getNextRuleForTypeDescriptor();
-            case TYPED_BINDING_PATTERN:
-                return ParserRuleContext.TYPE_DESCRIPTOR;
-            case BINDING_PATTERN_STARTING_IDENTIFIER:
-                return ParserRuleContext.VARIABLE_NAME;
-            case REST_BINDING_PATTERN:
-                return ParserRuleContext.ELLIPSIS;
-            case LIST_BINDING_PATTERN:
-                return ParserRuleContext.OPEN_BRACKET;
-            case MAPPING_BINDING_PATTERN:
-                return ParserRuleContext.OPEN_BRACE;
-            case FIELD_BINDING_PATTERN:
-                return ParserRuleContext.FIELD_BINDING_PATTERN_NAME;
-            case FIELD_BINDING_PATTERN_NAME:
-                return ParserRuleContext.FIELD_BINDING_PATTERN_END;
-            case PARAMETERIZED_TYPE:
-                return ParserRuleContext.LT;
-            case LT:
+            case ParserRuleContext2.TYPED_BINDING_PATTERN:
+                return ParserRuleContext2.TYPE_DESCRIPTOR;
+            case ParserRuleContext2.BINDING_PATTERN_STARTING_IDENTIFIER:
+                return ParserRuleContext2.VARIABLE_NAME;
+            case ParserRuleContext2.REST_BINDING_PATTERN:
+                return ParserRuleContext2.ELLIPSIS;
+            case ParserRuleContext2.LIST_BINDING_PATTERN:
+                return ParserRuleContext2.OPEN_BRACKET;
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.FIELD_BINDING_PATTERN:
+                return ParserRuleContext2.FIELD_BINDING_PATTERN_NAME;
+            case ParserRuleContext2.FIELD_BINDING_PATTERN_NAME:
+                return ParserRuleContext2.FIELD_BINDING_PATTERN_END;
+            case ParserRuleContext2.PARAMETERIZED_TYPE:
+                return ParserRuleContext2.LT;
+            case ParserRuleContext2.LT:
                 return getNextRuleForLt();
-            case GT:
+            case ParserRuleContext2.GT:
                 return getNextRuleForGt(nextLookahead);
-            case TEMPLATE_END:
-                return ParserRuleContext.EXPRESSION_RHS;
-            case TEMPLATE_START:
-                return ParserRuleContext.TEMPLATE_BODY;
-            case TEMPLATE_BODY:
-                return ParserRuleContext.TEMPLATE_MEMBER;
-            case TEMPLATE_STRING:
-                return ParserRuleContext.TEMPLATE_STRING_RHS;
-            case INTERPOLATION_START_TOKEN:
-                return ParserRuleContext.EXPRESSION;
-            case ARG_LIST_START:
-                return ParserRuleContext.ARG_LIST;
-            case ARG_LIST_END:
-            case QUERY_EXPRESSION_END:
+            case ParserRuleContext2.TEMPLATE_END:
+                return ParserRuleContext2.EXPRESSION_RHS;
+            case ParserRuleContext2.TEMPLATE_START:
+                return ParserRuleContext2.TEMPLATE_BODY;
+            case ParserRuleContext2.TEMPLATE_BODY:
+                return ParserRuleContext2.TEMPLATE_MEMBER;
+            case ParserRuleContext2.TEMPLATE_STRING:
+                return ParserRuleContext2.TEMPLATE_STRING_RHS;
+            case ParserRuleContext2.INTERPOLATION_START_TOKEN:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.ARG_LIST_START:
+                return ParserRuleContext2.ARG_LIST;
+            case ParserRuleContext2.ARG_LIST_END:
+            case ParserRuleContext2.QUERY_EXPRESSION_END:
                 endContext();
-                return ParserRuleContext.EXPRESSION_RHS;
-            case ARG_LIST:
-                return ParserRuleContext.ARG_START_OR_ARG_LIST_END;
-            case TYPE_DESC_IN_ANNOTATION_DECL:
-            case TYPE_DESC_BEFORE_IDENTIFIER:
-            case TYPE_DESC_IN_RECORD_FIELD:
-            case TYPE_DESC_IN_PARAM:
-            case TYPE_DESC_IN_TYPE_BINDING_PATTERN:
-            case TYPE_DESC_IN_TYPE_DEF:
-            case TYPE_DESC_IN_ANGLE_BRACKETS:
-            case TYPE_DESC_IN_RETURN_TYPE_DESC:
-            case TYPE_DESC_IN_EXPRESSION:
-            case TYPE_DESC_IN_STREAM_TYPE_DESC:
-            case TYPE_DESC_IN_PARENTHESIS:
-            case TYPE_DESC_IN_NEW_EXPR:
-            case TYPE_DESC_IN_TUPLE:
-                return ParserRuleContext.TYPE_DESCRIPTOR;
-            case VAR_DECL_STARTED_WITH_DENTIFIER:
+                return ParserRuleContext2.EXPRESSION_RHS;
+            case ParserRuleContext2.ARG_LIST:
+                return ParserRuleContext2.ARG_START_OR_ARG_LIST_END;
+            case ParserRuleContext2.TYPE_DESC_IN_ANNOTATION_DECL:
+            case ParserRuleContext2.TYPE_DESC_BEFORE_IDENTIFIER:
+            case ParserRuleContext2.TYPE_DESC_IN_RECORD_FIELD:
+            case ParserRuleContext2.TYPE_DESC_IN_PARAM:
+            case ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN:
+            case ParserRuleContext2.TYPE_DESC_IN_TYPE_DEF:
+            case ParserRuleContext2.TYPE_DESC_IN_ANGLE_BRACKETS:
+            case ParserRuleContext2.TYPE_DESC_IN_RETURN_TYPE_DESC:
+            case ParserRuleContext2.TYPE_DESC_IN_EXPRESSION:
+            case ParserRuleContext2.TYPE_DESC_IN_STREAM_TYPE_DESC:
+            case ParserRuleContext2.TYPE_DESC_IN_PARENTHESIS:
+            case ParserRuleContext2.TYPE_DESC_IN_NEW_EXPR:
+            case ParserRuleContext2.TYPE_DESC_IN_TUPLE:
+                return ParserRuleContext2.TYPE_DESCRIPTOR;
+            case ParserRuleContext2.VAR_DECL_STARTED_WITH_DENTIFIER:
                 // We come here trying to recover statement started with identifier,
                 // and trying to match it against a var-decl. Since this wasn't a var-decl
                 // originally, a context for type hasn't started yet. Therefore start a
                 // a context manually here.
-                startContext(ParserRuleContext.TYPE_DESC_IN_TYPE_BINDING_PATTERN);
-                return ParserRuleContext.TYPEDESC_RHS;
-            case INFERRED_TYPE_DESC:
-                return ParserRuleContext.GT;
-            case ROW_TYPE_PARAM:
-                return ParserRuleContext.LT;
-            case PARENTHESISED_TYPE_DESC_START:
-                return ParserRuleContext.TYPE_DESC_IN_PARENTHESIS;
-            case SELECT_CLAUSE:
-                return ParserRuleContext.SELECT_KEYWORD;
-            case WHERE_CLAUSE:
-                return ParserRuleContext.WHERE_KEYWORD;
-            case FROM_CLAUSE:
-                return ParserRuleContext.FROM_KEYWORD;
-            case LET_CLAUSE:
-                return ParserRuleContext.LET_KEYWORD;
-            case ORDER_BY_CLAUSE:
-                return ParserRuleContext.ORDER_KEYWORD;
-            case QUERY_EXPRESSION:
-                return ParserRuleContext.FROM_CLAUSE;
-            case TABLE_CONSTRUCTOR_OR_QUERY_EXPRESSION:
-                return ParserRuleContext.TABLE_CONSTRUCTOR_OR_QUERY_START;
-            case BITWISE_AND_OPERATOR:
-                return ParserRuleContext.TYPE_DESCRIPTOR;
-            case EXPR_FUNC_BODY_START:
-                return ParserRuleContext.EXPRESSION;
-            case MODULE_LEVEL_AMBIGUOUS_FUNC_TYPE_DESC_RHS:
+                startContext(ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN);
+                return ParserRuleContext2.TYPEDESC_RHS;
+            case ParserRuleContext2.INFERRED_TYPE_DESC:
+                return ParserRuleContext2.GT;
+            case ParserRuleContext2.ROW_TYPE_PARAM:
+                return ParserRuleContext2.LT;
+            case ParserRuleContext2.PARENTHESISED_TYPE_DESC_START:
+                return ParserRuleContext2.TYPE_DESC_IN_PARENTHESIS;
+            case ParserRuleContext2.SELECT_CLAUSE:
+                return ParserRuleContext2.SELECT_KEYWORD;
+            case ParserRuleContext2.WHERE_CLAUSE:
+                return ParserRuleContext2.WHERE_KEYWORD;
+            case ParserRuleContext2.FROM_CLAUSE:
+                return ParserRuleContext2.FROM_KEYWORD;
+            case ParserRuleContext2.LET_CLAUSE:
+                return ParserRuleContext2.LET_KEYWORD;
+            case ParserRuleContext2.ORDER_BY_CLAUSE:
+                return ParserRuleContext2.ORDER_KEYWORD;
+            case ParserRuleContext2.QUERY_EXPRESSION:
+                return ParserRuleContext2.FROM_CLAUSE;
+            case ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_EXPRESSION:
+                return ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_START;
+            case ParserRuleContext2.BITWISE_AND_OPERATOR:
+                return ParserRuleContext2.TYPE_DESCRIPTOR;
+            case ParserRuleContext2.EXPR_FUNC_BODY_START:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.MODULE_LEVEL_AMBIGUOUS_FUNC_TYPE_DESC_RHS:
                 endContext();
                 // We come here trying to recover module-var-decl/object-member started with function,
                 // keyword and trying to match it against a var-decl. Since this wasn't a var-decl
                 // originally, a context for type hasn't started yet. Therefore start a
                 // a context manually here.
-                startContext(ParserRuleContext.VAR_DECL_STMT);
-                startContext(ParserRuleContext.TYPE_DESC_IN_TYPE_BINDING_PATTERN);
-                return ParserRuleContext.TYPEDESC_RHS;
-            case STMT_LEVEL_AMBIGUOUS_FUNC_TYPE_DESC_RHS:
+                startContext(ParserRuleContext2.VAR_DECL_STMT);
+                startContext(ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN);
+                return ParserRuleContext2.TYPEDESC_RHS;
+            case ParserRuleContext2.STMT_LEVEL_AMBIGUOUS_FUNC_TYPE_DESC_RHS:
                 endContext();
                 // We come here trying to recover statement started with function-keyword,
                 // and trying to match it against a var-decl. Since this wasn't a var-decl
                 // originally, a context for type hasn't started yet. Therefore switch to
                 // var-decl context
-                switchContext(ParserRuleContext.VAR_DECL_STMT);
-                startContext(ParserRuleContext.TYPE_DESC_IN_TYPE_BINDING_PATTERN);
-                return ParserRuleContext.TYPEDESC_RHS;
-            case FUNC_TYPE_DESC_END:
+                switchContext(ParserRuleContext2.VAR_DECL_STMT);
+                startContext(ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN);
+                return ParserRuleContext2.TYPEDESC_RHS;
+            case ParserRuleContext2.FUNC_TYPE_DESC_END:
                 endContext();
-                return ParserRuleContext.TYPEDESC_RHS;
-            case IMPLICIT_ANON_FUNC_PARAM:
-                return ParserRuleContext.BRACED_EXPR_OR_ANON_FUNC_PARAM_RHS;
-            case EXPLICIT_ANON_FUNC_EXPR_BODY_START:
+                return ParserRuleContext2.TYPEDESC_RHS;
+            case ParserRuleContext2.IMPLICIT_ANON_FUNC_PARAM:
+                return ParserRuleContext2.BRACED_EXPR_OR_ANON_FUNC_PARAM_RHS;
+            case ParserRuleContext2.EXPLICIT_ANON_FUNC_EXPR_BODY_START:
                 endContext(); // end explicit anon-func
-                return ParserRuleContext.EXPR_FUNC_BODY_START;
-            case OBJECT_MEMBER:
-                return ParserRuleContext.OBJECT_MEMBER_START;
-            case ANNOTATION_END:
+                return ParserRuleContext2.EXPR_FUNC_BODY_START;
+            case ParserRuleContext2.OBJECT_MEMBER:
+                return ParserRuleContext2.OBJECT_MEMBER_START;
+            case ParserRuleContext2.ANNOTATION_END:
                 return getNextRuleForAnnotationEnd(nextLookahead);
-            case PLUS_TOKEN:
-            case MINUS_TOKEN:
-                return ParserRuleContext.SIGNED_INT_OR_FLOAT_RHS;
-            case SIGNED_INT_OR_FLOAT_RHS:
+            case ParserRuleContext2.PLUS_TOKEN:
+            case ParserRuleContext2.MINUS_TOKEN:
+                return ParserRuleContext2.SIGNED_INT_OR_FLOAT_RHS;
+            case ParserRuleContext2.SIGNED_INT_OR_FLOAT_RHS:
                 return getNextRuleForExpr();
-            case TUPLE_TYPE_DESC_START:
-                return ParserRuleContext.TYPE_DESC_IN_TUPLE;
-            case TYPE_DESC_IN_TUPLE_RHS:
-                return ParserRuleContext.OPEN_BRACKET;
-            case WORKER_NAME_OR_METHOD_NAME:
-                return ParserRuleContext.WORKER_NAME_OR_METHOD_NAME;
-            case DEFAULT_WORKER_NAME_IN_ASYNC_SEND:
-                return ParserRuleContext.SEMICOLON;
-            case SYNC_SEND_TOKEN:
-                return ParserRuleContext.PEER_WORKER_NAME;
-            case LEFT_ARROW_TOKEN:
-                return ParserRuleContext.RECEIVE_WORKERS;
-            case MULTI_RECEIVE_WORKERS:
-                return ParserRuleContext.OPEN_BRACE;
-            case RECEIVE_FIELD_NAME:
-                return ParserRuleContext.COLON;
+            case ParserRuleContext2.TUPLE_TYPE_DESC_START:
+                return ParserRuleContext2.TYPE_DESC_IN_TUPLE;
+            case ParserRuleContext2.TYPE_DESC_IN_TUPLE_RHS:
+                return ParserRuleContext2.OPEN_BRACKET;
+            case ParserRuleContext2.WORKER_NAME_OR_METHOD_NAME:
+                return ParserRuleContext2.WORKER_NAME_OR_METHOD_NAME;
+            case ParserRuleContext2.DEFAULT_WORKER_NAME_IN_ASYNC_SEND:
+                return ParserRuleContext2.SEMICOLON;
+            case ParserRuleContext2.SYNC_SEND_TOKEN:
+                return ParserRuleContext2.PEER_WORKER_NAME;
+            case ParserRuleContext2.LEFT_ARROW_TOKEN:
+                return ParserRuleContext2.RECEIVE_WORKERS;
+            case ParserRuleContext2.MULTI_RECEIVE_WORKERS:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.RECEIVE_FIELD_NAME:
+                return ParserRuleContext2.COLON;
 
-            case WAIT_FIELD_NAME:
-                return ParserRuleContext.WAIT_FIELD_NAME_RHS;
-            case ALTERNATE_WAIT_EXPR_LIST_END:
+            case ParserRuleContext2.WAIT_FIELD_NAME:
+                return ParserRuleContext2.WAIT_FIELD_NAME_RHS;
+            case ParserRuleContext2.ALTERNATE_WAIT_EXPR_LIST_END:
                 return getNextRuleForWaitExprListEnd();
-            case MULTI_WAIT_FIELDS:
-                return ParserRuleContext.OPEN_BRACE;
-            case ALTERNATE_WAIT_EXPRS:
-                return ParserRuleContext.EXPRESSION;
-            case ANNOT_CHAINING_TOKEN:
-                return ParserRuleContext.FIELD_ACCESS_IDENTIFIER;
-            case DO_CLAUSE:
-                return ParserRuleContext.DO_KEYWORD;
-            case LET_CLAUSE_END:
-            case ORDER_CLAUSE_END:
+            case ParserRuleContext2.MULTI_WAIT_FIELDS:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.ALTERNATE_WAIT_EXPRS:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.ANNOT_CHAINING_TOKEN:
+                return ParserRuleContext2.FIELD_ACCESS_IDENTIFIER;
+            case ParserRuleContext2.DO_CLAUSE:
+                return ParserRuleContext2.DO_KEYWORD;
+            case ParserRuleContext2.LET_CLAUSE_END:
+            case ParserRuleContext2.ORDER_CLAUSE_END:
                 endContext();
-                return ParserRuleContext.QUERY_PIPELINE_RHS;
-            case MEMBER_ACCESS_KEY_EXPR:
-                return ParserRuleContext.OPEN_BRACKET;
-            case OPTIONAL_CHAINING_TOKEN:
-                return ParserRuleContext.FIELD_ACCESS_IDENTIFIER;
-            case CONDITIONAL_EXPRESSION:
-                return ParserRuleContext.QUESTION_MARK;
-            case TRANSACTION_STMT:
-                return ParserRuleContext.TRANSACTION_KEYWORD;
-            case RETRY_STMT:
-                return ParserRuleContext.RETRY_KEYWORD;
-            case ROLLBACK_STMT:
-                return ParserRuleContext.ROLLBACK_KEYWORD;
+                return ParserRuleContext2.QUERY_PIPELINE_RHS;
+            case ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR:
+                return ParserRuleContext2.OPEN_BRACKET;
+            case ParserRuleContext2.OPTIONAL_CHAINING_TOKEN:
+                return ParserRuleContext2.FIELD_ACCESS_IDENTIFIER;
+            case ParserRuleContext2.CONDITIONAL_EXPRESSION:
+                return ParserRuleContext2.QUESTION_MARK;
+            case ParserRuleContext2.TRANSACTION_STMT:
+                return ParserRuleContext2.TRANSACTION_KEYWORD;
+            case ParserRuleContext2.RETRY_STMT:
+                return ParserRuleContext2.RETRY_KEYWORD;
+            case ParserRuleContext2.ROLLBACK_STMT:
+                return ParserRuleContext2.ROLLBACK_KEYWORD;
 
-            case MODULE_ENUM_DECLARATION:
-                return ParserRuleContext.ENUM_KEYWORD;
-            case MODULE_ENUM_NAME:
-                return ParserRuleContext.OPEN_BRACE;
-            case ENUM_MEMBER_LIST:
-                return ParserRuleContext.ENUM_MEMBER_START;
-            case ENUM_MEMBER_NAME:
-                return ParserRuleContext.ENUM_MEMBER_RHS;
-            case TYPED_BINDING_PATTERN_TYPE_RHS:
-                return ParserRuleContext.BINDING_PATTERN;
-            case UNION_OR_INTERSECTION_TOKEN:
-                return ParserRuleContext.TYPE_DESCRIPTOR;
-            case MATCH_STMT:
-                return ParserRuleContext.MATCH_KEYWORD;
-            case MATCH_BODY:
-                return ParserRuleContext.OPEN_BRACE;
-            case MATCH_PATTERN:
-                return ParserRuleContext.MATCH_PATTERN_START;
-            case MATCH_PATTERN_END:
+            case ParserRuleContext2.MODULE_ENUM_DECLARATION:
+                return ParserRuleContext2.ENUM_KEYWORD;
+            case ParserRuleContext2.MODULE_ENUM_NAME:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.ENUM_MEMBER_LIST:
+                return ParserRuleContext2.ENUM_MEMBER_START;
+            case ParserRuleContext2.ENUM_MEMBER_NAME:
+                return ParserRuleContext2.ENUM_MEMBER_RHS;
+            case ParserRuleContext2.TYPED_BINDING_PATTERN_TYPE_RHS:
+                return ParserRuleContext2.BINDING_PATTERN;
+            case ParserRuleContext2.UNION_OR_INTERSECTION_TOKEN:
+                return ParserRuleContext2.TYPE_DESCRIPTOR;
+            case ParserRuleContext2.MATCH_STMT:
+                return ParserRuleContext2.MATCH_KEYWORD;
+            case ParserRuleContext2.MATCH_BODY:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.MATCH_PATTERN:
+                return ParserRuleContext2.MATCH_PATTERN_START;
+            case ParserRuleContext2.MATCH_PATTERN_END:
                 endContext(); // End match pattern context
                 return getNextRuleForMatchPattern();
-            case RIGHT_DOUBLE_ARROW:
+            case ParserRuleContext2.RIGHT_DOUBLE_ARROW:
                 // Assumption: RIGHT_DOUBLE_ARROW is only occurs in match clauses
                 // in expr-func-body, it is used by a different alias.
-                return ParserRuleContext.BLOCK_STMT;
-            case LIST_MATCH_PATTERN:
-                return ParserRuleContext.OPEN_BRACKET;
-            case REST_MATCH_PATTERN:
-                return ParserRuleContext.ELLIPSIS;
-            case FUNCTIONAL_BINDING_PATTERN:
-                return ParserRuleContext.OPEN_PARENTHESIS;
-            case NAMED_ARG_BINDING_PATTERN:
-                return ParserRuleContext.ASSIGN_OP;
-            case MAPPING_MATCH_PATTERN:
-                return ParserRuleContext.OPEN_BRACE;
-            case FUNCTIONAL_MATCH_PATTERN:
-                return ParserRuleContext.FUNCTIONAL_MATCH_PATTERN_START;
-            case NAMED_ARG_MATCH_PATTERN:
-                return ParserRuleContext.IDENTIFIER;
+                return ParserRuleContext2.BLOCK_STMT;
+            case ParserRuleContext2.LIST_MATCH_PATTERN:
+                return ParserRuleContext2.OPEN_BRACKET;
+            case ParserRuleContext2.REST_MATCH_PATTERN:
+                return ParserRuleContext2.ELLIPSIS;
+            case ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN:
+                return ParserRuleContext2.OPEN_PARENTHESIS;
+            case ParserRuleContext2.NAMED_ARG_BINDING_PATTERN:
+                return ParserRuleContext2.ASSIGN_OP;
+            case ParserRuleContext2.MAPPING_MATCH_PATTERN:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN:
+                return ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN_START;
+            case ParserRuleContext2.NAMED_ARG_MATCH_PATTERN:
+                return ParserRuleContext2.IDENTIFIER;
             default:
                 return getNextRuleForKeywords(currentCtx, nextLookahead);
         }
     }
 
-    private ParserRuleContext getNextRuleForKeywords(ParserRuleContext currentCtx, int nextLookahead) {
-        ParserRuleContext parentCtx;
+    private int getNextRuleForKeywords(int currentCtx, int nextLookahead) {
+        int parentCtx;
         switch (currentCtx) {
-            case PUBLIC_KEYWORD:
+            case ParserRuleContext2.PUBLIC_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.OBJECT_TYPE_DESCRIPTOR ||
-                        parentCtx == ParserRuleContext.OBJECT_MEMBER) {
-                    return ParserRuleContext.OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY;
+                if (parentCtx == ParserRuleContext2.OBJECT_TYPE_DESCRIPTOR ||
+                        parentCtx == ParserRuleContext2.OBJECT_MEMBER) {
+                    return ParserRuleContext2.OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY;
                 } else if (isParameter(parentCtx)) {
-                    return ParserRuleContext.TYPE_DESC_IN_PARAM;
+                    return ParserRuleContext2.TYPE_DESC_IN_PARAM;
                 }
-                return ParserRuleContext.TOP_LEVEL_NODE_WITHOUT_MODIFIER;
-            case PRIVATE_KEYWORD:
-                return ParserRuleContext.OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY;
-            case ON_KEYWORD:
+                return ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_MODIFIER;
+            case ParserRuleContext2.PRIVATE_KEYWORD:
+                return ParserRuleContext2.OBJECT_FUNC_OR_FIELD_WITHOUT_VISIBILITY;
+            case ParserRuleContext2.ON_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.ANNOTATION_DECL) {
-                    return ParserRuleContext.ANNOT_ATTACH_POINTS_LIST;
+                if (parentCtx == ParserRuleContext2.ANNOTATION_DECL) {
+                    return ParserRuleContext2.ANNOT_ATTACH_POINTS_LIST;
                 }
-                return ParserRuleContext.LISTENERS_LIST;
-            case RESOURCE_KEYWORD:
-                return ParserRuleContext.FUNC_DEF;
-            case SERVICE_KEYWORD:
+                return ParserRuleContext2.LISTENERS_LIST;
+            case ParserRuleContext2.RESOURCE_KEYWORD:
+                return ParserRuleContext2.FUNC_DEF;
+            case ParserRuleContext2.SERVICE_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.SERVICE_CONSTRUCTOR_EXPRESSION) {
-                    return ParserRuleContext.LISTENERS_LIST;
+                if (parentCtx == ParserRuleContext2.SERVICE_CONSTRUCTOR_EXPRESSION) {
+                    return ParserRuleContext2.LISTENERS_LIST;
                 }
-                return ParserRuleContext.OPTIONAL_SERVICE_NAME;
-            case LISTENER_KEYWORD:
-                return ParserRuleContext.TYPE_DESC_BEFORE_IDENTIFIER;
-            case FINAL_KEYWORD:
+                return ParserRuleContext2.OPTIONAL_SERVICE_NAME;
+            case ParserRuleContext2.LISTENER_KEYWORD:
+                return ParserRuleContext2.TYPE_DESC_BEFORE_IDENTIFIER;
+            case ParserRuleContext2.FINAL_KEYWORD:
                 // Assume the final keyword is only used in var-decl.
-                return ParserRuleContext.TYPE_DESC_IN_TYPE_BINDING_PATTERN;
-            case CONST_KEYWORD:
-                return ParserRuleContext.CONST_DECL_TYPE;
-            case TYPEOF_KEYWORD:
-                return ParserRuleContext.EXPRESSION;
-            case IS_KEYWORD:
-                return ParserRuleContext.TYPE_DESC_IN_EXPRESSION;
-            case NULL_KEYWORD:
-                return ParserRuleContext.EXPRESSION_RHS;
-            case ANNOTATION_KEYWORD:
-                return ParserRuleContext.ANNOT_DECL_OPTIONAL_TYPE;
-            case SOURCE_KEYWORD:
-                return ParserRuleContext.ATTACH_POINT_IDENT;
-            case XMLNS_KEYWORD:
-                return ParserRuleContext.CONSTANT_EXPRESSION;
-            case WORKER_KEYWORD:
-                return ParserRuleContext.WORKER_NAME;
-            case IF_KEYWORD:
-                return ParserRuleContext.EXPRESSION;
-            case ELSE_KEYWORD:
-                return ParserRuleContext.ELSE_BODY;
-            case WHILE_KEYWORD:
-                return ParserRuleContext.EXPRESSION;
-            case CHECKING_KEYWORD:
-                return ParserRuleContext.EXPRESSION;
-            case FAIL_KEYWORD:
-                return ParserRuleContext.EXPRESSION;
-            case PANIC_KEYWORD:
-                return ParserRuleContext.EXPRESSION;
-            case IMPORT_KEYWORD:
-                return ParserRuleContext.IMPORT_ORG_OR_MODULE_NAME;
-            case AS_KEYWORD:
+                return ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN;
+            case ParserRuleContext2.CONST_KEYWORD:
+                return ParserRuleContext2.CONST_DECL_TYPE;
+            case ParserRuleContext2.TYPEOF_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.IS_KEYWORD:
+                return ParserRuleContext2.TYPE_DESC_IN_EXPRESSION;
+            case ParserRuleContext2.NULL_KEYWORD:
+                return ParserRuleContext2.EXPRESSION_RHS;
+            case ParserRuleContext2.ANNOTATION_KEYWORD:
+                return ParserRuleContext2.ANNOT_DECL_OPTIONAL_TYPE;
+            case ParserRuleContext2.SOURCE_KEYWORD:
+                return ParserRuleContext2.ATTACH_POINT_IDENT;
+            case ParserRuleContext2.XMLNS_KEYWORD:
+                return ParserRuleContext2.CONSTANT_EXPRESSION;
+            case ParserRuleContext2.WORKER_KEYWORD:
+                return ParserRuleContext2.WORKER_NAME;
+            case ParserRuleContext2.IF_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.ELSE_KEYWORD:
+                return ParserRuleContext2.ELSE_BODY;
+            case ParserRuleContext2.WHILE_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.CHECKING_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.FAIL_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.PANIC_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.IMPORT_KEYWORD:
+                return ParserRuleContext2.IMPORT_ORG_OR_MODULE_NAME;
+            case ParserRuleContext2.AS_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.IMPORT_DECL) {
-                    return ParserRuleContext.IMPORT_PREFIX;
-                } else if (parentCtx == ParserRuleContext.XML_NAMESPACE_DECLARATION) {
-                    return ParserRuleContext.NAMESPACE_PREFIX;
+                if (parentCtx == ParserRuleContext2.IMPORT_DECL) {
+                    return ParserRuleContext2.IMPORT_PREFIX;
+                } else if (parentCtx == ParserRuleContext2.XML_NAMESPACE_DECLARATION) {
+                    return ParserRuleContext2.NAMESPACE_PREFIX;
                 }
                 throw new IllegalStateException();
-            case CONTINUE_KEYWORD:
-            case BREAK_KEYWORD:
-                return ParserRuleContext.SEMICOLON;
-            case RETURN_KEYWORD:
-                return ParserRuleContext.RETURN_STMT_RHS;
-            case EXTERNAL_KEYWORD:
-                return ParserRuleContext.SEMICOLON;
-            case FUNCTION_KEYWORD:
+            case ParserRuleContext2.CONTINUE_KEYWORD:
+            case ParserRuleContext2.BREAK_KEYWORD:
+                return ParserRuleContext2.SEMICOLON;
+            case ParserRuleContext2.RETURN_KEYWORD:
+                return ParserRuleContext2.RETURN_STMT_RHS;
+            case ParserRuleContext2.EXTERNAL_KEYWORD:
+                return ParserRuleContext2.SEMICOLON;
+            case ParserRuleContext2.FUNCTION_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.ANON_FUNC_EXPRESSION ||
-                        parentCtx == ParserRuleContext.FUNC_TYPE_DESC) {
-                    return ParserRuleContext.OPEN_PARENTHESIS;
+                if (parentCtx == ParserRuleContext2.ANON_FUNC_EXPRESSION ||
+                        parentCtx == ParserRuleContext2.FUNC_TYPE_DESC) {
+                    return ParserRuleContext2.OPEN_PARENTHESIS;
                 }
-                return ParserRuleContext.FUNCTION_KEYWORD_RHS;
-            case RETURNS_KEYWORD:
-                return ParserRuleContext.TYPE_DESC_IN_RETURN_TYPE_DESC;
-            case RECORD_KEYWORD:
-                return ParserRuleContext.RECORD_BODY_START;
-            case TYPE_KEYWORD:
-                return ParserRuleContext.TYPE_NAME;
-            case OBJECT_KEYWORD:
-                return ParserRuleContext.OPEN_BRACE;
-            case REMOTE_KEYWORD:
-                return ParserRuleContext.FUNCTION_KEYWORD;
-            case ABSTRACT_KEYWORD:
-            case CLIENT_KEYWORD:
-                return ParserRuleContext.OBJECT_KEYWORD;
-            case FORK_KEYWORD:
-                return ParserRuleContext.OPEN_BRACE;
-            case TRAP_KEYWORD:
-                return ParserRuleContext.EXPRESSION;
-            case FOREACH_KEYWORD:
-                return ParserRuleContext.TYPE_DESC_IN_TYPE_BINDING_PATTERN;
-            case IN_KEYWORD:
+                return ParserRuleContext2.FUNCTION_KEYWORD_RHS;
+            case ParserRuleContext2.RETURNS_KEYWORD:
+                return ParserRuleContext2.TYPE_DESC_IN_RETURN_TYPE_DESC;
+            case ParserRuleContext2.RECORD_KEYWORD:
+                return ParserRuleContext2.RECORD_BODY_START;
+            case ParserRuleContext2.TYPE_KEYWORD:
+                return ParserRuleContext2.TYPE_NAME;
+            case ParserRuleContext2.OBJECT_KEYWORD:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.REMOTE_KEYWORD:
+                return ParserRuleContext2.FUNCTION_KEYWORD;
+            case ParserRuleContext2.ABSTRACT_KEYWORD:
+            case ParserRuleContext2.CLIENT_KEYWORD:
+                return ParserRuleContext2.OBJECT_KEYWORD;
+            case ParserRuleContext2.FORK_KEYWORD:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.TRAP_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.FOREACH_KEYWORD:
+                return ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN;
+            case ParserRuleContext2.IN_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.LET_EXPR_LET_VAR_DECL) {
+                if (parentCtx == ParserRuleContext2.LET_EXPR_LET_VAR_DECL) {
                     endContext(); // end let-expr-let-var-decl
                 }
-                return ParserRuleContext.EXPRESSION;
-            case KEY_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.KEY_KEYWORD:
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.KEY_CONSTRAINTS_RHS;
+                    return ParserRuleContext2.KEY_CONSTRAINTS_RHS;
                 }
-                return ParserRuleContext.OPEN_PARENTHESIS;
-            case ERROR_KEYWORD:
+                return ParserRuleContext2.OPEN_PARENTHESIS;
+            case ParserRuleContext2.ERROR_KEYWORD:
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.ERROR_TYPE_PARAM_START;
+                    return ParserRuleContext2.ERROR_TYPE_PARAM_START;
                 }
-                if (getParentContext() == ParserRuleContext.FUNCTIONAL_MATCH_PATTERN) {
-                    return ParserRuleContext.OPEN_PARENTHESIS;
+                if (getParentContext() == ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN) {
+                    return ParserRuleContext2.OPEN_PARENTHESIS;
                 }
-                return ParserRuleContext.ARG_LIST_START;
-            case LET_KEYWORD:
+                return ParserRuleContext2.ARG_LIST_START;
+            case ParserRuleContext2.LET_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.QUERY_EXPRESSION) {
-                    return ParserRuleContext.LET_CLAUSE_LET_VAR_DECL;
-                } else if (parentCtx == ParserRuleContext.LET_CLAUSE_LET_VAR_DECL) {
+                if (parentCtx == ParserRuleContext2.QUERY_EXPRESSION) {
+                    return ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL;
+                } else if (parentCtx == ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL) {
                     endContext(); // end let-clause-let-var-decl
-                    return ParserRuleContext.LET_CLAUSE_LET_VAR_DECL;
+                    return ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL;
                 }
-                return ParserRuleContext.LET_EXPR_LET_VAR_DECL;
-            case TABLE_KEYWORD:
+                return ParserRuleContext2.LET_EXPR_LET_VAR_DECL;
+            case ParserRuleContext2.TABLE_KEYWORD:
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.ROW_TYPE_PARAM;
+                    return ParserRuleContext2.ROW_TYPE_PARAM;
                 }
-                return ParserRuleContext.TABLE_KEYWORD_RHS;
-            case STREAM_KEYWORD:
+                return ParserRuleContext2.TABLE_KEYWORD_RHS;
+            case ParserRuleContext2.STREAM_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.TABLE_CONSTRUCTOR_OR_QUERY_EXPRESSION) {
-                    return ParserRuleContext.QUERY_EXPRESSION;
+                if (parentCtx == ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_EXPRESSION) {
+                    return ParserRuleContext2.QUERY_EXPRESSION;
                 }
-                return ParserRuleContext.LT;
-            case NEW_KEYWORD:
-                return ParserRuleContext.NEW_KEYWORD_RHS;
-            case XML_KEYWORD:
-            case STRING_KEYWORD:
-            case BASE16_KEYWORD:
-            case BASE64_KEYWORD:
-                return ParserRuleContext.TEMPLATE_START;
-            case SELECT_KEYWORD:
+                return ParserRuleContext2.LT;
+            case ParserRuleContext2.NEW_KEYWORD:
+                return ParserRuleContext2.NEW_KEYWORD_RHS;
+            case ParserRuleContext2.XML_KEYWORD:
+            case ParserRuleContext2.STRING_KEYWORD:
+            case ParserRuleContext2.BASE16_KEYWORD:
+            case ParserRuleContext2.BASE64_KEYWORD:
+                return ParserRuleContext2.TEMPLATE_START;
+            case ParserRuleContext2.SELECT_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.QUERY_EXPRESSION) {
+                if (parentCtx == ParserRuleContext2.QUERY_EXPRESSION) {
                     endContext(); // end query-expression
                 }
-                if (parentCtx == ParserRuleContext.LET_CLAUSE_LET_VAR_DECL) {
+                if (parentCtx == ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL) {
                     endContext(); // end let-clause-let-var-decl
                     endContext(); // end query-expression
                 }
-                return ParserRuleContext.EXPRESSION;
-            case WHERE_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.WHERE_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.LET_CLAUSE_LET_VAR_DECL) {
+                if (parentCtx == ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL) {
                     endContext(); // end let-clause-let-var-decl
                 }
-                return ParserRuleContext.EXPRESSION;
-            case ORDER_KEYWORD:
-                return ParserRuleContext.BY_KEYWORD;
-            case BY_KEYWORD:
-                return ParserRuleContext.ORDER_KEY;
-            case ASCENDING_KEYWORD:
-            case DESCENDING_KEYWORD:
-                return ParserRuleContext.ORDER_DIRECTION_RHS;
-            case FROM_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.ORDER_KEYWORD:
+                return ParserRuleContext2.BY_KEYWORD;
+            case ParserRuleContext2.BY_KEYWORD:
+                return ParserRuleContext2.ORDER_KEY;
+            case ParserRuleContext2.ASCENDING_KEYWORD:
+            case ParserRuleContext2.DESCENDING_KEYWORD:
+                return ParserRuleContext2.ORDER_DIRECTION_RHS;
+            case ParserRuleContext2.FROM_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.LET_CLAUSE_LET_VAR_DECL) {
+                if (parentCtx == ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL) {
                     endContext(); // end let-clause-let-var-decl
                 }
-                return ParserRuleContext.TYPE_DESC_IN_TYPE_BINDING_PATTERN;
-            case START_KEYWORD:
-                return ParserRuleContext.EXPRESSION;
-            case FLUSH_KEYWORD:
-                return ParserRuleContext.OPTIONAL_PEER_WORKER;
-            case PEER_WORKER_NAME:
-            case DEFAULT_KEYWORD:
-                if (getParentContext() == ParserRuleContext.MULTI_RECEIVE_WORKERS) {
-                    return ParserRuleContext.RECEIVE_FIELD_END;
+                return ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN;
+            case ParserRuleContext2.START_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.FLUSH_KEYWORD:
+                return ParserRuleContext2.OPTIONAL_PEER_WORKER;
+            case ParserRuleContext2.PEER_WORKER_NAME:
+            case ParserRuleContext2.DEFAULT_KEYWORD:
+                if (getParentContext() == ParserRuleContext2.MULTI_RECEIVE_WORKERS) {
+                    return ParserRuleContext2.RECEIVE_FIELD_END;
                 }
-                return ParserRuleContext.EXPRESSION_RHS;
-            case WAIT_KEYWORD:
-                return ParserRuleContext.WAIT_KEYWORD_RHS;
-            case DO_KEYWORD:
-                return ParserRuleContext.OPEN_BRACE;
-            case TRANSACTION_KEYWORD:
-                return ParserRuleContext.BLOCK_STMT;
-            case COMMIT_KEYWORD:
-                return ParserRuleContext.EXPRESSION_RHS;
-            case ROLLBACK_KEYWORD:
-                return ParserRuleContext.ROLLBACK_RHS;
-            case RETRY_KEYWORD:
-                return ParserRuleContext.RETRY_KEYWORD_RHS;
-            case TRANSACTIONAL_KEYWORD:
-                return ParserRuleContext.EXPRESSION_RHS;
-            case ENUM_KEYWORD:
-                return ParserRuleContext.MODULE_ENUM_NAME;
-            case MATCH_KEYWORD:
-                return ParserRuleContext.EXPRESSION;
-            case READONLY_KEYWORD:
+                return ParserRuleContext2.EXPRESSION_RHS;
+            case ParserRuleContext2.WAIT_KEYWORD:
+                return ParserRuleContext2.WAIT_KEYWORD_RHS;
+            case ParserRuleContext2.DO_KEYWORD:
+                return ParserRuleContext2.OPEN_BRACE;
+            case ParserRuleContext2.TRANSACTION_KEYWORD:
+                return ParserRuleContext2.BLOCK_STMT;
+            case ParserRuleContext2.COMMIT_KEYWORD:
+                return ParserRuleContext2.EXPRESSION_RHS;
+            case ParserRuleContext2.ROLLBACK_KEYWORD:
+                return ParserRuleContext2.ROLLBACK_RHS;
+            case ParserRuleContext2.RETRY_KEYWORD:
+                return ParserRuleContext2.RETRY_KEYWORD_RHS;
+            case ParserRuleContext2.TRANSACTIONAL_KEYWORD:
+                return ParserRuleContext2.EXPRESSION_RHS;
+            case ParserRuleContext2.ENUM_KEYWORD:
+                return ParserRuleContext2.MODULE_ENUM_NAME;
+            case ParserRuleContext2.MATCH_KEYWORD:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.READONLY_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.MAPPING_CONSTRUCTOR ||
-                        parentCtx == ParserRuleContext.MAPPING_FIELD) {
-                    return ParserRuleContext.SPECIFIC_FIELD;
+                if (parentCtx == ParserRuleContext2.MAPPING_CONSTRUCTOR ||
+                        parentCtx == ParserRuleContext2.MAPPING_FIELD) {
+                    return ParserRuleContext2.SPECIFIC_FIELD;
                 }
                 throw new IllegalStateException("cannot find the next rule for: " + currentCtx);
-            case DISTINCT_KEYWORD:
-                return ParserRuleContext.TYPE_DESCRIPTOR;
-            case VAR_KEYWORD:
+            case ParserRuleContext2.DISTINCT_KEYWORD:
+                return ParserRuleContext2.TYPE_DESCRIPTOR;
+            case ParserRuleContext2.VAR_KEYWORD:
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.REST_MATCH_PATTERN) {
-                    return ParserRuleContext.VARIABLE_NAME;
+                if (parentCtx == ParserRuleContext2.REST_MATCH_PATTERN) {
+                    return ParserRuleContext2.VARIABLE_NAME;
                 }
-                return ParserRuleContext.BINDING_PATTERN;
+                return ParserRuleContext2.BINDING_PATTERN;
             default:
                 throw new IllegalStateException("cannot find the next rule for: " + currentCtx);
         }
     }
 
-    private void startContextIfRequired(ParserRuleContext currentCtx) {
+    private void startContextIfRequired(int currentCtx) {
         switch (currentCtx) {
-            case COMP_UNIT:
-            case FUNC_DEF_OR_FUNC_TYPE:
-            case ANON_FUNC_EXPRESSION:
-            case FUNC_DEF:
-            case FUNC_TYPE_DESC:
-            case EXTERNAL_FUNC_BODY:
-            case FUNC_BODY_BLOCK:
-            case STATEMENT:
-            case STATEMENT_WITHOUT_ANNOTS:
-            case VAR_DECL_STMT:
-            case ASSIGNMENT_STMT:
-            case REQUIRED_PARAM:
-            case DEFAULTABLE_PARAM:
-            case REST_PARAM:
-            case MODULE_TYPE_DEFINITION:
-            case RECORD_FIELD:
-            case RECORD_TYPE_DESCRIPTOR:
-            case OBJECT_TYPE_DESCRIPTOR:
-            case ARG_LIST:
-            case OBJECT_FUNC_OR_FIELD:
-            case IF_BLOCK:
-            case BLOCK_STMT:
-            case WHILE_BLOCK:
-            case PANIC_STMT:
-            case CALL_STMT:
-            case IMPORT_DECL:
-            case CONTINUE_STATEMENT:
-            case BREAK_STATEMENT:
-            case RETURN_STMT:
-            case COMPUTED_FIELD_NAME:
-            case LISTENERS_LIST:
-            case SERVICE_DECL:
-            case LISTENER_DECL:
-            case CONSTANT_DECL:
-            case NIL_TYPE_DESCRIPTOR:
-            case COMPOUND_ASSIGNMENT_STMT:
-            case OPTIONAL_TYPE_DESCRIPTOR:
-            case ARRAY_TYPE_DESCRIPTOR:
-            case ANNOTATIONS:
-            case VARIABLE_REF:
-            case TYPE_REFERENCE:
-            case ANNOT_REFERENCE:
-            case FIELD_ACCESS_IDENTIFIER:
-            case MAPPING_CONSTRUCTOR:
-            case LOCAL_TYPE_DEFINITION_STMT:
-            case EXPRESSION_STATEMENT:
-            case NIL_LITERAL:
-            case LOCK_STMT:
-            case ANNOTATION_DECL:
-            case ANNOT_ATTACH_POINTS_LIST:
-            case XML_NAMESPACE_DECLARATION:
-            case CONSTANT_EXPRESSION:
-            case NAMED_WORKER_DECL:
-            case FORK_STMT:
-            case FOREACH_STMT:
-            case LIST_CONSTRUCTOR:
-            case TYPE_CAST:
-            case KEY_SPECIFIER:
-            case LET_EXPR_LET_VAR_DECL:
-            case LET_CLAUSE_LET_VAR_DECL:
-            case ORDER_KEY:
-            case ROW_TYPE_PARAM:
-            case TABLE_CONSTRUCTOR_OR_QUERY_EXPRESSION:
-            case OBJECT_MEMBER:
-            case LIST_BINDING_PATTERN:
-            case MAPPING_BINDING_PATTERN:
-            case REST_BINDING_PATTERN:
-            case TYPED_BINDING_PATTERN:
-            case BINDING_PATTERN_STARTING_IDENTIFIER:
-            case MULTI_RECEIVE_WORKERS:
-            case MULTI_WAIT_FIELDS:
-            case ALTERNATE_WAIT_EXPRS:
-            case DO_CLAUSE:
-            case MEMBER_ACCESS_KEY_EXPR:
-            case CONDITIONAL_EXPRESSION:
-            case TRANSACTION_STMT:
-            case RETRY_STMT:
-            case ROLLBACK_STMT:
-            case MODULE_ENUM_DECLARATION:
-            case ENUM_MEMBER_LIST:
-            case SERVICE_CONSTRUCTOR_EXPRESSION:
-            case XML_NAME_PATTERN:
-            case XML_ATOMIC_NAME_PATTERN:
-            case MATCH_STMT:
-            case MATCH_BODY:
-            case MATCH_PATTERN:
-            case LIST_MATCH_PATTERN:
-            case REST_MATCH_PATTERN:
-            case FUNCTIONAL_BINDING_PATTERN:
-            case MAPPING_MATCH_PATTERN:
-            case FUNCTIONAL_MATCH_PATTERN:
-            case NAMED_ARG_MATCH_PATTERN:
+            case ParserRuleContext2.COMP_UNIT:
+            case ParserRuleContext2.FUNC_DEF_OR_FUNC_TYPE:
+            case ParserRuleContext2.ANON_FUNC_EXPRESSION:
+            case ParserRuleContext2.FUNC_DEF:
+            case ParserRuleContext2.FUNC_TYPE_DESC:
+            case ParserRuleContext2.EXTERNAL_FUNC_BODY:
+            case ParserRuleContext2.FUNC_BODY_BLOCK:
+            case ParserRuleContext2.STATEMENT:
+            case ParserRuleContext2.STATEMENT_WITHOUT_ANNOTS:
+            case ParserRuleContext2.VAR_DECL_STMT:
+            case ParserRuleContext2.ASSIGNMENT_STMT:
+            case ParserRuleContext2.REQUIRED_PARAM:
+            case ParserRuleContext2.DEFAULTABLE_PARAM:
+            case ParserRuleContext2.REST_PARAM:
+            case ParserRuleContext2.MODULE_TYPE_DEFINITION:
+            case ParserRuleContext2.RECORD_FIELD:
+            case ParserRuleContext2.RECORD_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.OBJECT_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.ARG_LIST:
+            case ParserRuleContext2.OBJECT_FUNC_OR_FIELD:
+            case ParserRuleContext2.IF_BLOCK:
+            case ParserRuleContext2.BLOCK_STMT:
+            case ParserRuleContext2.WHILE_BLOCK:
+            case ParserRuleContext2.PANIC_STMT:
+            case ParserRuleContext2.CALL_STMT:
+            case ParserRuleContext2.IMPORT_DECL:
+            case ParserRuleContext2.CONTINUE_STATEMENT:
+            case ParserRuleContext2.BREAK_STATEMENT:
+            case ParserRuleContext2.RETURN_STMT:
+            case ParserRuleContext2.COMPUTED_FIELD_NAME:
+            case ParserRuleContext2.LISTENERS_LIST:
+            case ParserRuleContext2.SERVICE_DECL:
+            case ParserRuleContext2.LISTENER_DECL:
+            case ParserRuleContext2.CONSTANT_DECL:
+            case ParserRuleContext2.NIL_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.COMPOUND_ASSIGNMENT_STMT:
+            case ParserRuleContext2.OPTIONAL_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.ANNOTATIONS:
+            case ParserRuleContext2.VARIABLE_REF:
+            case ParserRuleContext2.TYPE_REFERENCE:
+            case ParserRuleContext2.ANNOT_REFERENCE:
+            case ParserRuleContext2.FIELD_ACCESS_IDENTIFIER:
+            case ParserRuleContext2.MAPPING_CONSTRUCTOR:
+            case ParserRuleContext2.LOCAL_TYPE_DEFINITION_STMT:
+            case ParserRuleContext2.EXPRESSION_STATEMENT:
+            case ParserRuleContext2.NIL_LITERAL:
+            case ParserRuleContext2.LOCK_STMT:
+            case ParserRuleContext2.ANNOTATION_DECL:
+            case ParserRuleContext2.ANNOT_ATTACH_POINTS_LIST:
+            case ParserRuleContext2.XML_NAMESPACE_DECLARATION:
+            case ParserRuleContext2.CONSTANT_EXPRESSION:
+            case ParserRuleContext2.NAMED_WORKER_DECL:
+            case ParserRuleContext2.FORK_STMT:
+            case ParserRuleContext2.FOREACH_STMT:
+            case ParserRuleContext2.LIST_CONSTRUCTOR:
+            case ParserRuleContext2.TYPE_CAST:
+            case ParserRuleContext2.KEY_SPECIFIER:
+            case ParserRuleContext2.LET_EXPR_LET_VAR_DECL:
+            case ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL:
+            case ParserRuleContext2.ORDER_KEY:
+            case ParserRuleContext2.ROW_TYPE_PARAM:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_EXPRESSION:
+            case ParserRuleContext2.OBJECT_MEMBER:
+            case ParserRuleContext2.LIST_BINDING_PATTERN:
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN:
+            case ParserRuleContext2.REST_BINDING_PATTERN:
+            case ParserRuleContext2.TYPED_BINDING_PATTERN:
+            case ParserRuleContext2.BINDING_PATTERN_STARTING_IDENTIFIER:
+            case ParserRuleContext2.MULTI_RECEIVE_WORKERS:
+            case ParserRuleContext2.MULTI_WAIT_FIELDS:
+            case ParserRuleContext2.ALTERNATE_WAIT_EXPRS:
+            case ParserRuleContext2.DO_CLAUSE:
+            case ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR:
+            case ParserRuleContext2.CONDITIONAL_EXPRESSION:
+            case ParserRuleContext2.TRANSACTION_STMT:
+            case ParserRuleContext2.RETRY_STMT:
+            case ParserRuleContext2.ROLLBACK_STMT:
+            case ParserRuleContext2.MODULE_ENUM_DECLARATION:
+            case ParserRuleContext2.ENUM_MEMBER_LIST:
+            case ParserRuleContext2.SERVICE_CONSTRUCTOR_EXPRESSION:
+            case ParserRuleContext2.XML_NAME_PATTERN:
+            case ParserRuleContext2.XML_ATOMIC_NAME_PATTERN:
+            case ParserRuleContext2.MATCH_STMT:
+            case ParserRuleContext2.MATCH_BODY:
+            case ParserRuleContext2.MATCH_PATTERN:
+            case ParserRuleContext2.LIST_MATCH_PATTERN:
+            case ParserRuleContext2.REST_MATCH_PATTERN:
+            case ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN:
+            case ParserRuleContext2.MAPPING_MATCH_PATTERN:
+            case ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN:
+            case ParserRuleContext2.NAMED_ARG_MATCH_PATTERN:
 
                 // Contexts that expect a type
-            case TYPE_DESC_IN_ANNOTATION_DECL:
-            case TYPE_DESC_BEFORE_IDENTIFIER:
-            case TYPE_DESC_IN_RECORD_FIELD:
-            case TYPE_DESC_IN_PARAM:
-            case TYPE_DESC_IN_TYPE_BINDING_PATTERN:
-            case TYPE_DESC_IN_TYPE_DEF:
-            case TYPE_DESC_IN_ANGLE_BRACKETS:
-            case TYPE_DESC_IN_RETURN_TYPE_DESC:
-            case TYPE_DESC_IN_EXPRESSION:
-            case TYPE_DESC_IN_STREAM_TYPE_DESC:
-            case TYPE_DESC_IN_PARENTHESIS:
-            case TYPE_DESC_IN_NEW_EXPR:
-            case TYPE_DESC_IN_TUPLE:
+            case ParserRuleContext2.TYPE_DESC_IN_ANNOTATION_DECL:
+            case ParserRuleContext2.TYPE_DESC_BEFORE_IDENTIFIER:
+            case ParserRuleContext2.TYPE_DESC_IN_RECORD_FIELD:
+            case ParserRuleContext2.TYPE_DESC_IN_PARAM:
+            case ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN:
+            case ParserRuleContext2.TYPE_DESC_IN_TYPE_DEF:
+            case ParserRuleContext2.TYPE_DESC_IN_ANGLE_BRACKETS:
+            case ParserRuleContext2.TYPE_DESC_IN_RETURN_TYPE_DESC:
+            case ParserRuleContext2.TYPE_DESC_IN_EXPRESSION:
+            case ParserRuleContext2.TYPE_DESC_IN_STREAM_TYPE_DESC:
+            case ParserRuleContext2.TYPE_DESC_IN_PARENTHESIS:
+            case ParserRuleContext2.TYPE_DESC_IN_NEW_EXPR:
+            case ParserRuleContext2.TYPE_DESC_IN_TUPLE:
                 startContext(currentCtx);
                 break;
             default:
@@ -2915,8 +2918,8 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
         }
 
         switch (currentCtx) {
-            case TABLE_CONSTRUCTOR:
-            case QUERY_EXPRESSION:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR:
+            case ParserRuleContext2.QUERY_EXPRESSION:
                 switchContext(currentCtx);
                 break;
             default:
@@ -2924,144 +2927,144 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
         }
     }
 
-    private ParserRuleContext getNextRuleForCloseParenthsis() {
-        ParserRuleContext parentCtx;
+    private int getNextRuleForCloseParenthsis() {
+        int parentCtx;
         parentCtx = getParentContext();
-        if (parentCtx == ParserRuleContext.PARAM_LIST) {
+        if (parentCtx == ParserRuleContext2.PARAM_LIST) {
             endContext(); // end parameters
-            return ParserRuleContext.FUNC_OPTIONAL_RETURNS;
+            return ParserRuleContext2.FUNC_OPTIONAL_RETURNS;
         } else if (isParameter(parentCtx)) {
             endContext(); // end parameters
             endContext(); // end parameter
-            return ParserRuleContext.FUNC_OPTIONAL_RETURNS;
-        } else if (parentCtx == ParserRuleContext.NIL_TYPE_DESCRIPTOR) {
+            return ParserRuleContext2.FUNC_OPTIONAL_RETURNS;
+        } else if (parentCtx == ParserRuleContext2.NIL_TYPE_DESCRIPTOR) {
             endContext();
             // After parsing nil type descriptor all the other parsing is same as next rule of simple type
-            return ParserRuleContext.TYPEDESC_RHS;
-        } else if (parentCtx == ParserRuleContext.NIL_LITERAL) {
+            return ParserRuleContext2.TYPEDESC_RHS;
+        } else if (parentCtx == ParserRuleContext2.NIL_LITERAL) {
             endContext();
             return getNextRuleForExpr();
-        } else if (parentCtx == ParserRuleContext.KEY_SPECIFIER) {
+        } else if (parentCtx == ParserRuleContext2.KEY_SPECIFIER) {
             endContext(); // end key-specifier
             if (isInTypeDescContext()) {
-                return ParserRuleContext.TYPEDESC_RHS;
+                return ParserRuleContext2.TYPEDESC_RHS;
             }
-            return ParserRuleContext.TABLE_CONSTRUCTOR_OR_QUERY_RHS;
+            return ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_RHS;
         } else if (isInTypeDescContext()) {
-            return ParserRuleContext.TYPEDESC_RHS;
-        } else if (parentCtx == ParserRuleContext.BRACED_EXPR_OR_ANON_FUNC_PARAMS) {
+            return ParserRuleContext2.TYPEDESC_RHS;
+        } else if (parentCtx == ParserRuleContext2.BRACED_EXPR_OR_ANON_FUNC_PARAMS) {
             endContext(); // end infered-param/parenthesised-expr context
-            return ParserRuleContext.INFER_PARAM_END_OR_PARENTHESIS_END;
-        } else if (parentCtx == ParserRuleContext.FUNCTIONAL_MATCH_PATTERN) {
+            return ParserRuleContext2.INFER_PARAM_END_OR_PARENTHESIS_END;
+        } else if (parentCtx == ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN) {
             endContext();
             return getNextRuleForMatchPattern();
-        } else if (parentCtx == ParserRuleContext.NAMED_ARG_MATCH_PATTERN) {
+        } else if (parentCtx == ParserRuleContext2.NAMED_ARG_MATCH_PATTERN) {
             endContext(); // end named arg math pattern context
             endContext(); // end functional match pattern context
             return getNextRuleForMatchPattern();
-        } else if (parentCtx == ParserRuleContext.FUNCTIONAL_BINDING_PATTERN) {
+        } else if (parentCtx == ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN) {
             endContext(); // end functional-binding-pattern
             return getNextRuleForBindingPattern();
         }
-        return ParserRuleContext.EXPRESSION_RHS;
+        return ParserRuleContext2.EXPRESSION_RHS;
     }
 
-    private ParserRuleContext getNextRuleForOpenParenthesis() {
-        ParserRuleContext parentCtx = getParentContext();
-        if (parentCtx == ParserRuleContext.EXPRESSION_STATEMENT) {
-            return ParserRuleContext.EXPRESSION_STATEMENT_START;
+    private int getNextRuleForOpenParenthesis() {
+        int parentCtx = getParentContext();
+        if (parentCtx == ParserRuleContext2.EXPRESSION_STATEMENT) {
+            return ParserRuleContext2.EXPRESSION_STATEMENT_START;
         } else if (isStatement(parentCtx) || isExpressionContext(parentCtx) ||
-                parentCtx == ParserRuleContext.ARRAY_TYPE_DESCRIPTOR) {
-            return ParserRuleContext.EXPRESSION;
-        } else if (parentCtx == ParserRuleContext.FUNC_DEF_OR_FUNC_TYPE ||
-                parentCtx == ParserRuleContext.FUNC_TYPE_DESC || parentCtx == ParserRuleContext.FUNC_DEF ||
-                parentCtx == ParserRuleContext.ANON_FUNC_EXPRESSION ||
-                parentCtx == ParserRuleContext.FUNC_TYPE_DESC_OR_ANON_FUNC) {
+                parentCtx == ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR) {
+            return ParserRuleContext2.EXPRESSION;
+        } else if (parentCtx == ParserRuleContext2.FUNC_DEF_OR_FUNC_TYPE ||
+                parentCtx == ParserRuleContext2.FUNC_TYPE_DESC || parentCtx == ParserRuleContext2.FUNC_DEF ||
+                parentCtx == ParserRuleContext2.ANON_FUNC_EXPRESSION ||
+                parentCtx == ParserRuleContext2.FUNC_TYPE_DESC_OR_ANON_FUNC) {
             // TODO: find a better way
-            startContext(ParserRuleContext.PARAM_LIST);
-            return ParserRuleContext.PARAM_LIST;
-        } else if (parentCtx == ParserRuleContext.NIL_TYPE_DESCRIPTOR || parentCtx == ParserRuleContext.NIL_LITERAL) {
-            return ParserRuleContext.CLOSE_PARENTHESIS;
-        } else if (parentCtx == ParserRuleContext.KEY_SPECIFIER) {
-            return ParserRuleContext.KEY_SPECIFIER_RHS;
+            startContext(ParserRuleContext2.PARAM_LIST);
+            return ParserRuleContext2.PARAM_LIST;
+        } else if (parentCtx == ParserRuleContext2.NIL_TYPE_DESCRIPTOR || parentCtx == ParserRuleContext2.NIL_LITERAL) {
+            return ParserRuleContext2.CLOSE_PARENTHESIS;
+        } else if (parentCtx == ParserRuleContext2.KEY_SPECIFIER) {
+            return ParserRuleContext2.KEY_SPECIFIER_RHS;
         } else if (isInTypeDescContext()) {
             // if the parent context is table type desc then we are in key specifier context.hence start context
-            startContext(ParserRuleContext.KEY_SPECIFIER);
-            return ParserRuleContext.KEY_SPECIFIER_RHS;
+            startContext(ParserRuleContext2.KEY_SPECIFIER);
+            return ParserRuleContext2.KEY_SPECIFIER_RHS;
         } else if (isParameter(parentCtx)) {
-            return ParserRuleContext.EXPRESSION;
-        } else if (parentCtx == ParserRuleContext.FUNCTIONAL_MATCH_PATTERN) {
-            return ParserRuleContext.ARG_LIST_MATCH_PATTERN_START;
+            return ParserRuleContext2.EXPRESSION;
+        } else if (parentCtx == ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN) {
+            return ParserRuleContext2.ARG_LIST_MATCH_PATTERN_START;
         } else if (isInMatchPatternCtx(parentCtx)) {
-            // This is a special case which occurs because of FUNC_MATCH_PATTERN_OR_CONST_PATTERN context,
+            // This is a special case ParserRuleContext2.which occurs because of FUNC_MATCH_PATTERN_OR_CONST_PATTERN context,
             // If this is the case we are in a functional match pattern but the context is not started, hence
             // start the context.
-            startContext(ParserRuleContext.FUNCTIONAL_MATCH_PATTERN);
-            return ParserRuleContext.ARG_LIST_MATCH_PATTERN_START;
-        } else if (parentCtx == ParserRuleContext.FUNCTIONAL_BINDING_PATTERN) {
-            return ParserRuleContext.ARG_BINDING_PATTERN;
+            startContext(ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN);
+            return ParserRuleContext2.ARG_LIST_MATCH_PATTERN_START;
+        } else if (parentCtx == ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN) {
+            return ParserRuleContext2.ARG_BINDING_PATTERN;
         }
-        return ParserRuleContext.EXPRESSION;
+        return ParserRuleContext2.EXPRESSION;
     }
 
-    private boolean isInMatchPatternCtx(ParserRuleContext context) {
+    private boolean isInMatchPatternCtx(int context) {
         switch (context) {
-            case MATCH_PATTERN:
-            case LIST_MATCH_PATTERN:
-            case MAPPING_MATCH_PATTERN:
-            case FUNCTIONAL_MATCH_PATTERN:
-            case NAMED_ARG_MATCH_PATTERN:
+            case ParserRuleContext2.MATCH_PATTERN:
+            case ParserRuleContext2.LIST_MATCH_PATTERN:
+            case ParserRuleContext2.MAPPING_MATCH_PATTERN:
+            case ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN:
+            case ParserRuleContext2.NAMED_ARG_MATCH_PATTERN:
                 return true;
             default:
                 return false;
         }
     }
 
-    private ParserRuleContext getNextRuleForOpenBrace(int nextLookahead) {
-        ParserRuleContext parentCtx = getParentContext();
-        if (parentCtx == ParserRuleContext.LISTENERS_LIST) {
+    private int getNextRuleForOpenBrace(int nextLookahead) {
+        int parentCtx = getParentContext();
+        if (parentCtx == ParserRuleContext2.LISTENERS_LIST) {
             endContext();
         }
 
         switch (parentCtx) {
-            case OBJECT_TYPE_DESCRIPTOR:
-                return ParserRuleContext.OBJECT_MEMBER;
-            case RECORD_TYPE_DESCRIPTOR:
-                return ParserRuleContext.RECORD_FIELD;
-            case MAPPING_CONSTRUCTOR:
-                return ParserRuleContext.FIRST_MAPPING_FIELD;
-            case FORK_STMT:
-                return ParserRuleContext.NAMED_WORKER_DECL;
-            case MULTI_RECEIVE_WORKERS:
-                return ParserRuleContext.RECEIVE_FIELD;
-            case MULTI_WAIT_FIELDS:
-                return ParserRuleContext.WAIT_FIELD_NAME;
-            case MODULE_ENUM_DECLARATION:
-                return ParserRuleContext.ENUM_MEMBER_LIST;
-            case MAPPING_BINDING_PATTERN:
-                return ParserRuleContext.MAPPING_BINDING_PATTERN_MEMBER;
-            case MAPPING_MATCH_PATTERN:
-                return ParserRuleContext.FIELD_MATCH_PATTERNS_START;
+            case ParserRuleContext2.OBJECT_TYPE_DESCRIPTOR:
+                return ParserRuleContext2.OBJECT_MEMBER;
+            case ParserRuleContext2.RECORD_TYPE_DESCRIPTOR:
+                return ParserRuleContext2.RECORD_FIELD;
+            case ParserRuleContext2.MAPPING_CONSTRUCTOR:
+                return ParserRuleContext2.FIRST_MAPPING_FIELD;
+            case ParserRuleContext2.FORK_STMT:
+                return ParserRuleContext2.NAMED_WORKER_DECL;
+            case ParserRuleContext2.MULTI_RECEIVE_WORKERS:
+                return ParserRuleContext2.RECEIVE_FIELD;
+            case ParserRuleContext2.MULTI_WAIT_FIELDS:
+                return ParserRuleContext2.WAIT_FIELD_NAME;
+            case ParserRuleContext2.MODULE_ENUM_DECLARATION:
+                return ParserRuleContext2.ENUM_MEMBER_LIST;
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN:
+                return ParserRuleContext2.MAPPING_BINDING_PATTERN_MEMBER;
+            case ParserRuleContext2.MAPPING_MATCH_PATTERN:
+                return ParserRuleContext2.FIELD_MATCH_PATTERNS_START;
             default:
-                return ParserRuleContext.STATEMENT;
+                return ParserRuleContext2.STATEMENT;
         }
     }
 
-    private boolean isExpressionContext(ParserRuleContext ctx) {
+    private boolean isExpressionContext(int ctx) {
         switch (ctx) {
-            case LISTENERS_LIST:
-            case MAPPING_CONSTRUCTOR:
-            case COMPUTED_FIELD_NAME:
-            case LIST_CONSTRUCTOR:
-            case INTERPOLATION:
-            case ARG_LIST:
-            case LET_EXPR_LET_VAR_DECL:
-            case LET_CLAUSE_LET_VAR_DECL:
-            case TABLE_CONSTRUCTOR:
-            case QUERY_EXPRESSION:
-            case TABLE_CONSTRUCTOR_OR_QUERY_EXPRESSION:
-            case SERVICE_CONSTRUCTOR_EXPRESSION:
-            case ORDER_KEY:
+            case ParserRuleContext2.LISTENERS_LIST:
+            case ParserRuleContext2.MAPPING_CONSTRUCTOR:
+            case ParserRuleContext2.COMPUTED_FIELD_NAME:
+            case ParserRuleContext2.LIST_CONSTRUCTOR:
+            case ParserRuleContext2.INTERPOLATION:
+            case ParserRuleContext2.ARG_LIST:
+            case ParserRuleContext2.LET_EXPR_LET_VAR_DECL:
+            case ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR:
+            case ParserRuleContext2.QUERY_EXPRESSION:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR_OR_QUERY_EXPRESSION:
+            case ParserRuleContext2.SERVICE_CONSTRUCTOR_EXPRESSION:
+            case ParserRuleContext2.ORDER_KEY:
                 return true;
             default:
                 return false;
@@ -3073,13 +3076,13 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      *
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForParamType() {
-        ParserRuleContext parentCtx;
+    private int getNextRuleForParamType() {
+        int parentCtx;
         parentCtx = getParentContext();
-        if (parentCtx == ParserRuleContext.REQUIRED_PARAM || parentCtx == ParserRuleContext.DEFAULTABLE_PARAM) {
-            return ParserRuleContext.VARIABLE_NAME;
-        } else if (parentCtx == ParserRuleContext.REST_PARAM) {
-            return ParserRuleContext.ELLIPSIS;
+        if (parentCtx == ParserRuleContext2.REQUIRED_PARAM || parentCtx == ParserRuleContext2.DEFAULTABLE_PARAM) {
+            return ParserRuleContext2.VARIABLE_NAME;
+        } else if (parentCtx == ParserRuleContext2.REST_PARAM) {
+            return ParserRuleContext2.ELLIPSIS;
         } else {
             throw new IllegalStateException();
         }
@@ -3090,68 +3093,68 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      *
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForComma() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForComma() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case PARAM_LIST:
-            case REQUIRED_PARAM:
-            case DEFAULTABLE_PARAM:
-            case REST_PARAM:
+            case ParserRuleContext2.PARAM_LIST:
+            case ParserRuleContext2.REQUIRED_PARAM:
+            case ParserRuleContext2.DEFAULTABLE_PARAM:
+            case ParserRuleContext2.REST_PARAM:
                 endContext();
                 return parentCtx;
-            case ARG_LIST:
-                return ParserRuleContext.ARG_START;
-            case MAPPING_CONSTRUCTOR:
-                return ParserRuleContext.MAPPING_FIELD;
-            case LISTENERS_LIST:
-            case LIST_CONSTRUCTOR:
-            case ORDER_KEY:
-                return ParserRuleContext.EXPRESSION;
-            case ANNOT_ATTACH_POINTS_LIST:
-                return ParserRuleContext.ATTACH_POINT;
-            case TABLE_CONSTRUCTOR:
-                return ParserRuleContext.MAPPING_CONSTRUCTOR;
-            case KEY_SPECIFIER:
-                return ParserRuleContext.VARIABLE_NAME;
-            case LET_EXPR_LET_VAR_DECL:
-            case LET_CLAUSE_LET_VAR_DECL:
-                return ParserRuleContext.LET_VAR_DECL_START;
-            case TYPE_DESC_IN_STREAM_TYPE_DESC:
-                return ParserRuleContext.TYPE_DESCRIPTOR;
-            case BRACED_EXPR_OR_ANON_FUNC_PARAMS:
-                return ParserRuleContext.IMPLICIT_ANON_FUNC_PARAM;
-            case TYPE_DESC_IN_TUPLE:
-                return ParserRuleContext.TYPE_DESCRIPTOR;
-            case LIST_BINDING_PATTERN:
-                return ParserRuleContext.LIST_BINDING_PATTERN_MEMBER;
-            case MAPPING_BINDING_PATTERN:
-            case MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
-                return ParserRuleContext.MAPPING_BINDING_PATTERN_MEMBER;
-            case MULTI_RECEIVE_WORKERS:
-                return ParserRuleContext.RECEIVE_FIELD;
-            case MULTI_WAIT_FIELDS:
-                return ParserRuleContext.WAIT_FIELD_NAME;
-            case ENUM_MEMBER_LIST:
-                return ParserRuleContext.ENUM_MEMBER_START;
-            case MEMBER_ACCESS_KEY_EXPR:
-                return ParserRuleContext.MEMBER_ACCESS_KEY_EXPR_END;
-            case STMT_START_BRACKETED_LIST:
-                return ParserRuleContext.STMT_START_BRACKETED_LIST_MEMBER;
-            case BRACKETED_LIST:
-                return ParserRuleContext.BRACKETED_LIST_MEMBER;
-            case LIST_MATCH_PATTERN:
-                return ParserRuleContext.LIST_MATCH_PATTERN_MEMBER;
-            case FUNCTIONAL_BINDING_PATTERN:
-                return ParserRuleContext.ARG_BINDING_PATTERN;
-            case MAPPING_MATCH_PATTERN:
-                return ParserRuleContext.FIELD_MATCH_PATTERN_MEMBER;
-            case FUNCTIONAL_MATCH_PATTERN:
-                return ParserRuleContext.ARG_MATCH_PATTERN;
-            case NAMED_ARG_MATCH_PATTERN:
+            case ParserRuleContext2.ARG_LIST:
+                return ParserRuleContext2.ARG_START;
+            case ParserRuleContext2.MAPPING_CONSTRUCTOR:
+                return ParserRuleContext2.MAPPING_FIELD;
+            case ParserRuleContext2.LISTENERS_LIST:
+            case ParserRuleContext2.LIST_CONSTRUCTOR:
+            case ParserRuleContext2.ORDER_KEY:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.ANNOT_ATTACH_POINTS_LIST:
+                return ParserRuleContext2.ATTACH_POINT;
+            case ParserRuleContext2.TABLE_CONSTRUCTOR:
+                return ParserRuleContext2.MAPPING_CONSTRUCTOR;
+            case ParserRuleContext2.KEY_SPECIFIER:
+                return ParserRuleContext2.VARIABLE_NAME;
+            case ParserRuleContext2.LET_EXPR_LET_VAR_DECL:
+            case ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL:
+                return ParserRuleContext2.LET_VAR_DECL_START;
+            case ParserRuleContext2.TYPE_DESC_IN_STREAM_TYPE_DESC:
+                return ParserRuleContext2.TYPE_DESCRIPTOR;
+            case ParserRuleContext2.BRACED_EXPR_OR_ANON_FUNC_PARAMS:
+                return ParserRuleContext2.IMPLICIT_ANON_FUNC_PARAM;
+            case ParserRuleContext2.TYPE_DESC_IN_TUPLE:
+                return ParserRuleContext2.TYPE_DESCRIPTOR;
+            case ParserRuleContext2.LIST_BINDING_PATTERN:
+                return ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER;
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN:
+            case ParserRuleContext2.MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
+                return ParserRuleContext2.MAPPING_BINDING_PATTERN_MEMBER;
+            case ParserRuleContext2.MULTI_RECEIVE_WORKERS:
+                return ParserRuleContext2.RECEIVE_FIELD;
+            case ParserRuleContext2.MULTI_WAIT_FIELDS:
+                return ParserRuleContext2.WAIT_FIELD_NAME;
+            case ParserRuleContext2.ENUM_MEMBER_LIST:
+                return ParserRuleContext2.ENUM_MEMBER_START;
+            case ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR:
+                return ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR_END;
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST:
+                return ParserRuleContext2.STMT_START_BRACKETED_LIST_MEMBER;
+            case ParserRuleContext2.BRACKETED_LIST:
+                return ParserRuleContext2.BRACKETED_LIST_MEMBER;
+            case ParserRuleContext2.LIST_MATCH_PATTERN:
+                return ParserRuleContext2.LIST_MATCH_PATTERN_MEMBER;
+            case ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN:
+                return ParserRuleContext2.ARG_BINDING_PATTERN;
+            case ParserRuleContext2.MAPPING_MATCH_PATTERN:
+                return ParserRuleContext2.FIELD_MATCH_PATTERN_MEMBER;
+            case ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN:
+                return ParserRuleContext2.ARG_MATCH_PATTERN;
+            case ParserRuleContext2.NAMED_ARG_MATCH_PATTERN:
                 endContext();
-                return ParserRuleContext.NAMED_ARG_MATCH_PATTERN_RHS;
+                return ParserRuleContext2.NAMED_ARG_MATCH_PATTERN_RHS;
             default:
-                throw new IllegalStateException(parentCtx.toString());
+                throw new IllegalStateException(String.valueOf(parentCtx));
         }
     }
 
@@ -3160,78 +3163,78 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      *
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForTypeDescriptor() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForTypeDescriptor() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
             // Contexts that expect a type
-            case TYPE_DESC_IN_ANNOTATION_DECL:
+            case ParserRuleContext2.TYPE_DESC_IN_ANNOTATION_DECL:
                 endContext();
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
-                return ParserRuleContext.ANNOTATION_TAG;
-            case TYPE_DESC_BEFORE_IDENTIFIER:
-            case TYPE_DESC_IN_RECORD_FIELD:
+                return ParserRuleContext2.ANNOTATION_TAG;
+            case ParserRuleContext2.TYPE_DESC_BEFORE_IDENTIFIER:
+            case ParserRuleContext2.TYPE_DESC_IN_RECORD_FIELD:
                 endContext();
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
-                return ParserRuleContext.VARIABLE_NAME;
-            case TYPE_DESC_IN_TYPE_BINDING_PATTERN:
+                return ParserRuleContext2.VARIABLE_NAME;
+            case ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN:
                 endContext();
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
-                if (getParentContext() == ParserRuleContext.FOREACH_STMT) {
-                    return ParserRuleContext.BINDING_PATTERN;
+                if (getParentContext() == ParserRuleContext2.FOREACH_STMT) {
+                    return ParserRuleContext2.BINDING_PATTERN;
                 }
-                return ParserRuleContext.VARIABLE_NAME;
-            case TYPE_DESC_IN_PARAM:
+                return ParserRuleContext2.VARIABLE_NAME;
+            case ParserRuleContext2.TYPE_DESC_IN_PARAM:
                 endContext();
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
-                return ParserRuleContext.AFTER_PARAMETER_TYPE;
-            case TYPE_DESC_IN_TYPE_DEF:
+                return ParserRuleContext2.AFTER_PARAMETER_TYPE;
+            case ParserRuleContext2.TYPE_DESC_IN_TYPE_DEF:
                 endContext();
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
-                return ParserRuleContext.SEMICOLON;
-            case TYPE_DESC_IN_ANGLE_BRACKETS:
+                return ParserRuleContext2.SEMICOLON;
+            case ParserRuleContext2.TYPE_DESC_IN_ANGLE_BRACKETS:
                 endContext();
-                return ParserRuleContext.GT;
-            case TYPE_DESC_IN_RETURN_TYPE_DESC:
+                return ParserRuleContext2.GT;
+            case ParserRuleContext2.TYPE_DESC_IN_RETURN_TYPE_DESC:
                 endContext();
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
 
                 parentCtx = getParentContext();
                 switch (parentCtx) {
-                    case FUNC_TYPE_DESC:
+                    case ParserRuleContext2.FUNC_TYPE_DESC:
                         endContext();
-                        return ParserRuleContext.TYPEDESC_RHS;
-                    case FUNC_DEF_OR_FUNC_TYPE:
-                        return ParserRuleContext.FUNC_BODY_OR_TYPE_DESC_RHS;
-                    case FUNC_TYPE_DESC_OR_ANON_FUNC:
-                        return ParserRuleContext.FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY;
-                    case FUNC_DEF:
-                        return ParserRuleContext.FUNC_BODY;
-                    case ANON_FUNC_EXPRESSION:
-                        return ParserRuleContext.ANON_FUNC_BODY;
-                    case NAMED_WORKER_DECL:
-                        return ParserRuleContext.BLOCK_STMT;
+                        return ParserRuleContext2.TYPEDESC_RHS;
+                    case ParserRuleContext2.FUNC_DEF_OR_FUNC_TYPE:
+                        return ParserRuleContext2.FUNC_BODY_OR_TYPE_DESC_RHS;
+                    case ParserRuleContext2.FUNC_TYPE_DESC_OR_ANON_FUNC:
+                        return ParserRuleContext2.FUNC_TYPE_DESC_RHS_OR_ANON_FUNC_BODY;
+                    case ParserRuleContext2.FUNC_DEF:
+                        return ParserRuleContext2.FUNC_BODY;
+                    case ParserRuleContext2.ANON_FUNC_EXPRESSION:
+                        return ParserRuleContext2.ANON_FUNC_BODY;
+                    case ParserRuleContext2.NAMED_WORKER_DECL:
+                        return ParserRuleContext2.BLOCK_STMT;
                     default:
-                        throw new IllegalStateException(parentCtx.toString());
+                        throw new IllegalStateException(String.valueOf(parentCtx));
                 }
-            case TYPE_DESC_IN_EXPRESSION:
+            case ParserRuleContext2.TYPE_DESC_IN_EXPRESSION:
                 endContext();
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
-                return ParserRuleContext.EXPRESSION_RHS;
-            case COMP_UNIT:
+                return ParserRuleContext2.EXPRESSION_RHS;
+            case ParserRuleContext2.COMP_UNIT:
                 /*
                  * Fact 1:
                  * ------
@@ -3245,57 +3248,57 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
                  * We reach here for END_OF_TYPE_DESC context. That means we are going to end the
                  * func-type-desc.
                  */
-                startContext(ParserRuleContext.VAR_DECL_STMT);
-                return ParserRuleContext.VARIABLE_NAME; // TODO add typed-binding-patters
-            case OBJECT_MEMBER:
-                return ParserRuleContext.VARIABLE_NAME;
-            case ANNOTATION_DECL:
-                return ParserRuleContext.IDENTIFIER;
-            case TYPE_DESC_IN_STREAM_TYPE_DESC:
-                return ParserRuleContext.STREAM_TYPE_FIRST_PARAM_RHS;
-            case TYPE_DESC_IN_PARENTHESIS:
+                startContext(ParserRuleContext2.VAR_DECL_STMT);
+                return ParserRuleContext2.VARIABLE_NAME; // TODO add typed-binding-patters
+            case ParserRuleContext2.OBJECT_MEMBER:
+                return ParserRuleContext2.VARIABLE_NAME;
+            case ParserRuleContext2.ANNOTATION_DECL:
+                return ParserRuleContext2.IDENTIFIER;
+            case ParserRuleContext2.TYPE_DESC_IN_STREAM_TYPE_DESC:
+                return ParserRuleContext2.STREAM_TYPE_FIRST_PARAM_RHS;
+            case ParserRuleContext2.TYPE_DESC_IN_PARENTHESIS:
                 endContext();
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
-                return ParserRuleContext.CLOSE_PARENTHESIS;
-            case TYPE_DESC_IN_NEW_EXPR:
+                return ParserRuleContext2.CLOSE_PARENTHESIS;
+            case ParserRuleContext2.TYPE_DESC_IN_NEW_EXPR:
                 endContext();
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
-                return ParserRuleContext.ARG_LIST_START;
-            case TYPE_DESC_IN_TUPLE:
-            case STMT_START_BRACKETED_LIST:
-                return ParserRuleContext.TYPE_DESC_IN_TUPLE_RHS;
-            case TYPE_REFERENCE:
+                return ParserRuleContext2.ARG_LIST_START;
+            case ParserRuleContext2.TYPE_DESC_IN_TUPLE:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST:
+                return ParserRuleContext2.TYPE_DESC_IN_TUPLE_RHS;
+            case ParserRuleContext2.TYPE_REFERENCE:
                 endContext();
-                return ParserRuleContext.SEMICOLON;
+                return ParserRuleContext2.SEMICOLON;
             default:
                 // If none of the above that means we reach here via, anonymous-func-or-func-type context.
                 // Then the rhs of this is definitely an expression-rhs
-                return ParserRuleContext.EXPRESSION_RHS;
+                return ParserRuleContext2.EXPRESSION_RHS;
         }
     }
 
     private boolean isInTypeDescContext() {
         switch (getParentContext()) {
-            case TYPE_DESC_IN_ANNOTATION_DECL:
-            case TYPE_DESC_BEFORE_IDENTIFIER:
-            case TYPE_DESC_IN_RECORD_FIELD:
-            case TYPE_DESC_IN_PARAM:
-            case TYPE_DESC_IN_TYPE_BINDING_PATTERN:
-            case TYPE_DESC_IN_TYPE_DEF:
-            case TYPE_DESC_IN_ANGLE_BRACKETS:
-            case TYPE_DESC_IN_RETURN_TYPE_DESC:
-            case TYPE_DESC_IN_EXPRESSION:
-            case TYPE_DESC_IN_STREAM_TYPE_DESC:
-            case TYPE_DESC_IN_PARENTHESIS:
-            case TYPE_DESC_IN_NEW_EXPR:
-            case TYPE_DESC_IN_TUPLE:
-            case STMT_START_BRACKETED_LIST:
-            case BRACKETED_LIST:
-            case TYPE_REFERENCE:
+            case ParserRuleContext2.TYPE_DESC_IN_ANNOTATION_DECL:
+            case ParserRuleContext2.TYPE_DESC_BEFORE_IDENTIFIER:
+            case ParserRuleContext2.TYPE_DESC_IN_RECORD_FIELD:
+            case ParserRuleContext2.TYPE_DESC_IN_PARAM:
+            case ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN:
+            case ParserRuleContext2.TYPE_DESC_IN_TYPE_DEF:
+            case ParserRuleContext2.TYPE_DESC_IN_ANGLE_BRACKETS:
+            case ParserRuleContext2.TYPE_DESC_IN_RETURN_TYPE_DESC:
+            case ParserRuleContext2.TYPE_DESC_IN_EXPRESSION:
+            case ParserRuleContext2.TYPE_DESC_IN_STREAM_TYPE_DESC:
+            case ParserRuleContext2.TYPE_DESC_IN_PARENTHESIS:
+            case ParserRuleContext2.TYPE_DESC_IN_NEW_EXPR:
+            case ParserRuleContext2.TYPE_DESC_IN_TUPLE:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST:
+            case ParserRuleContext2.BRACKETED_LIST:
+            case ParserRuleContext2.TYPE_REFERENCE:
                 return true;
             default:
                 return false;
@@ -3307,30 +3310,30 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      *
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForEqualOp() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForEqualOp() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case EXTERNAL_FUNC_BODY:
-                return ParserRuleContext.EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS;
-            case REQUIRED_PARAM:
-            case DEFAULTABLE_PARAM:
-            case RECORD_FIELD:
-            case ARG_LIST:
-            case OBJECT_MEMBER:
-            case LISTENER_DECL:
-            case CONSTANT_DECL:
-            case LET_EXPR_LET_VAR_DECL:
-            case LET_CLAUSE_LET_VAR_DECL:
-            case ORDER_KEY:
-            case ENUM_MEMBER_LIST:
-                return ParserRuleContext.EXPRESSION;
-            case NAMED_ARG_MATCH_PATTERN:
-                return ParserRuleContext.MATCH_PATTERN;
-            case FUNCTIONAL_BINDING_PATTERN:
-                return ParserRuleContext.BINDING_PATTERN;
+            case ParserRuleContext2.EXTERNAL_FUNC_BODY:
+                return ParserRuleContext2.EXTERNAL_FUNC_BODY_OPTIONAL_ANNOTS;
+            case ParserRuleContext2.REQUIRED_PARAM:
+            case ParserRuleContext2.DEFAULTABLE_PARAM:
+            case ParserRuleContext2.RECORD_FIELD:
+            case ParserRuleContext2.ARG_LIST:
+            case ParserRuleContext2.OBJECT_MEMBER:
+            case ParserRuleContext2.LISTENER_DECL:
+            case ParserRuleContext2.CONSTANT_DECL:
+            case ParserRuleContext2.LET_EXPR_LET_VAR_DECL:
+            case ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL:
+            case ParserRuleContext2.ORDER_KEY:
+            case ParserRuleContext2.ENUM_MEMBER_LIST:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.NAMED_ARG_MATCH_PATTERN:
+                return ParserRuleContext2.MATCH_PATTERN;
+            case ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN:
+                return ParserRuleContext2.BINDING_PATTERN;
             default:
                 if (isStatement(parentCtx)) {
-                    return ParserRuleContext.EXPRESSION;
+                    return ParserRuleContext2.EXPRESSION;
                 }
                 throw new IllegalStateException("equal op cannot exist in a " + parentCtx);
         }
@@ -3342,104 +3345,98 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @param nextLookahead Position of the next token to consider, relative to the position of the original error
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForCloseBrace(int nextLookahead) {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForCloseBrace(int nextLookahead) {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case FUNC_BODY_BLOCK:
+            case ParserRuleContext2.FUNC_BODY_BLOCK:
                 endContext(); // end body block
                 return getNextRuleForCloseBraceInFuncBody();
-            case SERVICE_DECL:
+            case ParserRuleContext2.SERVICE_DECL:
                 endContext();
-                return ParserRuleContext.TOP_LEVEL_NODE;
-            case OBJECT_MEMBER:
+                return ParserRuleContext2.TOP_LEVEL_NODE;
+            case ParserRuleContext2.OBJECT_MEMBER:
                 endContext(); // end object member
                 // fall through
-            case RECORD_TYPE_DESCRIPTOR:
-            case OBJECT_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.RECORD_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.OBJECT_TYPE_DESCRIPTOR:
                 endContext(); // end record/object type def
-                return ParserRuleContext.TYPEDESC_RHS;
-            case BLOCK_STMT:
-            case AMBIGUOUS_STMT:
+                return ParserRuleContext2.TYPEDESC_RHS;
+            case ParserRuleContext2.BLOCK_STMT:
+            case ParserRuleContext2.AMBIGUOUS_STMT:
                 endContext(); // end block stmt
                 parentCtx = getParentContext();
                 switch (parentCtx) {
-                    case LOCK_STMT:
-                    case FOREACH_STMT:
-                    case WHILE_BLOCK:
-                    case RETRY_STMT:
+                    case ParserRuleContext2.LOCK_STMT:
+                    case ParserRuleContext2.FOREACH_STMT:
+                    case ParserRuleContext2.WHILE_BLOCK:
+                    case ParserRuleContext2.RETRY_STMT:
                         endContext();
-                        return ParserRuleContext.STATEMENT;
-                    case IF_BLOCK:
+                        return ParserRuleContext2.STATEMENT;
+                    case ParserRuleContext2.IF_BLOCK:
                         endContext(); // end parent stmt if/lock/while/ block
-                        return ParserRuleContext.ELSE_BLOCK;
-                    case TRANSACTION_STMT:
+                        return ParserRuleContext2.ELSE_BLOCK;
+                    case ParserRuleContext2.TRANSACTION_STMT:
                         endContext(); // end transaction context
                         parentCtx = getParentContext();
 
                         // If this is a retry-transaction block, then end the enclosing retry
                         // context as well.
-                        if (parentCtx == ParserRuleContext.RETRY_STMT) {
+                        if (parentCtx == ParserRuleContext2.RETRY_STMT) {
                             endContext();
                         }
-                        return ParserRuleContext.STATEMENT;
-                    case NAMED_WORKER_DECL:
+                        return ParserRuleContext2.STATEMENT;
+                    case ParserRuleContext2.NAMED_WORKER_DECL:
                         endContext(); // end named-worker
                         parentCtx = getParentContext();
-                        if (parentCtx == ParserRuleContext.FORK_STMT) {
-                            STToken nextToken = this.tokenReader.peek(nextLookahead);
-                            switch (nextToken.kind) {
-                                case CLOSE_BRACE_TOKEN:
-                                    return ParserRuleContext.CLOSE_BRACE;
-                                default:
-                                    return ParserRuleContext.STATEMENT;
-                            }
+                        if (parentCtx == ParserRuleContext2.FORK_STMT) {
+                            return ParserRuleContext2.STATEMENT;
                         } else {
-                            return ParserRuleContext.STATEMENT;
+                            return ParserRuleContext2.STATEMENT;
                         }
-                    case MATCH_BODY:
-                        return ParserRuleContext.MATCH_PATTERN;
+                    case ParserRuleContext2.MATCH_BODY:
+                        return ParserRuleContext2.MATCH_PATTERN;
                     default:
-                        return ParserRuleContext.STATEMENT;
+                        return ParserRuleContext2.STATEMENT;
                 }
-            case MAPPING_CONSTRUCTOR:
+            case ParserRuleContext2.MAPPING_CONSTRUCTOR:
                 endContext(); // end mapping constructor
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.TABLE_CONSTRUCTOR) {
-                    return ParserRuleContext.TABLE_ROW_END;
+                if (parentCtx == ParserRuleContext2.TABLE_CONSTRUCTOR) {
+                    return ParserRuleContext2.TABLE_ROW_END;
                 }
 
-                if (parentCtx == ParserRuleContext.ANNOTATIONS) {
-                    return ParserRuleContext.ANNOTATION_END;
+                if (parentCtx == ParserRuleContext2.ANNOTATIONS) {
+                    return ParserRuleContext2.ANNOTATION_END;
                 }
 
                 return getNextRuleForExpr();
-            case STMT_START_BRACKETED_LIST:
-                return ParserRuleContext.BRACKETED_LIST_MEMBER_END;
-            case MAPPING_BINDING_PATTERN:
-            case MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST:
+                return ParserRuleContext2.BRACKETED_LIST_MEMBER_END;
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN:
+            case ParserRuleContext2.MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
                 endContext();
                 return getNextRuleForBindingPattern();
-            case FORK_STMT:
+            case ParserRuleContext2.FORK_STMT:
                 endContext(); // end fork-statement
-                return ParserRuleContext.STATEMENT;
-            case INTERPOLATION:
+                return ParserRuleContext2.STATEMENT;
+            case ParserRuleContext2.INTERPOLATION:
                 endContext();
-                return ParserRuleContext.TEMPLATE_MEMBER;
-            case MULTI_RECEIVE_WORKERS:
-            case MULTI_WAIT_FIELDS:
-            case SERVICE_CONSTRUCTOR_EXPRESSION:
-            case DO_CLAUSE:
+                return ParserRuleContext2.TEMPLATE_MEMBER;
+            case ParserRuleContext2.MULTI_RECEIVE_WORKERS:
+            case ParserRuleContext2.MULTI_WAIT_FIELDS:
+            case ParserRuleContext2.SERVICE_CONSTRUCTOR_EXPRESSION:
+            case ParserRuleContext2.DO_CLAUSE:
                 endContext();
-                return ParserRuleContext.EXPRESSION_RHS;
-            case ENUM_MEMBER_LIST:
+                return ParserRuleContext2.EXPRESSION_RHS;
+            case ParserRuleContext2.ENUM_MEMBER_LIST:
                 endContext(); // end ENUM_MEMBER_LIST context
                 endContext(); // end MODULE_ENUM_DECLARATION ctx
-                return ParserRuleContext.TOP_LEVEL_NODE;
-            case MATCH_BODY:
+                return ParserRuleContext2.TOP_LEVEL_NODE;
+            case ParserRuleContext2.MATCH_BODY:
                 endContext(); // end match body
                 endContext(); // end match stmt
-                return ParserRuleContext.STATEMENT;
-            case MAPPING_MATCH_PATTERN:
+                return ParserRuleContext2.STATEMENT;
+            case ParserRuleContext2.MAPPING_MATCH_PATTERN:
                 endContext();
                 return getNextRuleForMatchPattern();
             default:
@@ -3447,71 +3444,71 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
         }
     }
 
-    private ParserRuleContext getNextRuleForCloseBraceInFuncBody() {
-        ParserRuleContext parentCtx;
+    private int getNextRuleForCloseBraceInFuncBody() {
+        int parentCtx;
         parentCtx = getParentContext();
         switch (parentCtx) {
-            case SERVICE_DECL:
-                return ParserRuleContext.RESOURCE_DEF;
-            case OBJECT_MEMBER:
-                return ParserRuleContext.OBJECT_MEMBER_START;
-            case COMP_UNIT:
-                return ParserRuleContext.TOP_LEVEL_NODE;
-            case FUNC_DEF:
-            case FUNC_DEF_OR_FUNC_TYPE:
+            case ParserRuleContext2.SERVICE_DECL:
+                return ParserRuleContext2.RESOURCE_DEF;
+            case ParserRuleContext2.OBJECT_MEMBER:
+                return ParserRuleContext2.OBJECT_MEMBER_START;
+            case ParserRuleContext2.COMP_UNIT:
+                return ParserRuleContext2.TOP_LEVEL_NODE;
+            case ParserRuleContext2.FUNC_DEF:
+            case ParserRuleContext2.FUNC_DEF_OR_FUNC_TYPE:
                 endContext(); // end func-def
                 return getNextRuleForCloseBraceInFuncBody();
-            case ANON_FUNC_EXPRESSION:
+            case ParserRuleContext2.ANON_FUNC_EXPRESSION:
             default:
                 // Anonynous func
                 endContext(); // end anon-func
-                return ParserRuleContext.EXPRESSION_RHS;
+                return ParserRuleContext2.EXPRESSION_RHS;
         }
     }
 
-    private ParserRuleContext getNextRuleForAnnotationEnd(int nextLookahead) {
-        ParserRuleContext parentCtx;
+    private int getNextRuleForAnnotationEnd(int nextLookahead) {
+        int parentCtx;
         STToken nextToken;
         nextToken = this.tokenReader.peek(nextLookahead);
-        if (nextToken.kind == SyntaxKind.AT_TOKEN) {
-            return ParserRuleContext.AT;
+        if (nextToken.kind == SyntaxKind2.AT_TOKEN) {
+            return ParserRuleContext2.AT;
         }
 
         endContext(); // end annotations
         parentCtx = getParentContext();
         switch (parentCtx) {
-            case COMP_UNIT:
-                return ParserRuleContext.TOP_LEVEL_NODE_WITHOUT_METADATA;
-            case FUNC_DEF:
-            case FUNC_TYPE_DESC:
-            case FUNC_DEF_OR_FUNC_TYPE:
-            case ANON_FUNC_EXPRESSION:
-            case FUNC_TYPE_DESC_OR_ANON_FUNC:
-                return ParserRuleContext.TYPE_DESC_IN_RETURN_TYPE_DESC;
-            case LET_EXPR_LET_VAR_DECL:
-            case LET_CLAUSE_LET_VAR_DECL:
-                return ParserRuleContext.TYPE_DESC_IN_TYPE_BINDING_PATTERN;
-            case RECORD_FIELD:
-                return ParserRuleContext.RECORD_FIELD_WITHOUT_METADATA;
-            case OBJECT_MEMBER:
-                return ParserRuleContext.OBJECT_MEMBER_WITHOUT_METADATA;
-            case SERVICE_DECL:
-                return ParserRuleContext.RESOURCE_DEF;
-            case FUNC_BODY_BLOCK:
-                return ParserRuleContext.STATEMENT_WITHOUT_ANNOTS;
-            case EXTERNAL_FUNC_BODY:
-                return ParserRuleContext.EXTERNAL_KEYWORD;
-            case TYPE_CAST:
-                return ParserRuleContext.TYPE_CAST_PARAM_RHS;
-            case ENUM_MEMBER_LIST:
-                return ParserRuleContext.ENUM_MEMBER_NAME;
+            case ParserRuleContext2.COMP_UNIT:
+                return ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_METADATA;
+            case ParserRuleContext2.FUNC_DEF:
+            case ParserRuleContext2.FUNC_TYPE_DESC:
+            case ParserRuleContext2.FUNC_DEF_OR_FUNC_TYPE:
+            case ParserRuleContext2.ANON_FUNC_EXPRESSION:
+            case ParserRuleContext2.FUNC_TYPE_DESC_OR_ANON_FUNC:
+                return ParserRuleContext2.TYPE_DESC_IN_RETURN_TYPE_DESC;
+            case ParserRuleContext2.LET_EXPR_LET_VAR_DECL:
+            case ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL:
+                return ParserRuleContext2.TYPE_DESC_IN_TYPE_BINDING_PATTERN;
+            case ParserRuleContext2.RECORD_FIELD:
+                return ParserRuleContext2.RECORD_FIELD_WITHOUT_METADATA;
+            case ParserRuleContext2.OBJECT_MEMBER:
+                return ParserRuleContext2.OBJECT_MEMBER_WITHOUT_METADATA;
+            case ParserRuleContext2.SERVICE_DECL:
+                return ParserRuleContext2.RESOURCE_DEF;
+            case ParserRuleContext2.FUNC_BODY_BLOCK:
+                return ParserRuleContext2.STATEMENT_WITHOUT_ANNOTS;
+            case ParserRuleContext2.EXTERNAL_FUNC_BODY:
+                return ParserRuleContext2.EXTERNAL_KEYWORD;
+            case ParserRuleContext2.TYPE_CAST:
+                return ParserRuleContext2.TYPE_CAST_PARAM_RHS;
+            case ParserRuleContext2.ENUM_MEMBER_LIST:
+                return ParserRuleContext2.ENUM_MEMBER_NAME;
             default:
                 if (isParameter(parentCtx)) {
-                    return ParserRuleContext.REQUIRED_PARAM;
+                    return ParserRuleContext2.REQUIRED_PARAM;
                 }
 
                 // everything else, treat as an annotation in an expression
-                return ParserRuleContext.EXPRESSION;
+                return ParserRuleContext2.EXPRESSION;
         }
     }
 
@@ -3520,66 +3517,66 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      *
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForVarName() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForVarName() {
+        int parentCtx = getParentContext();
         if (isStatement(parentCtx)) {
-            return ParserRuleContext.VAR_DECL_STMT_RHS;
+            return ParserRuleContext2.VAR_DECL_STMT_RHS;
         }
 
         switch (parentCtx) {
-            case REQUIRED_PARAM:
-            case PARAM_LIST:
-                return ParserRuleContext.REQUIRED_PARAM_NAME_RHS;
-            case DEFAULTABLE_PARAM:
-                return ParserRuleContext.ASSIGN_OP;
-            case REST_PARAM:
-                return ParserRuleContext.PARAM_END;
-            case FOREACH_STMT:
-                return ParserRuleContext.IN_KEYWORD;
-            case TYPED_BINDING_PATTERN:
-            case BINDING_PATTERN_STARTING_IDENTIFIER:
-            case LIST_BINDING_PATTERN:
-            case STMT_START_BRACKETED_LIST_MEMBER:
-            case REST_BINDING_PATTERN:
-            case FIELD_BINDING_PATTERN:
-            case MAPPING_BINDING_PATTERN:
-            case MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
-            case FUNCTIONAL_BINDING_PATTERN:
+            case ParserRuleContext2.REQUIRED_PARAM:
+            case ParserRuleContext2.PARAM_LIST:
+                return ParserRuleContext2.REQUIRED_PARAM_NAME_RHS;
+            case ParserRuleContext2.DEFAULTABLE_PARAM:
+                return ParserRuleContext2.ASSIGN_OP;
+            case ParserRuleContext2.REST_PARAM:
+                return ParserRuleContext2.PARAM_END;
+            case ParserRuleContext2.FOREACH_STMT:
+                return ParserRuleContext2.IN_KEYWORD;
+            case ParserRuleContext2.TYPED_BINDING_PATTERN:
+            case ParserRuleContext2.BINDING_PATTERN_STARTING_IDENTIFIER:
+            case ParserRuleContext2.LIST_BINDING_PATTERN:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST_MEMBER:
+            case ParserRuleContext2.REST_BINDING_PATTERN:
+            case ParserRuleContext2.FIELD_BINDING_PATTERN:
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN:
+            case ParserRuleContext2.MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
+            case ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN:
                 return getNextRuleForBindingPattern();
-            case LISTENER_DECL:
-            case CONSTANT_DECL:
-                return ParserRuleContext.VAR_DECL_STMT_RHS;
-            case RECORD_FIELD:
-                return ParserRuleContext.FIELD_DESCRIPTOR_RHS;
-            case ARG_LIST:
-                return ParserRuleContext.NAMED_OR_POSITIONAL_ARG_RHS;
-            case OBJECT_MEMBER:
-                return ParserRuleContext.OBJECT_FIELD_RHS;
-            case ARRAY_TYPE_DESCRIPTOR:
-                return ParserRuleContext.CLOSE_BRACKET;
-            case KEY_SPECIFIER:
-                return ParserRuleContext.TABLE_KEY_RHS;
-            case LET_EXPR_LET_VAR_DECL:
-            case LET_CLAUSE_LET_VAR_DECL:
-                return ParserRuleContext.ASSIGN_OP;
-            case ANNOTATION_DECL:
-                return ParserRuleContext.ANNOT_OPTIONAL_ATTACH_POINTS;
-            case QUERY_EXPRESSION:
-                return ParserRuleContext.IN_KEYWORD;
-            case REST_MATCH_PATTERN:
+            case ParserRuleContext2.LISTENER_DECL:
+            case ParserRuleContext2.CONSTANT_DECL:
+                return ParserRuleContext2.VAR_DECL_STMT_RHS;
+            case ParserRuleContext2.RECORD_FIELD:
+                return ParserRuleContext2.FIELD_DESCRIPTOR_RHS;
+            case ParserRuleContext2.ARG_LIST:
+                return ParserRuleContext2.NAMED_OR_POSITIONAL_ARG_RHS;
+            case ParserRuleContext2.OBJECT_MEMBER:
+                return ParserRuleContext2.OBJECT_FIELD_RHS;
+            case ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR:
+                return ParserRuleContext2.CLOSE_BRACKET;
+            case ParserRuleContext2.KEY_SPECIFIER:
+                return ParserRuleContext2.TABLE_KEY_RHS;
+            case ParserRuleContext2.LET_EXPR_LET_VAR_DECL:
+            case ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL:
+                return ParserRuleContext2.ASSIGN_OP;
+            case ParserRuleContext2.ANNOTATION_DECL:
+                return ParserRuleContext2.ANNOT_OPTIONAL_ATTACH_POINTS;
+            case ParserRuleContext2.QUERY_EXPRESSION:
+                return ParserRuleContext2.IN_KEYWORD;
+            case ParserRuleContext2.REST_MATCH_PATTERN:
                 endContext(); // end rest match pattern context
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.MAPPING_MATCH_PATTERN) {
-                    return ParserRuleContext.CLOSE_BRACE;
+                if (parentCtx == ParserRuleContext2.MAPPING_MATCH_PATTERN) {
+                    return ParserRuleContext2.CLOSE_BRACE;
                 }
-                if (parentCtx == ParserRuleContext.FUNCTIONAL_MATCH_PATTERN) {
-                    return ParserRuleContext.CLOSE_PARENTHESIS;
+                if (parentCtx == ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN) {
+                    return ParserRuleContext2.CLOSE_PARENTHESIS;
                 }
-                return ParserRuleContext.CLOSE_BRACKET;
-            case MAPPING_MATCH_PATTERN:
-                return ParserRuleContext.COLON;
+                return ParserRuleContext2.CLOSE_BRACKET;
+            case ParserRuleContext2.MAPPING_MATCH_PATTERN:
+                return ParserRuleContext2.COLON;
             default:
-                throw new IllegalStateException(parentCtx.toString());
+                throw new IllegalStateException(String.valueOf(parentCtx));
         }
     }
 
@@ -3589,84 +3586,84 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @param nextLookahead Position of the next token to consider, relative to the position of the original error
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForSemicolon(int nextLookahead) {
+    private int getNextRuleForSemicolon(int nextLookahead) {
         STToken nextToken;
-        ParserRuleContext parentCtx = getParentContext();
-        if (parentCtx == ParserRuleContext.EXTERNAL_FUNC_BODY) {
+        int parentCtx = getParentContext();
+        if (parentCtx == ParserRuleContext2.EXTERNAL_FUNC_BODY) {
             endContext(); // end external func-body
             endContext(); // end func-def
-            return ParserRuleContext.TOP_LEVEL_NODE;
-        } else if (parentCtx == ParserRuleContext.QUERY_EXPRESSION) {
+            return ParserRuleContext2.TOP_LEVEL_NODE;
+        } else if (parentCtx == ParserRuleContext2.QUERY_EXPRESSION) {
             endContext(); // end expression
             return getNextRuleForSemicolon(nextLookahead);
         } else if (isExpressionContext(parentCtx)) {
             // A semicolon after an expression also means its an end of a statement/field, Hence pop the ctx.
             endContext(); // end statement
-            return ParserRuleContext.STATEMENT;
-        } else if (parentCtx == ParserRuleContext.VAR_DECL_STMT) {
+            return ParserRuleContext2.STATEMENT;
+        } else if (parentCtx == ParserRuleContext2.VAR_DECL_STMT) {
             endContext(); // end var-decl
             parentCtx = getParentContext();
-            if (parentCtx == ParserRuleContext.COMP_UNIT) {
-                return ParserRuleContext.TOP_LEVEL_NODE;
+            if (parentCtx == ParserRuleContext2.COMP_UNIT) {
+                return ParserRuleContext2.TOP_LEVEL_NODE;
             }
-            return ParserRuleContext.STATEMENT;
+            return ParserRuleContext2.STATEMENT;
         } else if (isStatement(parentCtx)) {
             endContext(); // end statement
-            return ParserRuleContext.STATEMENT;
-        } else if (parentCtx == ParserRuleContext.RECORD_FIELD) {
+            return ParserRuleContext2.STATEMENT;
+        } else if (parentCtx == ParserRuleContext2.RECORD_FIELD) {
             endContext(); // end record field
-            return ParserRuleContext.RECORD_FIELD_OR_RECORD_END;
-        } else if (parentCtx == ParserRuleContext.XML_NAMESPACE_DECLARATION) {
+            return ParserRuleContext2.RECORD_FIELD_OR_RECORD_END;
+        } else if (parentCtx == ParserRuleContext2.XML_NAMESPACE_DECLARATION) {
             endContext();
             parentCtx = getParentContext();
-            if (parentCtx == ParserRuleContext.COMP_UNIT) {
-                return ParserRuleContext.TOP_LEVEL_NODE;
+            if (parentCtx == ParserRuleContext2.COMP_UNIT) {
+                return ParserRuleContext2.TOP_LEVEL_NODE;
             }
-            return ParserRuleContext.STATEMENT;
-        } else if (parentCtx == ParserRuleContext.MODULE_TYPE_DEFINITION ||
-                parentCtx == ParserRuleContext.LISTENER_DECL || parentCtx == ParserRuleContext.CONSTANT_DECL ||
-                parentCtx == ParserRuleContext.ANNOTATION_DECL) {
+            return ParserRuleContext2.STATEMENT;
+        } else if (parentCtx == ParserRuleContext2.MODULE_TYPE_DEFINITION ||
+                parentCtx == ParserRuleContext2.LISTENER_DECL || parentCtx == ParserRuleContext2.CONSTANT_DECL ||
+                parentCtx == ParserRuleContext2.ANNOTATION_DECL) {
             endContext(); // end declaration
-            return ParserRuleContext.TOP_LEVEL_NODE;
-        } else if (parentCtx == ParserRuleContext.OBJECT_MEMBER) {
+            return ParserRuleContext2.TOP_LEVEL_NODE;
+        } else if (parentCtx == ParserRuleContext2.OBJECT_MEMBER) {
             if (isEndOfObjectTypeNode(nextLookahead)) {
                 endContext(); // end object member
-                return ParserRuleContext.CLOSE_BRACE;
+                return ParserRuleContext2.CLOSE_BRACE;
             }
-            return ParserRuleContext.OBJECT_MEMBER_START;
-        } else if (parentCtx == ParserRuleContext.IMPORT_DECL) {
+            return ParserRuleContext2.OBJECT_MEMBER_START;
+        } else if (parentCtx == ParserRuleContext2.IMPORT_DECL) {
             endContext(); // end object member
             nextToken = this.tokenReader.peek(nextLookahead);
-            if (nextToken.kind == SyntaxKind.EOF_TOKEN) {
-                return ParserRuleContext.EOF;
+            if (nextToken.kind == SyntaxKind2.EOF_TOKEN) {
+                return ParserRuleContext2.EOF;
             }
-            return ParserRuleContext.TOP_LEVEL_NODE;
-        } else if (parentCtx == ParserRuleContext.ANNOT_ATTACH_POINTS_LIST) {
+            return ParserRuleContext2.TOP_LEVEL_NODE;
+        } else if (parentCtx == ParserRuleContext2.ANNOT_ATTACH_POINTS_LIST) {
             endContext(); // end annot attach points list
             endContext(); // end annot declaration
             nextToken = this.tokenReader.peek(nextLookahead);
-            if (nextToken.kind == SyntaxKind.EOF_TOKEN) {
-                return ParserRuleContext.EOF;
+            if (nextToken.kind == SyntaxKind2.EOF_TOKEN) {
+                return ParserRuleContext2.EOF;
             }
-            return ParserRuleContext.TOP_LEVEL_NODE;
-        } else if (parentCtx == ParserRuleContext.FUNC_DEF || parentCtx == ParserRuleContext.FUNC_DEF_OR_FUNC_TYPE) {
+            return ParserRuleContext2.TOP_LEVEL_NODE;
+        } else if (parentCtx == ParserRuleContext2.FUNC_DEF || parentCtx == ParserRuleContext2.FUNC_DEF_OR_FUNC_TYPE) {
             endContext(); // end func-def
             nextToken = this.tokenReader.peek(nextLookahead);
-            if (nextToken.kind == SyntaxKind.EOF_TOKEN) {
-                return ParserRuleContext.EOF;
+            if (nextToken.kind == SyntaxKind2.EOF_TOKEN) {
+                return ParserRuleContext2.EOF;
             }
-            return ParserRuleContext.TOP_LEVEL_NODE;
+            return ParserRuleContext2.TOP_LEVEL_NODE;
         } else {
-            throw new IllegalStateException(parentCtx.toString());
+            throw new IllegalStateException(String.valueOf(parentCtx));
         }
     }
 
-    private ParserRuleContext getNextRuleForDot() {
-        ParserRuleContext parentCtx = getParentContext();
-        if (parentCtx == ParserRuleContext.IMPORT_DECL) {
-            return ParserRuleContext.IMPORT_MODULE_NAME;
+    private int getNextRuleForDot() {
+        int parentCtx = getParentContext();
+        if (parentCtx == ParserRuleContext2.IMPORT_DECL) {
+            return ParserRuleContext2.IMPORT_MODULE_NAME;
         }
-        return ParserRuleContext.FIELD_ACCESS_IDENTIFIER;
+        return ParserRuleContext2.FIELD_ACCESS_IDENTIFIER;
     }
 
     /**
@@ -3674,16 +3671,16 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      *
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForQuestionMark() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForQuestionMark() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case OPTIONAL_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.OPTIONAL_TYPE_DESCRIPTOR:
                 endContext();
-                return ParserRuleContext.TYPEDESC_RHS;
-            case CONDITIONAL_EXPRESSION:
-                return ParserRuleContext.EXPRESSION;
+                return ParserRuleContext2.TYPEDESC_RHS;
+            case ParserRuleContext2.CONDITIONAL_EXPRESSION:
+                return ParserRuleContext2.EXPRESSION;
             default:
-                return ParserRuleContext.SEMICOLON;
+                return ParserRuleContext2.SEMICOLON;
         }
     }
 
@@ -3692,24 +3689,24 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      *
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForOpenBracket() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForOpenBracket() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case ARRAY_TYPE_DESCRIPTOR:
-                return ParserRuleContext.ARRAY_LENGTH;
-            case LIST_CONSTRUCTOR:
-                return ParserRuleContext.LIST_CONSTRUCTOR_FIRST_MEMBER;
-            case TABLE_CONSTRUCTOR:
-                return ParserRuleContext.ROW_LIST_RHS;
-            case LIST_BINDING_PATTERN:
-                return ParserRuleContext.LIST_BINDING_PATTERN_MEMBER;
-            case LIST_MATCH_PATTERN:
-                return ParserRuleContext.LIST_MATCH_PATTERNS_START;
+            case ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR:
+                return ParserRuleContext2.ARRAY_LENGTH;
+            case ParserRuleContext2.LIST_CONSTRUCTOR:
+                return ParserRuleContext2.LIST_CONSTRUCTOR_FIRST_MEMBER;
+            case ParserRuleContext2.TABLE_CONSTRUCTOR:
+                return ParserRuleContext2.ROW_LIST_RHS;
+            case ParserRuleContext2.LIST_BINDING_PATTERN:
+                return ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER;
+            case ParserRuleContext2.LIST_MATCH_PATTERN:
+                return ParserRuleContext2.LIST_MATCH_PATTERNS_START;
             default:
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPE_DESC_IN_TUPLE;
+                    return ParserRuleContext2.TYPE_DESC_IN_TUPLE;
                 }
-                return ParserRuleContext.EXPRESSION;
+                return ParserRuleContext2.EXPRESSION;
         }
     }
 
@@ -3718,36 +3715,36 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      *
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForCloseBracket() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForCloseBracket() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case ARRAY_TYPE_DESCRIPTOR:
-            case TYPE_DESC_IN_TUPLE:
+            case ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.TYPE_DESC_IN_TUPLE:
                 endContext(); // End array/tuple type descriptor context
-                return ParserRuleContext.TYPEDESC_RHS;
-            case COMPUTED_FIELD_NAME:
+                return ParserRuleContext2.TYPEDESC_RHS;
+            case ParserRuleContext2.COMPUTED_FIELD_NAME:
                 endContext(); // end computed-field-name
-                return ParserRuleContext.COLON;
-            case LIST_BINDING_PATTERN:
+                return ParserRuleContext2.COLON;
+            case ParserRuleContext2.LIST_BINDING_PATTERN:
                 endContext(); // end list-binding-pattern context
                 return getNextRuleForBindingPattern();
-            case LIST_CONSTRUCTOR:
-            case TABLE_CONSTRUCTOR:
-            case MEMBER_ACCESS_KEY_EXPR:
+            case ParserRuleContext2.LIST_CONSTRUCTOR:
+            case ParserRuleContext2.TABLE_CONSTRUCTOR:
+            case ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR:
                 endContext();
                 return getNextRuleForExpr();
-            case STMT_START_BRACKETED_LIST:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST:
                 endContext();
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.STMT_START_BRACKETED_LIST) {
-                    return ParserRuleContext.BRACKETED_LIST_MEMBER_END;
+                if (parentCtx == ParserRuleContext2.STMT_START_BRACKETED_LIST) {
+                    return ParserRuleContext2.BRACKETED_LIST_MEMBER_END;
                 }
 
-                return ParserRuleContext.STMT_START_BRACKETED_LIST_RHS;
-            case BRACKETED_LIST:
+                return ParserRuleContext2.STMT_START_BRACKETED_LIST_RHS;
+            case ParserRuleContext2.BRACKETED_LIST:
                 endContext();
-                return ParserRuleContext.BRACKETED_LIST_RHS;
-            case LIST_MATCH_PATTERN:
+                return ParserRuleContext2.BRACKETED_LIST_RHS;
+            case ParserRuleContext2.LIST_MATCH_PATTERN:
                 endContext();
                 return getNextRuleForMatchPattern();
             default:
@@ -3760,89 +3757,89 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      *
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForDecimalIntegerLiteral() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForDecimalIntegerLiteral() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case CONSTANT_EXPRESSION:
+            case ParserRuleContext2.CONSTANT_EXPRESSION:
                 endContext();
                 return getNextRuleForConstExpr();
-            case ARRAY_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR:
             default:
-                return ParserRuleContext.CLOSE_BRACKET;
+                return ParserRuleContext2.CLOSE_BRACKET;
         }
     }
 
-    private ParserRuleContext getNextRuleForExpr() {
-        ParserRuleContext parentCtx;
+    private int getNextRuleForExpr() {
+        int parentCtx;
         parentCtx = getParentContext();
-        if (parentCtx == ParserRuleContext.CONSTANT_EXPRESSION) {
+        if (parentCtx == ParserRuleContext2.CONSTANT_EXPRESSION) {
             endContext();
             return getNextRuleForConstExpr();
         }
-        return ParserRuleContext.EXPRESSION_RHS;
+        return ParserRuleContext2.EXPRESSION_RHS;
     }
 
-    private ParserRuleContext getNextRuleForExprStartsWithVarRef() {
-        ParserRuleContext parentCtx;
+    private int getNextRuleForExprStartsWithVarRef() {
+        int parentCtx;
         parentCtx = getParentContext();
-        if (parentCtx == ParserRuleContext.CONSTANT_EXPRESSION) {
+        if (parentCtx == ParserRuleContext2.CONSTANT_EXPRESSION) {
             endContext();
             return getNextRuleForConstExpr();
         }
-        return ParserRuleContext.VARIABLE_REF_RHS;
+        return ParserRuleContext2.VARIABLE_REF_RHS;
     }
 
-    private ParserRuleContext getNextRuleForConstExpr() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForConstExpr() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case XML_NAMESPACE_DECLARATION:
-                return ParserRuleContext.XML_NAMESPACE_PREFIX_DECL;
+            case ParserRuleContext2.XML_NAMESPACE_DECLARATION:
+                return ParserRuleContext2.XML_NAMESPACE_PREFIX_DECL;
             default:
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
                 return getNextRuleForMatchPattern();
         }
     }
 
-    private ParserRuleContext getNextRuleForLt() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForLt() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case TYPE_CAST:
-                return ParserRuleContext.TYPE_CAST_PARAM;
+            case ParserRuleContext2.TYPE_CAST:
+                return ParserRuleContext2.TYPE_CAST_PARAM;
             default:
-                return ParserRuleContext.TYPE_DESC_IN_ANGLE_BRACKETS;
+                return ParserRuleContext2.TYPE_DESC_IN_ANGLE_BRACKETS;
         }
     }
 
-    private ParserRuleContext getNextRuleForGt(int nextLookahead) {
-        ParserRuleContext parentCtx = getParentContext();
-        if (parentCtx == ParserRuleContext.TYPE_DESC_IN_STREAM_TYPE_DESC) {
+    private int getNextRuleForGt(int nextLookahead) {
+        int parentCtx = getParentContext();
+        if (parentCtx == ParserRuleContext2.TYPE_DESC_IN_STREAM_TYPE_DESC) {
             // Since type-desc in a stream-type can have alternate endings,
             // we haven't end the context. So if its '>', then end the ctx here.
             endContext();
-            return ParserRuleContext.TYPEDESC_RHS;
+            return ParserRuleContext2.TYPEDESC_RHS;
         }
 
         if (isInTypeDescContext()) {
-            return ParserRuleContext.TYPEDESC_RHS;
+            return ParserRuleContext2.TYPEDESC_RHS;
         }
 
-        if (parentCtx == ParserRuleContext.ROW_TYPE_PARAM) {
+        if (parentCtx == ParserRuleContext2.ROW_TYPE_PARAM) {
             endContext(); // end row type param ctx
-            return ParserRuleContext.TABLE_TYPE_DESC_RHS;
-        } else if (parentCtx == ParserRuleContext.RETRY_STMT) {
-            return ParserRuleContext.RETRY_TYPE_PARAM_RHS;
+            return ParserRuleContext2.TABLE_TYPE_DESC_RHS;
+        } else if (parentCtx == ParserRuleContext2.RETRY_STMT) {
+            return ParserRuleContext2.RETRY_TYPE_PARAM_RHS;
         }
 
-        if (parentCtx == ParserRuleContext.XML_NAME_PATTERN) {
+        if (parentCtx == ParserRuleContext2.XML_NAME_PATTERN) {
             endContext();
-            return ParserRuleContext.EXPRESSION_RHS;
+            return ParserRuleContext2.EXPRESSION_RHS;
         }
 
         // Type cast expression:
         endContext();
-        return ParserRuleContext.EXPRESSION;
+        return ParserRuleContext2.EXPRESSION;
     }
 
     /**
@@ -3850,135 +3847,135 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      *
      * @return Next parser context
      */
-    private ParserRuleContext getNextRuleForBindingPattern() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForBindingPattern() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case BINDING_PATTERN_STARTING_IDENTIFIER:
-            case TYPED_BINDING_PATTERN:
+            case ParserRuleContext2.BINDING_PATTERN_STARTING_IDENTIFIER:
+            case ParserRuleContext2.TYPED_BINDING_PATTERN:
                 endContext();
                 return getNextRuleForBindingPattern();
-            case FOREACH_STMT:
-            case QUERY_EXPRESSION:
-                return ParserRuleContext.IN_KEYWORD;
-            case LIST_BINDING_PATTERN:
-            case STMT_START_BRACKETED_LIST:
-            case BRACKETED_LIST:
-                return ParserRuleContext.LIST_BINDING_PATTERN_MEMBER_END;
-            case MAPPING_BINDING_PATTERN:
-            case MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
-                return ParserRuleContext.MAPPING_BINDING_PATTERN_END;
-            case REST_BINDING_PATTERN:
+            case ParserRuleContext2.FOREACH_STMT:
+            case ParserRuleContext2.QUERY_EXPRESSION:
+                return ParserRuleContext2.IN_KEYWORD;
+            case ParserRuleContext2.LIST_BINDING_PATTERN:
+            case ParserRuleContext2.STMT_START_BRACKETED_LIST:
+            case ParserRuleContext2.BRACKETED_LIST:
+                return ParserRuleContext2.LIST_BINDING_PATTERN_MEMBER_END;
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN:
+            case ParserRuleContext2.MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
+                return ParserRuleContext2.MAPPING_BINDING_PATTERN_END;
+            case ParserRuleContext2.REST_BINDING_PATTERN:
                 endContext();
                 parentCtx = getParentContext();
-                if (parentCtx == ParserRuleContext.LIST_BINDING_PATTERN) {
-                    return ParserRuleContext.CLOSE_BRACKET;
-                } else if (parentCtx == ParserRuleContext.FUNCTIONAL_BINDING_PATTERN) {
-                    return ParserRuleContext.CLOSE_PARENTHESIS;
+                if (parentCtx == ParserRuleContext2.LIST_BINDING_PATTERN) {
+                    return ParserRuleContext2.CLOSE_BRACKET;
+                } else if (parentCtx == ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN) {
+                    return ParserRuleContext2.CLOSE_PARENTHESIS;
                 }
-                return ParserRuleContext.CLOSE_BRACE; // for mapping binding pattern
-            case AMBIGUOUS_STMT:
-                switchContext(ParserRuleContext.VAR_DECL_STMT);
-                return ParserRuleContext.VAR_DECL_STMT_RHS;
-            case ASSIGNMENT_OR_VAR_DECL_STMT:
-            case VAR_DECL_STMT:
-                return ParserRuleContext.VAR_DECL_STMT_RHS;
-            case LET_CLAUSE_LET_VAR_DECL:
-            case LET_EXPR_LET_VAR_DECL:
-            case ASSIGNMENT_STMT:
-                return ParserRuleContext.ASSIGN_OP;
-            case MATCH_PATTERN:
-                return ParserRuleContext.MATCH_PATTERN_RHS;
-            case LIST_MATCH_PATTERN:
-                return ParserRuleContext.LIST_MATCH_PATTERN_MEMBER_RHS;
-            case FUNCTIONAL_BINDING_PATTERN:
-                return ParserRuleContext.ARG_BINDING_PATTERN_END;
+                return ParserRuleContext2.CLOSE_BRACE; // for mapping binding pattern
+            case ParserRuleContext2.AMBIGUOUS_STMT:
+                switchContext(ParserRuleContext2.VAR_DECL_STMT);
+                return ParserRuleContext2.VAR_DECL_STMT_RHS;
+            case ParserRuleContext2.ASSIGNMENT_OR_VAR_DECL_STMT:
+            case ParserRuleContext2.VAR_DECL_STMT:
+                return ParserRuleContext2.VAR_DECL_STMT_RHS;
+            case ParserRuleContext2.LET_CLAUSE_LET_VAR_DECL:
+            case ParserRuleContext2.LET_EXPR_LET_VAR_DECL:
+            case ParserRuleContext2.ASSIGNMENT_STMT:
+                return ParserRuleContext2.ASSIGN_OP;
+            case ParserRuleContext2.MATCH_PATTERN:
+                return ParserRuleContext2.MATCH_PATTERN_RHS;
+            case ParserRuleContext2.LIST_MATCH_PATTERN:
+                return ParserRuleContext2.LIST_MATCH_PATTERN_MEMBER_RHS;
+            case ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN:
+                return ParserRuleContext2.ARG_BINDING_PATTERN_END;
             default:
                 return getNextRuleForMatchPattern();
         }
     }
 
-    private ParserRuleContext getNextRuleForWaitExprListEnd() {
+    private int getNextRuleForWaitExprListEnd() {
         // TODO: add other endings based on the locations where action is allowed.
         endContext();
-        return ParserRuleContext.EXPRESSION_RHS;
+        return ParserRuleContext2.EXPRESSION_RHS;
     }
 
-    private ParserRuleContext getNextRuleForIdentifier() {
-        ParserRuleContext parentCtx;
+    private int getNextRuleForIdentifier() {
+        int parentCtx;
         parentCtx = getParentContext();
         switch (parentCtx) {
-            case VARIABLE_REF:
+            case ParserRuleContext2.VARIABLE_REF:
                 endContext();
                 return getNextRuleForExprStartsWithVarRef();
-            case TYPE_REFERENCE:
+            case ParserRuleContext2.TYPE_REFERENCE:
                 endContext();
                 if (isInTypeDescContext()) {
-                    return ParserRuleContext.TYPEDESC_RHS;
+                    return ParserRuleContext2.TYPEDESC_RHS;
                 }
-                if (getParentContext() == ParserRuleContext.FUNCTIONAL_MATCH_PATTERN) {
-                    return ParserRuleContext.OPEN_PARENTHESIS;
+                if (getParentContext() == ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN) {
+                    return ParserRuleContext2.OPEN_PARENTHESIS;
                 }
-                return ParserRuleContext.SEMICOLON;
-            case ANNOT_REFERENCE:
+                return ParserRuleContext2.SEMICOLON;
+            case ParserRuleContext2.ANNOT_REFERENCE:
                 endContext();
-                return ParserRuleContext.ANNOTATION_REF_RHS;
-            case ANNOTATION_DECL:
-                return ParserRuleContext.ANNOT_OPTIONAL_ATTACH_POINTS;
-            case FIELD_ACCESS_IDENTIFIER:
+                return ParserRuleContext2.ANNOTATION_REF_RHS;
+            case ParserRuleContext2.ANNOTATION_DECL:
+                return ParserRuleContext2.ANNOT_OPTIONAL_ATTACH_POINTS;
+            case ParserRuleContext2.FIELD_ACCESS_IDENTIFIER:
                 endContext();
-                return ParserRuleContext.VARIABLE_REF_RHS;
-            case XML_ATOMIC_NAME_PATTERN:
+                return ParserRuleContext2.VARIABLE_REF_RHS;
+            case ParserRuleContext2.XML_ATOMIC_NAME_PATTERN:
                 endContext();
-                return ParserRuleContext.XML_NAME_PATTERN_RHS;
-            case NAMED_ARG_MATCH_PATTERN:
-                return ParserRuleContext.ASSIGN_OP;
+                return ParserRuleContext2.XML_NAME_PATTERN_RHS;
+            case ParserRuleContext2.NAMED_ARG_MATCH_PATTERN:
+                return ParserRuleContext2.ASSIGN_OP;
             default:
-                throw new IllegalStateException(parentCtx.toString());
+                throw new IllegalStateException(String.valueOf(parentCtx));
         }
     }
 
-    private ParserRuleContext getNextRuleForColon() {
-        ParserRuleContext parentCtx;
+    private int getNextRuleForColon() {
+        int parentCtx;
         parentCtx = getParentContext();
         switch (parentCtx) {
-            case MAPPING_CONSTRUCTOR:
-                return ParserRuleContext.EXPRESSION;
-            case MULTI_RECEIVE_WORKERS:
-                return ParserRuleContext.PEER_WORKER_NAME;
-            case MULTI_WAIT_FIELDS:
-                return ParserRuleContext.EXPRESSION;
-            case CONDITIONAL_EXPRESSION:
+            case ParserRuleContext2.MAPPING_CONSTRUCTOR:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.MULTI_RECEIVE_WORKERS:
+                return ParserRuleContext2.PEER_WORKER_NAME;
+            case ParserRuleContext2.MULTI_WAIT_FIELDS:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.CONDITIONAL_EXPRESSION:
                 endContext(); // end conditional-expr
-                return ParserRuleContext.EXPRESSION;
-            case MAPPING_BINDING_PATTERN:
-            case MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
-                return ParserRuleContext.VARIABLE_NAME;
-            case FIELD_BINDING_PATTERN:
+                return ParserRuleContext2.EXPRESSION;
+            case ParserRuleContext2.MAPPING_BINDING_PATTERN:
+            case ParserRuleContext2.MAPPING_BP_OR_MAPPING_CONSTRUCTOR:
+                return ParserRuleContext2.VARIABLE_NAME;
+            case ParserRuleContext2.FIELD_BINDING_PATTERN:
                 endContext();
-                return ParserRuleContext.VARIABLE_NAME;
-            case XML_ATOMIC_NAME_PATTERN:
-                return ParserRuleContext.XML_ATOMIC_NAME_IDENTIFIER_RHS;
-            case MAPPING_MATCH_PATTERN:
-                return ParserRuleContext.MATCH_PATTERN;
+                return ParserRuleContext2.VARIABLE_NAME;
+            case ParserRuleContext2.XML_ATOMIC_NAME_PATTERN:
+                return ParserRuleContext2.XML_ATOMIC_NAME_IDENTIFIER_RHS;
+            case ParserRuleContext2.MAPPING_MATCH_PATTERN:
+                return ParserRuleContext2.MATCH_PATTERN;
             default:
-                return ParserRuleContext.IDENTIFIER;
+                return ParserRuleContext2.IDENTIFIER;
         }
     }
 
-    private ParserRuleContext getNextRuleForMatchPattern() {
-        ParserRuleContext parentCtx = getParentContext();
+    private int getNextRuleForMatchPattern() {
+        int parentCtx = getParentContext();
         switch (parentCtx) {
-            case LIST_MATCH_PATTERN:
-                return ParserRuleContext.LIST_MATCH_PATTERN_MEMBER_RHS;
-            case MAPPING_MATCH_PATTERN:
-                return ParserRuleContext.FIELD_MATCH_PATTERN_MEMBER_RHS;
-            case MATCH_PATTERN:
-                return ParserRuleContext.MATCH_PATTERN_RHS;
-            case FUNCTIONAL_MATCH_PATTERN:
-            case NAMED_ARG_MATCH_PATTERN:
-                return ParserRuleContext.ARG_MATCH_PATTERN_RHS;
+            case ParserRuleContext2.LIST_MATCH_PATTERN:
+                return ParserRuleContext2.LIST_MATCH_PATTERN_MEMBER_RHS;
+            case ParserRuleContext2.MAPPING_MATCH_PATTERN:
+                return ParserRuleContext2.FIELD_MATCH_PATTERN_MEMBER_RHS;
+            case ParserRuleContext2.MATCH_PATTERN:
+                return ParserRuleContext2.MATCH_PATTERN_RHS;
+            case ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN:
+            case ParserRuleContext2.NAMED_ARG_MATCH_PATTERN:
+                return ParserRuleContext2.ARG_MATCH_PATTERN_RHS;
             default:
-                return ParserRuleContext.OPTIONAL_MATCH_GUARD;
+                return ParserRuleContext2.OPTIONAL_MATCH_GUARD;
         }
     }
 
@@ -3988,32 +3985,32 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @param ctx Parser context to check
      * @return <code>true</code> if the given context is a statement. <code>false</code> otherwise
      */
-    private boolean isStatement(ParserRuleContext parentCtx) {
+    private boolean isStatement(int parentCtx) {
         switch (parentCtx) {
-            case STATEMENT:
-            case STATEMENT_WITHOUT_ANNOTS:
-            case VAR_DECL_STMT:
-            case ASSIGNMENT_STMT:
-            case ASSIGNMENT_OR_VAR_DECL_STMT:
-            case IF_BLOCK:
-            case BLOCK_STMT:
-            case WHILE_BLOCK:
-            case CALL_STMT:
-            case PANIC_STMT:
-            case CONTINUE_STATEMENT:
-            case BREAK_STATEMENT:
-            case RETURN_STMT:
-            case COMPOUND_ASSIGNMENT_STMT:
-            case LOCAL_TYPE_DEFINITION_STMT:
-            case EXPRESSION_STATEMENT:
-            case LOCK_STMT:
-            case FORK_STMT:
-            case FOREACH_STMT:
-            case TRANSACTION_STMT:
-            case RETRY_STMT:
-            case ROLLBACK_STMT:
-            case AMBIGUOUS_STMT:
-            case MATCH_STMT:
+            case ParserRuleContext2.STATEMENT:
+            case ParserRuleContext2.STATEMENT_WITHOUT_ANNOTS:
+            case ParserRuleContext2.VAR_DECL_STMT:
+            case ParserRuleContext2.ASSIGNMENT_STMT:
+            case ParserRuleContext2.ASSIGNMENT_OR_VAR_DECL_STMT:
+            case ParserRuleContext2.IF_BLOCK:
+            case ParserRuleContext2.BLOCK_STMT:
+            case ParserRuleContext2.WHILE_BLOCK:
+            case ParserRuleContext2.CALL_STMT:
+            case ParserRuleContext2.PANIC_STMT:
+            case ParserRuleContext2.CONTINUE_STATEMENT:
+            case ParserRuleContext2.BREAK_STATEMENT:
+            case ParserRuleContext2.RETURN_STMT:
+            case ParserRuleContext2.COMPOUND_ASSIGNMENT_STMT:
+            case ParserRuleContext2.LOCAL_TYPE_DEFINITION_STMT:
+            case ParserRuleContext2.EXPRESSION_STATEMENT:
+            case ParserRuleContext2.LOCK_STMT:
+            case ParserRuleContext2.FORK_STMT:
+            case ParserRuleContext2.FOREACH_STMT:
+            case ParserRuleContext2.TRANSACTION_STMT:
+            case ParserRuleContext2.RETRY_STMT:
+            case ParserRuleContext2.ROLLBACK_STMT:
+            case ParserRuleContext2.AMBIGUOUS_STMT:
+            case ParserRuleContext2.MATCH_STMT:
                 return true;
             default:
                 return false;
@@ -4027,47 +4024,48 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @return <code>true</code> if the given token refers to a binary operator. <code>false</code> otherwise
      */
     private boolean isBinaryOperator(STToken token) {
-        switch (token.kind) {
-            case PLUS_TOKEN:
-            case MINUS_TOKEN:
-            case SLASH_TOKEN:
-            case ASTERISK_TOKEN:
-            case GT_TOKEN:
-            case LT_TOKEN:
-            case DOUBLE_EQUAL_TOKEN:
-            case TRIPPLE_EQUAL_TOKEN:
-            case LT_EQUAL_TOKEN:
-            case GT_EQUAL_TOKEN:
-            case NOT_EQUAL_TOKEN:
-            case NOT_DOUBLE_EQUAL_TOKEN:
-            case BITWISE_AND_TOKEN:
-            case BITWISE_XOR_TOKEN:
-            case PIPE_TOKEN:
-            case LOGICAL_AND_TOKEN:
-            case LOGICAL_OR_TOKEN:
-            case DOUBLE_LT_TOKEN:
-            case DOUBLE_GT_TOKEN:
-            case TRIPPLE_GT_TOKEN:
-            case ELLIPSIS_TOKEN:
-            case DOUBLE_DOT_LT_TOKEN:
-            case ELVIS_TOKEN:
-                return true;
-
-            // Treat these also as binary operators.
-            case RIGHT_ARROW_TOKEN:
-            case RIGHT_DOUBLE_ARROW_TOKEN:
-                return true;
-            default:
-                return false;
-        }
+//        switch (token.kind) {
+//            case PLUS_TOKEN:
+//            case MINUS_TOKEN:
+//            case SLASH_TOKEN:
+//            case ASTERISK_TOKEN:
+//            case GT_TOKEN:
+//            case LT_TOKEN:
+//            case DOUBLE_EQUAL_TOKEN:
+//            case TRIPPLE_EQUAL_TOKEN:
+//            case LT_EQUAL_TOKEN:
+//            case GT_EQUAL_TOKEN:
+//            case NOT_EQUAL_TOKEN:
+//            case NOT_DOUBLE_EQUAL_TOKEN:
+//            case BITWISE_AND_TOKEN:
+//            case BITWISE_XOR_TOKEN:
+//            case PIPE_TOKEN:
+//            case LOGICAL_AND_TOKEN:
+//            case LOGICAL_OR_TOKEN:
+//            case DOUBLE_LT_TOKEN:
+//            case DOUBLE_GT_TOKEN:
+//            case TRIPPLE_GT_TOKEN:
+//            case ELLIPSIS_TOKEN:
+//            case DOUBLE_DOT_LT_TOKEN:
+//            case ELVIS_TOKEN:
+//                return true;
+//
+//            // Treat these also as binary operators.
+//            case RIGHT_ARROW_TOKEN:
+//            case RIGHT_DOUBLE_ARROW_TOKEN:
+//                return true;
+//            default:
+//                return false;
+//        }
+        return false;
     }
 
-    private boolean isParameter(ParserRuleContext ctx) {
+    private boolean isParameter(int ctx) {
         switch (ctx) {
-            case REQUIRED_PARAM:
-            case DEFAULTABLE_PARAM:
-            case REST_PARAM:
-            case PARAM_LIST:
+            case ParserRuleContext2.REQUIRED_PARAM:
+            case ParserRuleContext2.DEFAULTABLE_PARAM:
+            case ParserRuleContext2.REST_PARAM:
+            case ParserRuleContext2.PARAM_LIST:
                 return true;
             default:
                 return false;
@@ -4083,433 +4081,433 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @return Token kind expected at the given parser rule
      */
     @Override
-    protected SyntaxKind getExpectedTokenKind(ParserRuleContext ctx) {
+    protected int getExpectedTokenKind(int ctx) {
         switch (ctx) {
-            case EXTERNAL_FUNC_BODY:
-                return SyntaxKind.EQUAL_TOKEN;
-            case FUNC_BODY_OR_TYPE_DESC_RHS:
-            case FUNC_BODY_BLOCK:
-            case FUNC_BODY:
-                return SyntaxKind.OPEN_BRACE_TOKEN;
-            case FUNC_DEF:
-            case FUNC_DEF_OR_FUNC_TYPE:
-            case FUNC_TYPE_DESC:
-            case FUNC_TYPE_DESC_OR_ANON_FUNC:
-                return SyntaxKind.FUNCTION_KEYWORD;
-            case VAR_DECL_STMT_RHS:
-                return SyntaxKind.SEMICOLON_TOKEN;
-            case SIMPLE_TYPE_DESCRIPTOR:
-            case REQUIRED_PARAM:
-            case VAR_DECL_STMT:
-            case ASSIGNMENT_OR_VAR_DECL_STMT:
-            case DEFAULTABLE_PARAM:
-            case REST_PARAM:
-                return SyntaxKind.TYPE_DESC;
-            case TYPE_NAME:
-            case TYPE_REFERENCE:
-            case FIELD_ACCESS_IDENTIFIER:
-            case FUNC_NAME:
-            case FUNCTION_KEYWORD_RHS:
-            case VARIABLE_NAME:
-            case TYPE_NAME_OR_VAR_NAME:
-            case IMPORT_MODULE_NAME:
-            case IMPORT_ORG_OR_MODULE_NAME:
-            case IMPORT_PREFIX:
-            case VARIABLE_REF:
-            case BASIC_LITERAL: // return var-ref for any kind of terminal expression
-            case SERVICE_NAME:
-            case IDENTIFIER:
-            case QUALIFIED_IDENTIFIER:
-            case NAMESPACE_PREFIX:
-            case IMPLICIT_ANON_FUNC_PARAM:
-            case WORKER_NAME_OR_METHOD_NAME:
-            case PEER_WORKER_NAME:
-            case RECEIVE_FIELD_NAME:
-            case WAIT_FIELD_NAME:
-            case FIELD_BINDING_PATTERN_NAME:
-            case XML_ATOMIC_NAME_IDENTIFIER:
-            case MAPPING_FIELD_NAME:
-            case MAPPING_FIELD:
-            case ANNOT_DECL_OPTIONAL_TYPE:
-            case WORKER_NAME:
-            case NAMED_WORKERS:
-            case ANNOTATION_TAG:
-            case CONST_DECL_TYPE:
-            case AFTER_PARAMETER_TYPE:
-            case MODULE_ENUM_NAME:
-            case ENUM_MEMBER_NAME:
-            case TYPED_BINDING_PATTERN_TYPE_RHS:
-            case ASSIGNMENT_STMT:
-            case EXPRESSION:
-            case TERMINAL_EXPRESSION:
-            case XML_NAME:
-            case ACCESS_EXPRESSION:
-            case BINDING_PATTERN_STARTING_IDENTIFIER:
-            case COMPUTED_FIELD_NAME:
-            case FUNCTIONAL_BINDING_PATTERN:
-                return SyntaxKind.IDENTIFIER_TOKEN;
-            case VERSION_NUMBER:
-            case MAJOR_VERSION:
-            case MINOR_VERSION:
-            case PATCH_VERSION:
-                return SyntaxKind.DECIMAL_INTEGER_LITERAL;
-            case IMPORT_DECL_RHS:
-            case IMPORT_SUB_VERSION:
-                return SyntaxKind.SEMICOLON_TOKEN;
-            case STRING_LITERAL:
-                return SyntaxKind.STRING_LITERAL;
-            case NIL_TYPE_DESCRIPTOR:
-                return SyntaxKind.NIL_TYPE_DESC;
-            case OPTIONAL_TYPE_DESCRIPTOR:
-                return SyntaxKind.OPTIONAL_TYPE_DESC;
-            case ARRAY_TYPE_DESCRIPTOR:
-                return SyntaxKind.ARRAY_TYPE_DESC;
-            case OBJECT_MEMBER_WITHOUT_METADATA:
-            case RECORD_FIELD_WITHOUT_METADATA:
-            case PARAMETER_WITHOUT_ANNOTS:
-            case TYPE_DESCRIPTOR:
-                return SyntaxKind.TYPE_DESC;
-            case ARRAY_LENGTH:
-                return SyntaxKind.DECIMAL_INTEGER_LITERAL;
-            case HEX_INTEGER_LITERAL:
-                return SyntaxKind.HEX_INTEGER_LITERAL;
-            case CONSTANT_EXPRESSION:
-                return SyntaxKind.STRING_LITERAL;
-            case CONSTANT_EXPRESSION_START:
-            case XML_NAMESPACE_PREFIX_DECL:
-                return SyntaxKind.SEMICOLON_TOKEN;
-            case NIL_LITERAL:
-                return SyntaxKind.OPEN_PAREN_TOKEN;
-            case DECIMAL_FLOATING_POINT_LITERAL:
-                return SyntaxKind.DECIMAL_FLOATING_POINT_LITERAL;
-            case HEX_FLOATING_POINT_LITERAL:
-                return SyntaxKind.HEX_FLOATING_POINT_LITERAL;
-            case STATEMENT:
-            case STATEMENT_WITHOUT_ANNOTS:
-                return SyntaxKind.CLOSE_BRACE_TOKEN;
-            case DECIMAL_INTEGER_LITERAL:
-            case SIGNED_INT_OR_FLOAT_RHS:
-                return SyntaxKind.DECIMAL_INTEGER_LITERAL;
-            case ENUM_MEMBER_RHS:
-            case ENUM_MEMBER_END:
-                return SyntaxKind.CLOSE_BRACE_TOKEN;
-            case MATCH_PATTERN_RHS:
-            case OPTIONAL_MATCH_GUARD:
-                return SyntaxKind.RIGHT_DOUBLE_ARROW_TOKEN;
-            case FUNCTIONAL_MATCH_PATTERN:
-                return SyntaxKind.OPEN_PAREN_TOKEN;
-            case TOP_LEVEL_NODE_WITHOUT_MODIFIER:
-            case TOP_LEVEL_NODE_WITHOUT_METADATA:
-                return SyntaxKind.EOF_TOKEN;
+            case ParserRuleContext2.EXTERNAL_FUNC_BODY:
+                return SyntaxKind2.EQUAL_TOKEN;
+            case ParserRuleContext2.FUNC_BODY_OR_TYPE_DESC_RHS:
+            case ParserRuleContext2.FUNC_BODY_BLOCK:
+            case ParserRuleContext2.FUNC_BODY:
+                return SyntaxKind2.OPEN_BRACE_TOKEN;
+            case ParserRuleContext2.FUNC_DEF:
+            case ParserRuleContext2.FUNC_DEF_OR_FUNC_TYPE:
+            case ParserRuleContext2.FUNC_TYPE_DESC:
+            case ParserRuleContext2.FUNC_TYPE_DESC_OR_ANON_FUNC:
+                return SyntaxKind2.FUNCTION_KEYWORD;
+            case ParserRuleContext2.VAR_DECL_STMT_RHS:
+                return SyntaxKind2.SEMICOLON_TOKEN;
+            case ParserRuleContext2.SIMPLE_TYPE_DESCRIPTOR:
+            case ParserRuleContext2.REQUIRED_PARAM:
+            case ParserRuleContext2.VAR_DECL_STMT:
+            case ParserRuleContext2.ASSIGNMENT_OR_VAR_DECL_STMT:
+            case ParserRuleContext2.DEFAULTABLE_PARAM:
+            case ParserRuleContext2.REST_PARAM:
+                return SyntaxKind2.TYPE_DESC;
+            case ParserRuleContext2.TYPE_NAME:
+            case ParserRuleContext2.TYPE_REFERENCE:
+            case ParserRuleContext2.FIELD_ACCESS_IDENTIFIER:
+            case ParserRuleContext2.FUNC_NAME:
+            case ParserRuleContext2.FUNCTION_KEYWORD_RHS:
+            case ParserRuleContext2.VARIABLE_NAME:
+            case ParserRuleContext2.TYPE_NAME_OR_VAR_NAME:
+            case ParserRuleContext2.IMPORT_MODULE_NAME:
+            case ParserRuleContext2.IMPORT_ORG_OR_MODULE_NAME:
+            case ParserRuleContext2.IMPORT_PREFIX:
+            case ParserRuleContext2.VARIABLE_REF:
+            case ParserRuleContext2.BASIC_LITERAL: // return var-ref for any kind of terminal expression
+            case ParserRuleContext2.SERVICE_NAME:
+            case ParserRuleContext2.IDENTIFIER:
+            case ParserRuleContext2.QUALIFIED_IDENTIFIER:
+            case ParserRuleContext2.NAMESPACE_PREFIX:
+            case ParserRuleContext2.IMPLICIT_ANON_FUNC_PARAM:
+            case ParserRuleContext2.WORKER_NAME_OR_METHOD_NAME:
+            case ParserRuleContext2.PEER_WORKER_NAME:
+            case ParserRuleContext2.RECEIVE_FIELD_NAME:
+            case ParserRuleContext2.WAIT_FIELD_NAME:
+            case ParserRuleContext2.FIELD_BINDING_PATTERN_NAME:
+            case ParserRuleContext2.XML_ATOMIC_NAME_IDENTIFIER:
+            case ParserRuleContext2.MAPPING_FIELD_NAME:
+            case ParserRuleContext2.MAPPING_FIELD:
+            case ParserRuleContext2.ANNOT_DECL_OPTIONAL_TYPE:
+            case ParserRuleContext2.WORKER_NAME:
+            case ParserRuleContext2.NAMED_WORKERS:
+            case ParserRuleContext2.ANNOTATION_TAG:
+            case ParserRuleContext2.CONST_DECL_TYPE:
+            case ParserRuleContext2.AFTER_PARAMETER_TYPE:
+            case ParserRuleContext2.MODULE_ENUM_NAME:
+            case ParserRuleContext2.ENUM_MEMBER_NAME:
+            case ParserRuleContext2.TYPED_BINDING_PATTERN_TYPE_RHS:
+            case ParserRuleContext2.ASSIGNMENT_STMT:
+            case ParserRuleContext2.EXPRESSION:
+            case ParserRuleContext2.TERMINAL_EXPRESSION:
+            case ParserRuleContext2.XML_NAME:
+            case ParserRuleContext2.ACCESS_EXPRESSION:
+            case ParserRuleContext2.BINDING_PATTERN_STARTING_IDENTIFIER:
+            case ParserRuleContext2.COMPUTED_FIELD_NAME:
+            case ParserRuleContext2.FUNCTIONAL_BINDING_PATTERN:
+                return SyntaxKind2.IDENTIFIER_TOKEN;
+            case ParserRuleContext2.VERSION_NUMBER:
+            case ParserRuleContext2.MAJOR_VERSION:
+            case ParserRuleContext2.MINOR_VERSION:
+            case ParserRuleContext2.PATCH_VERSION:
+                return SyntaxKind2.DECIMAL_INTEGER_LITERAL;
+            case ParserRuleContext2.IMPORT_DECL_RHS:
+            case ParserRuleContext2.IMPORT_SUB_VERSION:
+                return SyntaxKind2.SEMICOLON_TOKEN;
+            case ParserRuleContext2.STRING_LITERAL:
+                return SyntaxKind2.STRING_LITERAL;
+            case ParserRuleContext2.NIL_TYPE_DESCRIPTOR:
+                return SyntaxKind2.NIL_TYPE_DESC;
+            case ParserRuleContext2.OPTIONAL_TYPE_DESCRIPTOR:
+                return SyntaxKind2.OPTIONAL_TYPE_DESC;
+            case ParserRuleContext2.ARRAY_TYPE_DESCRIPTOR:
+                return SyntaxKind2.ARRAY_TYPE_DESC;
+            case ParserRuleContext2.OBJECT_MEMBER_WITHOUT_METADATA:
+            case ParserRuleContext2.RECORD_FIELD_WITHOUT_METADATA:
+            case ParserRuleContext2.PARAMETER_WITHOUT_ANNOTS:
+            case ParserRuleContext2.TYPE_DESCRIPTOR:
+                return SyntaxKind2.TYPE_DESC;
+            case ParserRuleContext2.ARRAY_LENGTH:
+                return SyntaxKind2.DECIMAL_INTEGER_LITERAL;
+            case ParserRuleContext2.HEX_INTEGER_LITERAL:
+                return SyntaxKind2.HEX_INTEGER_LITERAL;
+            case ParserRuleContext2.CONSTANT_EXPRESSION:
+                return SyntaxKind2.STRING_LITERAL;
+            case ParserRuleContext2.CONSTANT_EXPRESSION_START:
+            case ParserRuleContext2.XML_NAMESPACE_PREFIX_DECL:
+                return SyntaxKind2.SEMICOLON_TOKEN;
+            case ParserRuleContext2.NIL_LITERAL:
+                return SyntaxKind2.OPEN_PAREN_TOKEN;
+            case ParserRuleContext2.DECIMAL_FLOATING_POINT_LITERAL:
+                return SyntaxKind2.DECIMAL_FLOATING_POINT_LITERAL;
+            case ParserRuleContext2.HEX_FLOATING_POINT_LITERAL:
+                return SyntaxKind2.HEX_FLOATING_POINT_LITERAL;
+            case ParserRuleContext2.STATEMENT:
+            case ParserRuleContext2.STATEMENT_WITHOUT_ANNOTS:
+                return SyntaxKind2.CLOSE_BRACE_TOKEN;
+            case ParserRuleContext2.DECIMAL_INTEGER_LITERAL:
+            case ParserRuleContext2.SIGNED_INT_OR_FLOAT_RHS:
+                return SyntaxKind2.DECIMAL_INTEGER_LITERAL;
+            case ParserRuleContext2.ENUM_MEMBER_RHS:
+            case ParserRuleContext2.ENUM_MEMBER_END:
+                return SyntaxKind2.CLOSE_BRACE_TOKEN;
+            case ParserRuleContext2.MATCH_PATTERN_RHS:
+            case ParserRuleContext2.OPTIONAL_MATCH_GUARD:
+                return SyntaxKind2.RIGHT_DOUBLE_ARROW_TOKEN;
+            case ParserRuleContext2.FUNCTIONAL_MATCH_PATTERN:
+                return SyntaxKind2.OPEN_PAREN_TOKEN;
+            case ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_MODIFIER:
+            case ParserRuleContext2.TOP_LEVEL_NODE_WITHOUT_METADATA:
+                return SyntaxKind2.EOF_TOKEN;
             default:
                 return getExpectedSeperatorTokenKind(ctx);
         }
     }
 
-    protected SyntaxKind getExpectedSeperatorTokenKind(ParserRuleContext ctx) {
+    protected int getExpectedSeperatorTokenKind(int ctx) {
         switch (ctx) {
-            case BITWISE_AND_OPERATOR:
-                return SyntaxKind.BITWISE_AND_TOKEN;
-            case EQUAL_OR_RIGHT_ARROW:
-                return SyntaxKind.EQUAL_TOKEN;
-            case EOF:
-                return SyntaxKind.EOF_TOKEN;
-            case ASSIGN_OP:
-                return SyntaxKind.EQUAL_TOKEN;
-            case BINARY_OPERATOR:
-                return SyntaxKind.PLUS_TOKEN;
-            case CLOSE_BRACE:
-                return SyntaxKind.CLOSE_BRACE_TOKEN;
-            case CLOSE_PARENTHESIS:
-            case ARG_LIST_END:
-                return SyntaxKind.CLOSE_PAREN_TOKEN;
-            case COMMA:
-                return SyntaxKind.COMMA_TOKEN;
-            case OPEN_BRACE:
-                return SyntaxKind.OPEN_BRACE_TOKEN;
-            case OPEN_PARENTHESIS:
-            case ARG_LIST_START:
-            case PARENTHESISED_TYPE_DESC_START:
-                return SyntaxKind.OPEN_PAREN_TOKEN;
-            case SEMICOLON:
-                return SyntaxKind.SEMICOLON_TOKEN;
-            case ASTERISK:
-            case INFERRED_TYPE_DESC:
-                return SyntaxKind.ASTERISK_TOKEN;
-            case CLOSED_RECORD_BODY_END:
-                return SyntaxKind.CLOSE_BRACE_PIPE_TOKEN;
-            case CLOSED_RECORD_BODY_START:
-                return SyntaxKind.OPEN_BRACE_PIPE_TOKEN;
-            case ELLIPSIS:
-                return SyntaxKind.ELLIPSIS_TOKEN;
-            case QUESTION_MARK:
-                return SyntaxKind.QUESTION_MARK_TOKEN;
-            case RECORD_BODY_START:
-                return SyntaxKind.OPEN_BRACE_PIPE_TOKEN;
-            case RECORD_BODY_END:
-                return SyntaxKind.CLOSE_BRACE_TOKEN;
-            case CLOSE_BRACKET:
-            case MEMBER_ACCESS_KEY_EXPR_END:
-                return SyntaxKind.CLOSE_BRACKET_TOKEN;
-            case DOT:
-                return SyntaxKind.DOT_TOKEN;
-            case OPEN_BRACKET:
-            case TUPLE_TYPE_DESC_START:
-                return SyntaxKind.OPEN_BRACKET_TOKEN;
-            case OBJECT_FIELD_RHS:
-                return SyntaxKind.SEMICOLON_TOKEN;
-            case SLASH:
-                return SyntaxKind.SLASH_TOKEN;
-            case COLON:
-                return SyntaxKind.COLON_TOKEN;
-            case UNARY_OPERATOR:
-            case COMPOUND_BINARY_OPERATOR:
-            case UNARY_EXPRESSION:
-            case EXPRESSION_RHS:
-                return SyntaxKind.PLUS_TOKEN;
-            case AT:
-                return SyntaxKind.AT_TOKEN;
-            case RIGHT_ARROW:
-                return SyntaxKind.RIGHT_ARROW_TOKEN;
-            case GT:
-                return SyntaxKind.GT_TOKEN;
-            case LT:
-                return SyntaxKind.LT_TOKEN;
-            case STMT_START_WITH_EXPR_RHS:
-                return SyntaxKind.EQUAL_TOKEN;
-            case EXPR_STMT_RHS:
-                return SyntaxKind.SEMICOLON_TOKEN;
-            case SYNC_SEND_TOKEN:
-                return SyntaxKind.SYNC_SEND_TOKEN;
-            case ANNOT_CHAINING_TOKEN:
-                return SyntaxKind.ANNOT_CHAINING_TOKEN;
-            case OPTIONAL_CHAINING_TOKEN:
-                return SyntaxKind.OPTIONAL_CHAINING_TOKEN;
-            case DOT_LT_TOKEN:
-                return SyntaxKind.DOT_LT_TOKEN;
-            case SLASH_LT_TOKEN:
-                return SyntaxKind.SLASH_LT_TOKEN;
-            case DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN:
-                return SyntaxKind.DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN;
-            case SLASH_ASTERISK_TOKEN:
-                return SyntaxKind.SLASH_ASTERISK_TOKEN;
-            case PLUS_TOKEN:
-                return SyntaxKind.PLUS_TOKEN;
-            case MINUS_TOKEN:
-                return SyntaxKind.MINUS_TOKEN;
-            case LEFT_ARROW_TOKEN:
-                return SyntaxKind.LEFT_ARROW_TOKEN;
-            case RECORD_FIELD_OR_RECORD_END:
-                return SyntaxKind.CLOSE_BRACE_TOKEN;
-            case ATTACH_POINT_END:
-                return SyntaxKind.SEMICOLON_TOKEN;
-            case FIELD_DESCRIPTOR_RHS:
-                return SyntaxKind.SEMICOLON_TOKEN;
-            case CONST_DECL_RHS:
-                return SyntaxKind.EQUAL_TOKEN;
-            case TEMPLATE_END:
-            case TEMPLATE_START:
-                return SyntaxKind.BACKTICK_TOKEN;
-            case LT_TOKEN:
-                return SyntaxKind.LT_TOKEN;
-            case GT_TOKEN:
-                return SyntaxKind.GT_TOKEN;
-            case INTERPOLATION_START_TOKEN:
-                return SyntaxKind.INTERPOLATION_START_TOKEN;
-            case EXPR_FUNC_BODY_START:
-            case RIGHT_DOUBLE_ARROW:
-                return SyntaxKind.RIGHT_DOUBLE_ARROW_TOKEN;
+            case ParserRuleContext2.BITWISE_AND_OPERATOR:
+                return SyntaxKind2.BITWISE_AND_TOKEN;
+            case ParserRuleContext2.EQUAL_OR_RIGHT_ARROW:
+                return SyntaxKind2.EQUAL_TOKEN;
+            case ParserRuleContext2.EOF:
+                return SyntaxKind2.EOF_TOKEN;
+            case ParserRuleContext2.ASSIGN_OP:
+                return SyntaxKind2.EQUAL_TOKEN;
+            case ParserRuleContext2.BINARY_OPERATOR:
+                return SyntaxKind2.PLUS_TOKEN;
+            case ParserRuleContext2.CLOSE_BRACE:
+                return SyntaxKind2.CLOSE_BRACE_TOKEN;
+            case ParserRuleContext2.CLOSE_PARENTHESIS:
+            case ParserRuleContext2.ARG_LIST_END:
+                return SyntaxKind2.CLOSE_PAREN_TOKEN;
+            case ParserRuleContext2.COMMA:
+                return SyntaxKind2.COMMA_TOKEN;
+            case ParserRuleContext2.OPEN_BRACE:
+                return SyntaxKind2.OPEN_BRACE_TOKEN;
+            case ParserRuleContext2.OPEN_PARENTHESIS:
+            case ParserRuleContext2.ARG_LIST_START:
+            case ParserRuleContext2.PARENTHESISED_TYPE_DESC_START:
+                return SyntaxKind2.OPEN_PAREN_TOKEN;
+            case ParserRuleContext2.SEMICOLON:
+                return SyntaxKind2.SEMICOLON_TOKEN;
+            case ParserRuleContext2.ASTERISK:
+            case ParserRuleContext2.INFERRED_TYPE_DESC:
+                return SyntaxKind2.ASTERISK_TOKEN;
+            case ParserRuleContext2.CLOSED_RECORD_BODY_END:
+                return SyntaxKind2.CLOSE_BRACE_PIPE_TOKEN;
+            case ParserRuleContext2.CLOSED_RECORD_BODY_START:
+                return SyntaxKind2.OPEN_BRACE_PIPE_TOKEN;
+            case ParserRuleContext2.ELLIPSIS:
+                return SyntaxKind2.ELLIPSIS_TOKEN;
+            case ParserRuleContext2.QUESTION_MARK:
+                return SyntaxKind2.QUESTION_MARK_TOKEN;
+            case ParserRuleContext2.RECORD_BODY_START:
+                return SyntaxKind2.OPEN_BRACE_PIPE_TOKEN;
+            case ParserRuleContext2.RECORD_BODY_END:
+                return SyntaxKind2.CLOSE_BRACE_TOKEN;
+            case ParserRuleContext2.CLOSE_BRACKET:
+            case ParserRuleContext2.MEMBER_ACCESS_KEY_EXPR_END:
+                return SyntaxKind2.CLOSE_BRACKET_TOKEN;
+            case ParserRuleContext2.DOT:
+                return SyntaxKind2.DOT_TOKEN;
+            case ParserRuleContext2.OPEN_BRACKET:
+            case ParserRuleContext2.TUPLE_TYPE_DESC_START:
+                return SyntaxKind2.OPEN_BRACKET_TOKEN;
+            case ParserRuleContext2.OBJECT_FIELD_RHS:
+                return SyntaxKind2.SEMICOLON_TOKEN;
+            case ParserRuleContext2.SLASH:
+                return SyntaxKind2.SLASH_TOKEN;
+            case ParserRuleContext2.COLON:
+                return SyntaxKind2.COLON_TOKEN;
+            case ParserRuleContext2.UNARY_OPERATOR:
+            case ParserRuleContext2.COMPOUND_BINARY_OPERATOR:
+            case ParserRuleContext2.UNARY_EXPRESSION:
+            case ParserRuleContext2.EXPRESSION_RHS:
+                return SyntaxKind2.PLUS_TOKEN;
+            case ParserRuleContext2.AT:
+                return SyntaxKind2.AT_TOKEN;
+            case ParserRuleContext2.RIGHT_ARROW:
+                return SyntaxKind2.RIGHT_ARROW_TOKEN;
+            case ParserRuleContext2.GT:
+                return SyntaxKind2.GT_TOKEN;
+            case ParserRuleContext2.LT:
+                return SyntaxKind2.LT_TOKEN;
+            case ParserRuleContext2.STMT_START_WITH_EXPR_RHS:
+                return SyntaxKind2.EQUAL_TOKEN;
+            case ParserRuleContext2.EXPR_STMT_RHS:
+                return SyntaxKind2.SEMICOLON_TOKEN;
+            case ParserRuleContext2.SYNC_SEND_TOKEN:
+                return SyntaxKind2.SYNC_SEND_TOKEN;
+            case ParserRuleContext2.ANNOT_CHAINING_TOKEN:
+                return SyntaxKind2.ANNOT_CHAINING_TOKEN;
+            case ParserRuleContext2.OPTIONAL_CHAINING_TOKEN:
+                return SyntaxKind2.OPTIONAL_CHAINING_TOKEN;
+            case ParserRuleContext2.DOT_LT_TOKEN:
+                return SyntaxKind2.DOT_LT_TOKEN;
+            case ParserRuleContext2.SLASH_LT_TOKEN:
+                return SyntaxKind2.SLASH_LT_TOKEN;
+            case ParserRuleContext2.DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN:
+                return SyntaxKind2.DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN;
+            case ParserRuleContext2.SLASH_ASTERISK_TOKEN:
+                return SyntaxKind2.SLASH_ASTERISK_TOKEN;
+            case ParserRuleContext2.PLUS_TOKEN:
+                return SyntaxKind2.PLUS_TOKEN;
+            case ParserRuleContext2.MINUS_TOKEN:
+                return SyntaxKind2.MINUS_TOKEN;
+            case ParserRuleContext2.LEFT_ARROW_TOKEN:
+                return SyntaxKind2.LEFT_ARROW_TOKEN;
+            case ParserRuleContext2.RECORD_FIELD_OR_RECORD_END:
+                return SyntaxKind2.CLOSE_BRACE_TOKEN;
+            case ParserRuleContext2.ATTACH_POINT_END:
+                return SyntaxKind2.SEMICOLON_TOKEN;
+            case ParserRuleContext2.FIELD_DESCRIPTOR_RHS:
+                return SyntaxKind2.SEMICOLON_TOKEN;
+            case ParserRuleContext2.CONST_DECL_RHS:
+                return SyntaxKind2.EQUAL_TOKEN;
+            case ParserRuleContext2.TEMPLATE_END:
+            case ParserRuleContext2.TEMPLATE_START:
+                return SyntaxKind2.BACKTICK_TOKEN;
+            case ParserRuleContext2.LT_TOKEN:
+                return SyntaxKind2.LT_TOKEN;
+            case ParserRuleContext2.GT_TOKEN:
+                return SyntaxKind2.GT_TOKEN;
+            case ParserRuleContext2.INTERPOLATION_START_TOKEN:
+                return SyntaxKind2.INTERPOLATION_START_TOKEN;
+            case ParserRuleContext2.EXPR_FUNC_BODY_START:
+            case ParserRuleContext2.RIGHT_DOUBLE_ARROW:
+                return SyntaxKind2.RIGHT_DOUBLE_ARROW_TOKEN;
             default:
                 return getExpectedKeywordKind(ctx);
         }
     }
 
-    protected SyntaxKind getExpectedKeywordKind(ParserRuleContext ctx) {
+    protected int getExpectedKeywordKind(int ctx) {
         switch (ctx) {
-            case EXTERNAL_KEYWORD:
-                return SyntaxKind.EXTERNAL_KEYWORD;
-            case FUNCTION_KEYWORD:
-                return SyntaxKind.FUNCTION_KEYWORD;
-            case RETURNS_KEYWORD:
-                return SyntaxKind.RETURNS_KEYWORD;
-            case PUBLIC_KEYWORD:
-                return SyntaxKind.PUBLIC_KEYWORD;
-            case RECORD_FIELD:
-            case RECORD_KEYWORD:
-                return SyntaxKind.RECORD_KEYWORD;
-            case TYPE_KEYWORD:
-                return SyntaxKind.TYPE_KEYWORD;
-            case OBJECT_KEYWORD:
-                return SyntaxKind.OBJECT_KEYWORD;
-            case PRIVATE_KEYWORD:
-                return SyntaxKind.PRIVATE_KEYWORD;
-            case REMOTE_KEYWORD:
-                return SyntaxKind.REMOTE_KEYWORD;
-            case ABSTRACT_KEYWORD:
-                return SyntaxKind.ABSTRACT_KEYWORD;
-            case CLIENT_KEYWORD:
-                return SyntaxKind.CLIENT_KEYWORD;
-            case OBJECT_TYPE_QUALIFIER:
-                return SyntaxKind.OBJECT_KEYWORD;
-            case IF_KEYWORD:
-                return SyntaxKind.IF_KEYWORD;
-            case ELSE_KEYWORD:
-                return SyntaxKind.ELSE_KEYWORD;
-            case WHILE_KEYWORD:
-                return SyntaxKind.WHILE_KEYWORD;
-            case CHECKING_KEYWORD:
-                return SyntaxKind.CHECK_KEYWORD;
-            case FAIL_KEYWORD:
-                return SyntaxKind.FAIL_KEYWORD;
-            case AS_KEYWORD:
-                return SyntaxKind.AS_KEYWORD;
-            case BOOLEAN_LITERAL:
-                return SyntaxKind.TRUE_KEYWORD;
-            case IMPORT_KEYWORD:
-                return SyntaxKind.IMPORT_KEYWORD;
-            case ON_KEYWORD:
-                return SyntaxKind.ON_KEYWORD;
-            case PANIC_KEYWORD:
-                return SyntaxKind.PANIC_KEYWORD;
-            case RESOURCE_KEYWORD:
-                return SyntaxKind.RESOURCE_KEYWORD;
-            case RETURN_KEYWORD:
-                return SyntaxKind.RETURN_KEYWORD;
-            case SERVICE_KEYWORD:
-                return SyntaxKind.SERVICE_KEYWORD;
-            case BREAK_KEYWORD:
-                return SyntaxKind.BREAK_KEYWORD;
-            case LISTENER_KEYWORD:
-                return SyntaxKind.CONST_KEYWORD;
-            case CONTINUE_KEYWORD:
-                return SyntaxKind.CONTINUE_KEYWORD;
-            case CONST_KEYWORD:
-                return SyntaxKind.CONST_KEYWORD;
-            case FINAL_KEYWORD:
-                return SyntaxKind.FINAL_KEYWORD;
-            case IS_KEYWORD:
-                return SyntaxKind.IS_KEYWORD;
-            case TYPEOF_KEYWORD:
-                return SyntaxKind.TYPEOF_KEYWORD;
-            case TYPEOF_EXPRESSION:
-                return SyntaxKind.TYPEOF_KEYWORD;
-            case MAP_KEYWORD:
-                return SyntaxKind.MAP_KEYWORD;
-            case FUTURE_KEYWORD:
-                return SyntaxKind.FUTURE_KEYWORD;
-            case TYPEDESC_KEYWORD:
-                return SyntaxKind.TYPEDESC_KEYWORD;
-            case NULL_KEYWORD:
-                return SyntaxKind.NULL_KEYWORD;
-            case LOCK_KEYWORD:
-                return SyntaxKind.LOCK_KEYWORD;
-            case ANNOTATION_KEYWORD:
-                return SyntaxKind.ANNOTATION_KEYWORD;
-            case VERSION_KEYWORD:
-                return SyntaxKind.VERSION_KEYWORD;
-            case ANNOT_DECL_RHS:
-                return SyntaxKind.ON_KEYWORD;
-            case ATTACH_POINT_IDENT:
-            case IDENT_AFTER_OBJECT_IDENT:
-            case SINGLE_KEYWORD_ATTACH_POINT_IDENT:
-                return SyntaxKind.TYPE_KEYWORD;
-            case FIELD_IDENT:
-                return SyntaxKind.FIELD_KEYWORD;
-            case FUNCTION_IDENT:
-                return SyntaxKind.FUNCTION_KEYWORD;
-            case OBJECT_IDENT:
-                return SyntaxKind.OBJECT_KEYWORD;
-            case RECORD_IDENT:
-                return SyntaxKind.RECORD_KEYWORD;
-            case RESOURCE_IDENT:
-                return SyntaxKind.RESOURCE_KEYWORD;
-            case XMLNS_KEYWORD:
-            case XML_NAMESPACE_DECLARATION:
-                return SyntaxKind.XMLNS_KEYWORD;
-            case SOURCE_KEYWORD:
-                return SyntaxKind.SOURCE_KEYWORD;
-            case START_KEYWORD:
-                return SyntaxKind.START_KEYWORD;
-            case FLUSH_KEYWORD:
-                return SyntaxKind.FLUSH_KEYWORD;
-            case DEFAULT_KEYWORD:
-            case OPTIONAL_PEER_WORKER:
-            case DEFAULT_WORKER_NAME_IN_ASYNC_SEND:
-                return SyntaxKind.DEFAULT_KEYWORD;
-            case WAIT_KEYWORD:
-                return SyntaxKind.WAIT_KEYWORD;
-            case TRANSACTION_KEYWORD:
-                return SyntaxKind.TRANSACTION_KEYWORD;
-            case TRANSACTIONAL_KEYWORD:
-                return SyntaxKind.TRANSACTIONAL_KEYWORD;
-            case COMMIT_KEYWORD:
-                return SyntaxKind.COMMIT_KEYWORD;
-            case RETRY_KEYWORD:
-                return SyntaxKind.RETRY_KEYWORD;
-            case ROLLBACK_KEYWORD:
-                return SyntaxKind.ROLLBACK_KEYWORD;
-            case ENUM_KEYWORD:
-                return SyntaxKind.ENUM_KEYWORD;
-            case MATCH_KEYWORD:
-                return SyntaxKind.MATCH_KEYWORD;
-            case NEW_KEYWORD:
-                return SyntaxKind.NEW_KEYWORD;
-            case FORK_KEYWORD:
-                return SyntaxKind.FORK_KEYWORD;
-            case NAMED_WORKER_DECL:
-            case WORKER_KEYWORD:
-                return SyntaxKind.WORKER_KEYWORD;
-            case PARAMETERIZED_TYPE:
-                return SyntaxKind.MAP_KEYWORD;
-            case TRAP_KEYWORD:
-                return SyntaxKind.TRAP_KEYWORD;
-            case FOREACH_KEYWORD:
-                return SyntaxKind.FOREACH_KEYWORD;
-            case IN_KEYWORD:
-                return SyntaxKind.IN_KEYWORD;
-            case PIPE:
-            case UNION_OR_INTERSECTION_TOKEN:
-                return SyntaxKind.PIPE_TOKEN;
-            case TABLE_KEYWORD:
-                return SyntaxKind.TABLE_KEYWORD;
-            case KEY_KEYWORD:
-                return SyntaxKind.KEY_KEYWORD;
-            case ERROR_KEYWORD:
-                return SyntaxKind.ERROR_KEYWORD;
-            case STREAM_KEYWORD:
-                return SyntaxKind.STREAM_KEYWORD;
-            case LET_KEYWORD:
-                return SyntaxKind.LET_KEYWORD;
-            case XML_KEYWORD:
-                return SyntaxKind.XML_KEYWORD;
-            case STRING_KEYWORD:
-                return SyntaxKind.STRING_KEYWORD;
-            case BASE16_KEYWORD:
-                return SyntaxKind.BASE16_KEYWORD;
-            case BASE64_KEYWORD:
-                return SyntaxKind.BASE64_KEYWORD;
-            case SELECT_KEYWORD:
-                return SyntaxKind.SELECT_KEYWORD;
-            case WHERE_KEYWORD:
-                return SyntaxKind.WHERE_KEYWORD;
-            case FROM_KEYWORD:
-                return SyntaxKind.FROM_KEYWORD;
-            case ORDER_KEYWORD:
-                return SyntaxKind.ORDER_KEYWORD;
-            case BY_KEYWORD:
-                return SyntaxKind.BY_KEYWORD;
-            case ASCENDING_KEYWORD:
-                return SyntaxKind.ASCENDING_KEYWORD;
-            case DESCENDING_KEYWORD:
-                return SyntaxKind.DESCENDING_KEYWORD;
-            case DO_KEYWORD:
-                return SyntaxKind.DO_KEYWORD;
-            case DISTINCT_KEYWORD:
-                return SyntaxKind.DISTINCT_KEYWORD;
-            case VAR_KEYWORD:
-                return SyntaxKind.VAR_KEYWORD;
+            case ParserRuleContext2.EXTERNAL_KEYWORD:
+                return SyntaxKind2.EXTERNAL_KEYWORD;
+            case ParserRuleContext2.FUNCTION_KEYWORD:
+                return SyntaxKind2.FUNCTION_KEYWORD;
+            case ParserRuleContext2.RETURNS_KEYWORD:
+                return SyntaxKind2.RETURNS_KEYWORD;
+            case ParserRuleContext2.PUBLIC_KEYWORD:
+                return SyntaxKind2.PUBLIC_KEYWORD;
+            case ParserRuleContext2.RECORD_FIELD:
+            case ParserRuleContext2.RECORD_KEYWORD:
+                return SyntaxKind2.RECORD_KEYWORD;
+            case ParserRuleContext2.TYPE_KEYWORD:
+                return SyntaxKind2.TYPE_KEYWORD;
+            case ParserRuleContext2.OBJECT_KEYWORD:
+                return SyntaxKind2.OBJECT_KEYWORD;
+            case ParserRuleContext2.PRIVATE_KEYWORD:
+                return SyntaxKind2.PRIVATE_KEYWORD;
+            case ParserRuleContext2.REMOTE_KEYWORD:
+                return SyntaxKind2.REMOTE_KEYWORD;
+            case ParserRuleContext2.ABSTRACT_KEYWORD:
+                return SyntaxKind2.ABSTRACT_KEYWORD;
+            case ParserRuleContext2.CLIENT_KEYWORD:
+                return SyntaxKind2.CLIENT_KEYWORD;
+            case ParserRuleContext2.OBJECT_TYPE_QUALIFIER:
+                return SyntaxKind2.OBJECT_KEYWORD;
+            case ParserRuleContext2.IF_KEYWORD:
+                return SyntaxKind2.IF_KEYWORD;
+            case ParserRuleContext2.ELSE_KEYWORD:
+                return SyntaxKind2.ELSE_KEYWORD;
+            case ParserRuleContext2.WHILE_KEYWORD:
+                return SyntaxKind2.WHILE_KEYWORD;
+            case ParserRuleContext2.CHECKING_KEYWORD:
+                return SyntaxKind2.CHECK_KEYWORD;
+            case ParserRuleContext2.FAIL_KEYWORD:
+                return SyntaxKind2.FAIL_KEYWORD;
+            case ParserRuleContext2.AS_KEYWORD:
+                return SyntaxKind2.AS_KEYWORD;
+            case ParserRuleContext2.BOOLEAN_LITERAL:
+                return SyntaxKind2.TRUE_KEYWORD;
+            case ParserRuleContext2.IMPORT_KEYWORD:
+                return SyntaxKind2.IMPORT_KEYWORD;
+            case ParserRuleContext2.ON_KEYWORD:
+                return SyntaxKind2.ON_KEYWORD;
+            case ParserRuleContext2.PANIC_KEYWORD:
+                return SyntaxKind2.PANIC_KEYWORD;
+            case ParserRuleContext2.RESOURCE_KEYWORD:
+                return SyntaxKind2.RESOURCE_KEYWORD;
+            case ParserRuleContext2.RETURN_KEYWORD:
+                return SyntaxKind2.RETURN_KEYWORD;
+            case ParserRuleContext2.SERVICE_KEYWORD:
+                return SyntaxKind2.SERVICE_KEYWORD;
+            case ParserRuleContext2.BREAK_KEYWORD:
+                return SyntaxKind2.BREAK_KEYWORD;
+            case ParserRuleContext2.LISTENER_KEYWORD:
+                return SyntaxKind2.CONST_KEYWORD;
+            case ParserRuleContext2.CONTINUE_KEYWORD:
+                return SyntaxKind2.CONTINUE_KEYWORD;
+            case ParserRuleContext2.CONST_KEYWORD:
+                return SyntaxKind2.CONST_KEYWORD;
+            case ParserRuleContext2.FINAL_KEYWORD:
+                return SyntaxKind2.FINAL_KEYWORD;
+            case ParserRuleContext2.IS_KEYWORD:
+                return SyntaxKind2.IS_KEYWORD;
+            case ParserRuleContext2.TYPEOF_KEYWORD:
+                return SyntaxKind2.TYPEOF_KEYWORD;
+            case ParserRuleContext2.TYPEOF_EXPRESSION:
+                return SyntaxKind2.TYPEOF_KEYWORD;
+            case ParserRuleContext2.MAP_KEYWORD:
+                return SyntaxKind2.MAP_KEYWORD;
+            case ParserRuleContext2.FUTURE_KEYWORD:
+                return SyntaxKind2.FUTURE_KEYWORD;
+            case ParserRuleContext2.TYPEDESC_KEYWORD:
+                return SyntaxKind2.TYPEDESC_KEYWORD;
+            case ParserRuleContext2.NULL_KEYWORD:
+                return SyntaxKind2.NULL_KEYWORD;
+            case ParserRuleContext2.LOCK_KEYWORD:
+                return SyntaxKind2.LOCK_KEYWORD;
+            case ParserRuleContext2.ANNOTATION_KEYWORD:
+                return SyntaxKind2.ANNOTATION_KEYWORD;
+            case ParserRuleContext2.VERSION_KEYWORD:
+                return SyntaxKind2.VERSION_KEYWORD;
+            case ParserRuleContext2.ANNOT_DECL_RHS:
+                return SyntaxKind2.ON_KEYWORD;
+            case ParserRuleContext2.ATTACH_POINT_IDENT:
+            case ParserRuleContext2.IDENT_AFTER_OBJECT_IDENT:
+            case ParserRuleContext2.SINGLE_KEYWORD_ATTACH_POINT_IDENT:
+                return SyntaxKind2.TYPE_KEYWORD;
+            case ParserRuleContext2.FIELD_IDENT:
+                return SyntaxKind2.FIELD_KEYWORD;
+            case ParserRuleContext2.FUNCTION_IDENT:
+                return SyntaxKind2.FUNCTION_KEYWORD;
+            case ParserRuleContext2.OBJECT_IDENT:
+                return SyntaxKind2.OBJECT_KEYWORD;
+            case ParserRuleContext2.RECORD_IDENT:
+                return SyntaxKind2.RECORD_KEYWORD;
+            case ParserRuleContext2.RESOURCE_IDENT:
+                return SyntaxKind2.RESOURCE_KEYWORD;
+            case ParserRuleContext2.XMLNS_KEYWORD:
+            case ParserRuleContext2.XML_NAMESPACE_DECLARATION:
+                return SyntaxKind2.XMLNS_KEYWORD;
+            case ParserRuleContext2.SOURCE_KEYWORD:
+                return SyntaxKind2.SOURCE_KEYWORD;
+            case ParserRuleContext2.START_KEYWORD:
+                return SyntaxKind2.START_KEYWORD;
+            case ParserRuleContext2.FLUSH_KEYWORD:
+                return SyntaxKind2.FLUSH_KEYWORD;
+            case ParserRuleContext2.DEFAULT_KEYWORD:
+            case ParserRuleContext2.OPTIONAL_PEER_WORKER:
+            case ParserRuleContext2.DEFAULT_WORKER_NAME_IN_ASYNC_SEND:
+                return SyntaxKind2.DEFAULT_KEYWORD;
+            case ParserRuleContext2.WAIT_KEYWORD:
+                return SyntaxKind2.WAIT_KEYWORD;
+            case ParserRuleContext2.TRANSACTION_KEYWORD:
+                return SyntaxKind2.TRANSACTION_KEYWORD;
+            case ParserRuleContext2.TRANSACTIONAL_KEYWORD:
+                return SyntaxKind2.TRANSACTIONAL_KEYWORD;
+            case ParserRuleContext2.COMMIT_KEYWORD:
+                return SyntaxKind2.COMMIT_KEYWORD;
+            case ParserRuleContext2.RETRY_KEYWORD:
+                return SyntaxKind2.RETRY_KEYWORD;
+            case ParserRuleContext2.ROLLBACK_KEYWORD:
+                return SyntaxKind2.ROLLBACK_KEYWORD;
+            case ParserRuleContext2.ENUM_KEYWORD:
+                return SyntaxKind2.ENUM_KEYWORD;
+            case ParserRuleContext2.MATCH_KEYWORD:
+                return SyntaxKind2.MATCH_KEYWORD;
+            case ParserRuleContext2.NEW_KEYWORD:
+                return SyntaxKind2.NEW_KEYWORD;
+            case ParserRuleContext2.FORK_KEYWORD:
+                return SyntaxKind2.FORK_KEYWORD;
+            case ParserRuleContext2.NAMED_WORKER_DECL:
+            case ParserRuleContext2.WORKER_KEYWORD:
+                return SyntaxKind2.WORKER_KEYWORD;
+            case ParserRuleContext2.PARAMETERIZED_TYPE:
+                return SyntaxKind2.MAP_KEYWORD;
+            case ParserRuleContext2.TRAP_KEYWORD:
+                return SyntaxKind2.TRAP_KEYWORD;
+            case ParserRuleContext2.FOREACH_KEYWORD:
+                return SyntaxKind2.FOREACH_KEYWORD;
+            case ParserRuleContext2.IN_KEYWORD:
+                return SyntaxKind2.IN_KEYWORD;
+            case ParserRuleContext2.PIPE:
+            case ParserRuleContext2.UNION_OR_INTERSECTION_TOKEN:
+                return SyntaxKind2.PIPE_TOKEN;
+            case ParserRuleContext2.TABLE_KEYWORD:
+                return SyntaxKind2.TABLE_KEYWORD;
+            case ParserRuleContext2.KEY_KEYWORD:
+                return SyntaxKind2.KEY_KEYWORD;
+            case ParserRuleContext2.ERROR_KEYWORD:
+                return SyntaxKind2.ERROR_KEYWORD;
+            case ParserRuleContext2.STREAM_KEYWORD:
+                return SyntaxKind2.STREAM_KEYWORD;
+            case ParserRuleContext2.LET_KEYWORD:
+                return SyntaxKind2.LET_KEYWORD;
+            case ParserRuleContext2.XML_KEYWORD:
+                return SyntaxKind2.XML_KEYWORD;
+            case ParserRuleContext2.STRING_KEYWORD:
+                return SyntaxKind2.STRING_KEYWORD;
+            case ParserRuleContext2.BASE16_KEYWORD:
+                return SyntaxKind2.BASE16_KEYWORD;
+            case ParserRuleContext2.BASE64_KEYWORD:
+                return SyntaxKind2.BASE64_KEYWORD;
+            case ParserRuleContext2.SELECT_KEYWORD:
+                return SyntaxKind2.SELECT_KEYWORD;
+            case ParserRuleContext2.WHERE_KEYWORD:
+                return SyntaxKind2.WHERE_KEYWORD;
+            case ParserRuleContext2.FROM_KEYWORD:
+                return SyntaxKind2.FROM_KEYWORD;
+            case ParserRuleContext2.ORDER_KEYWORD:
+                return SyntaxKind2.ORDER_KEYWORD;
+            case ParserRuleContext2.BY_KEYWORD:
+                return SyntaxKind2.BY_KEYWORD;
+            case ParserRuleContext2.ASCENDING_KEYWORD:
+                return SyntaxKind2.ASCENDING_KEYWORD;
+            case ParserRuleContext2.DESCENDING_KEYWORD:
+                return SyntaxKind2.DESCENDING_KEYWORD;
+            case ParserRuleContext2.DO_KEYWORD:
+                return SyntaxKind2.DO_KEYWORD;
+            case ParserRuleContext2.DISTINCT_KEYWORD:
+                return SyntaxKind2.DISTINCT_KEYWORD;
+            case ParserRuleContext2.VAR_KEYWORD:
+                return SyntaxKind2.VAR_KEYWORD;
             default:
-                return SyntaxKind.NONE;
+                return SyntaxKind2.NONE;
         }
     }
 
@@ -4519,16 +4517,16 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @param kind Token kind to check
      * @return <code>true</code> if the given token kind belongs to a basic literal.<code>false</code> otherwise
      */
-    private boolean isBasicLiteral(SyntaxKind kind) {
+    private boolean isBasicLiteral(int kind) {
         switch (kind) {
-            case DECIMAL_INTEGER_LITERAL:
-            case HEX_INTEGER_LITERAL:
-            case STRING_LITERAL:
-            case TRUE_KEYWORD:
-            case FALSE_KEYWORD:
-            case NULL_KEYWORD:
-            case DECIMAL_FLOATING_POINT_LITERAL:
-            case HEX_FLOATING_POINT_LITERAL:
+            case SyntaxKind2.DECIMAL_INTEGER_LITERAL:
+            case SyntaxKind2.HEX_INTEGER_LITERAL:
+            case SyntaxKind2.STRING_LITERAL:
+            case SyntaxKind2.TRUE_KEYWORD:
+            case SyntaxKind2.FALSE_KEYWORD:
+            case SyntaxKind2.NULL_KEYWORD:
+            case SyntaxKind2.DECIMAL_FLOATING_POINT_LITERAL:
+            case SyntaxKind2.HEX_FLOATING_POINT_LITERAL:
                 return true;
             default:
                 return false;
@@ -4543,30 +4541,30 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      */
     private boolean isUnaryOperator(STToken token) {
         switch (token.kind) {
-            case PLUS_TOKEN:
-            case MINUS_TOKEN:
-            case NEGATION_TOKEN:
-            case EXCLAMATION_MARK_TOKEN:
+            case SyntaxKind2.PLUS_TOKEN:
+            case SyntaxKind2.MINUS_TOKEN:
+            case SyntaxKind2.NEGATION_TOKEN:
+            case SyntaxKind2.EXCLAMATION_MARK_TOKEN:
                 return true;
             default:
                 return false;
         }
     }
 
-    private boolean isSingleKeywordAttachPointIdent(SyntaxKind tokenKind) {
+    private boolean isSingleKeywordAttachPointIdent(int tokenKind) {
         switch (tokenKind) {
-            case ANNOTATION_KEYWORD:
-            case EXTERNAL_KEYWORD:
-            case VAR_KEYWORD:
-            case CONST_KEYWORD:
-            case LISTENER_KEYWORD:
-            case WORKER_KEYWORD:
-            case TYPE_KEYWORD:
-            case FUNCTION_KEYWORD:
-            case PARAMETER_KEYWORD:
-            case RETURN_KEYWORD:
-            case SERVICE_KEYWORD:
-            case FIELD_KEYWORD:
+            case SyntaxKind2.ANNOTATION_KEYWORD:
+            case SyntaxKind2.EXTERNAL_KEYWORD:
+            case SyntaxKind2.VAR_KEYWORD:
+            case SyntaxKind2.CONST_KEYWORD:
+            case SyntaxKind2.LISTENER_KEYWORD:
+            case SyntaxKind2.WORKER_KEYWORD:
+            case SyntaxKind2.TYPE_KEYWORD:
+            case SyntaxKind2.FUNCTION_KEYWORD:
+            case SyntaxKind2.PARAMETER_KEYWORD:
+            case SyntaxKind2.RETURN_KEYWORD:
+            case SyntaxKind2.SERVICE_KEYWORD:
+            case SyntaxKind2.FIELD_KEYWORD:
                 return true;
             default:
                 return false;
@@ -4579,11 +4577,11 @@ public class BallerinaParserErrorHandler extends AbstractParserErrorHandler {
      * @param tokenKind Token to check
      * @return <code>true</code> if the given token is a parameterized type keyword. <code>false</code> otherwise
      */
-    public boolean isParameterizedTypeToken(SyntaxKind tokenKind) {
+    public boolean isParameterizedTypeToken(int tokenKind) {
         switch (tokenKind) {
-            case MAP_KEYWORD:
-            case FUTURE_KEYWORD:
-            case TYPEDESC_KEYWORD:
+            case SyntaxKind2.MAP_KEYWORD:
+            case SyntaxKind2.FUTURE_KEYWORD:
+            case SyntaxKind2.TYPEDESC_KEYWORD:
                 return true;
             default:
                 return false;

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.MarkdownDocumentationNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class STMarkdownDocumentationNode extends STDocumentationNode {
     STMarkdownDocumentationNode(
             STNode documentationLines,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.MARKDOWN_DOCUMENTATION, diagnostics);
+        super(SyntaxKind2.MARKDOWN_DOCUMENTATION, diagnostics);
         this.documentationLines = documentationLines;
 
         addChildren(

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.MarkdownParameterDocumentationLineNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class STMarkdownParameterDocumentationLineNode extends STDocumentationNod
     public final STNode documentElements;
 
     STMarkdownParameterDocumentationLineNode(
-            SyntaxKind kind,
+            int kind,
             STNode hashToken,
             STNode plusToken,
             STNode parameterName,
@@ -55,7 +55,7 @@ public class STMarkdownParameterDocumentationLineNode extends STDocumentationNod
     }
 
     STMarkdownParameterDocumentationLineNode(
-            SyntaxKind kind,
+            int kind,
             STNode hashToken,
             STNode plusToken,
             STNode parameterName,
@@ -89,7 +89,7 @@ public class STMarkdownParameterDocumentationLineNode extends STDocumentationNod
     }
 
     public STMarkdownParameterDocumentationLineNode modify(
-            SyntaxKind kind,
+            int kind,
             STNode hashToken,
             STNode plusToken,
             STNode parameterName,

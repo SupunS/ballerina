@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.BasicLiteralNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -34,7 +34,7 @@ public class STBasicLiteralNode extends STExpressionNode {
     public final STNode literalToken;
 
     STBasicLiteralNode(
-            SyntaxKind kind,
+            int kind,
             STNode literalToken) {
         this(
                 kind,
@@ -43,7 +43,7 @@ public class STBasicLiteralNode extends STExpressionNode {
     }
 
     STBasicLiteralNode(
-            SyntaxKind kind,
+            int kind,
             STNode literalToken,
             Collection<STNodeDiagnostic> diagnostics) {
         super(kind, diagnostics);
@@ -61,7 +61,7 @@ public class STBasicLiteralNode extends STExpressionNode {
     }
 
     public STBasicLiteralNode modify(
-            SyntaxKind kind,
+            int kind,
             STNode literalToken) {
         if (checkForReferenceEquality(
                 literalToken)) {

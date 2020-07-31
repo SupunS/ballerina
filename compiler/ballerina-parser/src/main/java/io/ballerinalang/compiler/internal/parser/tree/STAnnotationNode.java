@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.AnnotationNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STAnnotationNode extends STNode {
             STNode annotReference,
             STNode annotValue,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.ANNOTATION, diagnostics);
+        super(SyntaxKind2.ANNOTATION, diagnostics);
         this.atToken = atToken;
         this.annotReference = annotReference;
         this.annotValue = annotValue;

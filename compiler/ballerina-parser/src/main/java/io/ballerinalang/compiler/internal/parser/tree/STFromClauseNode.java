@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.FromClauseNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STFromClauseNode extends STClauseNode {
             STNode inKeyword,
             STNode expression,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.FROM_CLAUSE, diagnostics);
+        super(SyntaxKind2.FROM_CLAUSE, diagnostics);
         this.fromKeyword = fromKeyword;
         this.typedBindingPattern = typedBindingPattern;
         this.inKeyword = inKeyword;

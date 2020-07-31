@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.XmlTypeDescriptorNode;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class STXmlTypeDescriptorNode extends STTypeDescriptorNode {
             STNode xmlKeywordToken,
             STNode xmlTypeParamsNode,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.XML_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.XML_TYPE_DESC, diagnostics);
         this.xmlKeywordToken = xmlKeywordToken;
         this.xmlTypeParamsNode = xmlTypeParamsNode;
 

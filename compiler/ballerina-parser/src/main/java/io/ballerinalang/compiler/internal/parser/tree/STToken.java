@@ -41,15 +41,16 @@ public class STToken extends STNode {
     // Number of characters read beyond lexeme
     protected final int lookahead = 1; // TODO These is a default number
 
-    STToken(SyntaxKind kind, STNode leadingMinutiae, STNode trailingMinutiae) {
-        this(kind, kind.stringValue().length(), leadingMinutiae, trailingMinutiae);
+    STToken(int kind, STNode leadingMinutiae, STNode trailingMinutiae) {
+        // FIXME
+        this(kind, 1, leadingMinutiae, trailingMinutiae);
     }
 
-    STToken(SyntaxKind kind, int width, STNode leadingMinutiae, STNode trailingMinutiae) {
+    STToken(int kind, int width, STNode leadingMinutiae, STNode trailingMinutiae) {
         this(kind, width, leadingMinutiae, trailingMinutiae, Collections.emptyList());
     }
 
-    STToken(SyntaxKind kind,
+    STToken(int kind,
             int width,
             STNode leadingMinutiae,
             STNode trailingMinutiae,
@@ -65,7 +66,8 @@ public class STToken extends STNode {
     }
 
     public String text() {
-        return kind.stringValue();
+        // FIXME
+        return "";
     }
 
     public STNode leadingMinutiae() {
@@ -113,13 +115,13 @@ public class STToken extends STNode {
 
     @Override
     public String toString() {
-        return leadingMinutiae + kind.stringValue() + trailingMinutiae;
+        return leadingMinutiae + text() + trailingMinutiae;
     }
 
     @Override
     public void writeTo(StringBuilder builder) {
         leadingMinutiae.writeTo(builder);
-        builder.append(kind.stringValue());
+        builder.append(text());
         trailingMinutiae.writeTo(builder);
     }
 }

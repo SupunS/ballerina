@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TupleTypeDescriptorNode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STTupleTypeDescriptorNode extends STTypeDescriptorNode {
             STNode memberTypeDesc,
             STNode closeBracketToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TUPLE_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.TUPLE_TYPE_DESC, diagnostics);
         this.openBracketToken = openBracketToken;
         this.memberTypeDesc = memberTypeDesc;
         this.closeBracketToken = closeBracketToken;

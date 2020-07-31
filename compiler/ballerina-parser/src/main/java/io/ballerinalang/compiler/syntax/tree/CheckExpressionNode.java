@@ -58,7 +58,7 @@ public class CheckExpressionNode extends ExpressionNode {
     }
 
     public CheckExpressionNode modify(
-            SyntaxKind kind,
+            int kind,
             Token checkKeyword,
             ExpressionNode expression) {
         if (checkForReferenceEquality(

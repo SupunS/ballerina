@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.XMLStartTagNode;
 
 import java.util.Collection;
@@ -55,7 +55,7 @@ public class STXMLStartTagNode extends STXMLElementTagNode {
             STNode attributes,
             STNode getToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.XML_ELEMENT_START_TAG, diagnostics);
+        super(SyntaxKind2.XML_ELEMENT_START_TAG, diagnostics);
         this.ltToken = ltToken;
         this.name = name;
         this.attributes = attributes;

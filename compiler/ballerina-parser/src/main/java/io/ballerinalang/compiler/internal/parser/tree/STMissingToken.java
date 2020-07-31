@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.IdentifierToken;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.Token;
 
 import java.util.ArrayList;
@@ -33,15 +33,15 @@ import java.util.Collection;
  */
 public class STMissingToken extends STToken {
 
-    STMissingToken(SyntaxKind kind) {
+    STMissingToken(int kind) {
         super(kind, 0, new STNodeList(new ArrayList<>(0)), new STNodeList(new ArrayList<>(0)));
     }
 
-    STMissingToken(SyntaxKind kind, Collection<STNodeDiagnostic> diagnostics) {
+    STMissingToken(int kind, Collection<STNodeDiagnostic> diagnostics) {
         super(kind, 0, new STNodeList(new ArrayList<>(0)), new STNodeList(new ArrayList<>(0)), diagnostics);
     }
 
-    STMissingToken(SyntaxKind kind,
+    STMissingToken(int kind,
                    STNode leadingMinutiae,
                    STNode trailingMinutiae,
                    Collection<STNodeDiagnostic> diagnostics) {
@@ -59,7 +59,7 @@ public class STMissingToken extends STToken {
     @Override
     public Node createFacade(int position, NonTerminalNode parent) {
         switch (kind) {
-            case IDENTIFIER_TOKEN:
+            case SyntaxKind2.IDENTIFIER_TOKEN:
                 return new IdentifierToken(this, position, parent);
             default:
                 return new Token(this, position, parent);
@@ -74,7 +74,7 @@ public class STMissingToken extends STToken {
     @Override
     public String toString() {
         // TODO for testing purpose only
-        return " MISSING[" + kind.stringValue() + "]";
+        return " MISSING[" + text() + "]";
     }
 
     @Override

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.ReturnStatementNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STReturnStatementNode extends STStatementNode {
             STNode expression,
             STNode semicolonToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.RETURN_STATEMENT, diagnostics);
+        super(SyntaxKind2.RETURN_STATEMENT, diagnostics);
         this.returnKeyword = returnKeyword;
         this.expression = expression;
         this.semicolonToken = semicolonToken;

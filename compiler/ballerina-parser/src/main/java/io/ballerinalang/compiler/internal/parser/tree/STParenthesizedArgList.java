@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.ParenthesizedArgList;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STParenthesizedArgList extends STNode {
             STNode arguments,
             STNode closeParenToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.PARENTHESIZED_ARG_LIST, diagnostics);
+        super(SyntaxKind2.PARENTHESIZED_ARG_LIST, diagnostics);
         this.openParenToken = openParenToken;
         this.arguments = arguments;
         this.closeParenToken = closeParenToken;

@@ -19,7 +19,6 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +33,7 @@ public class STAmbiguousCollectionNode extends STNode {
     public final List<STNode> members;
     public final STNode collectionEndToken;
 
-    public STAmbiguousCollectionNode(SyntaxKind kind, STNode collectionStartToken, List<STNode> members,
+    public STAmbiguousCollectionNode(int kind, STNode collectionStartToken, List<STNode> members,
                                      STNode collectionEndToken) {
         super(kind);
         this.collectionStartToken = collectionStartToken;

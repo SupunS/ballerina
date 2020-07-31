@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TransactionalExpressionNode;
 
 import java.util.Collection;
@@ -43,7 +43,7 @@ public class STTransactionalExpressionNode extends STExpressionNode {
     STTransactionalExpressionNode(
             STNode transactionalKeyword,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TRANSACTIONAL_EXPRESSION, diagnostics);
+        super(SyntaxKind2.TRANSACTIONAL_EXPRESSION, diagnostics);
         this.transactionalKeyword = transactionalKeyword;
 
         addChildren(

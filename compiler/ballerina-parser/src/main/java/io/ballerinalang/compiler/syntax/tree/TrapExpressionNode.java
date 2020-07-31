@@ -58,7 +58,7 @@ public class TrapExpressionNode extends ExpressionNode {
     }
 
     public TrapExpressionNode modify(
-            SyntaxKind kind,
+            int kind,
             Token trapKeyword,
             ExpressionNode expression) {
         if (checkForReferenceEquality(

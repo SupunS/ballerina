@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ForkStatementNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STForkStatementNode extends STStatementNode {
             STNode namedWorkerDeclarations,
             STNode closeBraceToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.FORK_STATEMENT, diagnostics);
+        super(SyntaxKind2.FORK_STATEMENT, diagnostics);
         this.forkKeyword = forkKeyword;
         this.openBraceToken = openBraceToken;
         this.namedWorkerDeclarations = namedWorkerDeclarations;

@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.WhereClauseNode;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class STWhereClauseNode extends STClauseNode {
             STNode whereKeyword,
             STNode expression,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.WHERE_CLAUSE, diagnostics);
+        super(SyntaxKind2.WHERE_CLAUSE, diagnostics);
         this.whereKeyword = whereKeyword;
         this.expression = expression;
 

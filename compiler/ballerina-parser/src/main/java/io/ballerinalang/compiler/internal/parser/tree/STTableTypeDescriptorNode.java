@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TableTypeDescriptorNode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STTableTypeDescriptorNode extends STTypeDescriptorNode {
             STNode rowTypeParameterNode,
             STNode keyConstraintNode,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TABLE_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.TABLE_TYPE_DESC, diagnostics);
         this.tableKeywordToken = tableKeywordToken;
         this.rowTypeParameterNode = rowTypeParameterNode;
         this.keyConstraintNode = keyConstraintNode;

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.BuiltinSimpleNameReferenceNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -34,7 +34,7 @@ public class STBuiltinSimpleNameReferenceNode extends STNameReferenceNode {
     public final STNode name;
 
     STBuiltinSimpleNameReferenceNode(
-            SyntaxKind kind,
+            int kind,
             STNode name) {
         this(
                 kind,
@@ -43,7 +43,7 @@ public class STBuiltinSimpleNameReferenceNode extends STNameReferenceNode {
     }
 
     STBuiltinSimpleNameReferenceNode(
-            SyntaxKind kind,
+            int kind,
             STNode name,
             Collection<STNodeDiagnostic> diagnostics) {
         super(kind, diagnostics);
@@ -61,7 +61,7 @@ public class STBuiltinSimpleNameReferenceNode extends STNameReferenceNode {
     }
 
     public STBuiltinSimpleNameReferenceNode modify(
-            SyntaxKind kind,
+            int kind,
             STNode name) {
         if (checkForReferenceEquality(
                 name)) {

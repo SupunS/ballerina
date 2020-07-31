@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.MethodCallExpressionNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -63,7 +63,7 @@ public class STMethodCallExpressionNode extends STExpressionNode {
             STNode arguments,
             STNode closeParenToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.METHOD_CALL, diagnostics);
+        super(SyntaxKind2.METHOD_CALL, diagnostics);
         this.expression = expression;
         this.dotToken = dotToken;
         this.methodName = methodName;

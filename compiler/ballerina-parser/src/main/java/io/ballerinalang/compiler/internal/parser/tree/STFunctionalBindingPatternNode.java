@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.FunctionalBindingPatternNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STFunctionalBindingPatternNode extends STBindingPatternNode {
             STNode argListBindingPatterns,
             STNode closeParenthesis,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.FUNCTIONAL_BINDING_PATTERN, diagnostics);
+        super(SyntaxKind2.FUNCTIONAL_BINDING_PATTERN, diagnostics);
         this.typeReference = typeReference;
         this.openParenthesis = openParenthesis;
         this.argListBindingPatterns = argListBindingPatterns;

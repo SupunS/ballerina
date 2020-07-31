@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TrapExpressionNode;
 
 import java.util.Collection;
@@ -35,7 +35,7 @@ public class STTrapExpressionNode extends STExpressionNode {
     public final STNode expression;
 
     STTrapExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode trapKeyword,
             STNode expression) {
         this(
@@ -46,7 +46,7 @@ public class STTrapExpressionNode extends STExpressionNode {
     }
 
     STTrapExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode trapKeyword,
             STNode expression,
             Collection<STNodeDiagnostic> diagnostics) {
@@ -68,7 +68,7 @@ public class STTrapExpressionNode extends STExpressionNode {
     }
 
     public STTrapExpressionNode modify(
-            SyntaxKind kind,
+            int kind,
             STNode trapKeyword,
             STNode expression) {
         if (checkForReferenceEquality(

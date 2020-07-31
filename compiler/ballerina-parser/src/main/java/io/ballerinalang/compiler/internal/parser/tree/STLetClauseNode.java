@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.LetClauseNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STLetClauseNode extends STClauseNode {
             STNode letKeyword,
             STNode letVarDeclarations,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.LET_CLAUSE, diagnostics);
+        super(SyntaxKind2.LET_CLAUSE, diagnostics);
         this.letKeyword = letKeyword;
         this.letVarDeclarations = letVarDeclarations;
 

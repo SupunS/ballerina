@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.CaptureBindingPatternNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class STCaptureBindingPatternNode extends STBindingPatternNode {
     STCaptureBindingPatternNode(
             STNode variableName,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.CAPTURE_BINDING_PATTERN, diagnostics);
+        super(SyntaxKind2.CAPTURE_BINDING_PATTERN, diagnostics);
         this.variableName = variableName;
 
         addChildren(

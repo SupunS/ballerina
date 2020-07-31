@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.XMLNamespaceDeclarationNode;
 
 import java.util.Collection;
@@ -59,7 +59,7 @@ public class STXMLNamespaceDeclarationNode extends STStatementNode {
             STNode namespacePrefix,
             STNode semicolonToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.XML_NAMESPACE_DECLARATION, diagnostics);
+        super(SyntaxKind2.XML_NAMESPACE_DECLARATION, diagnostics);
         this.xmlnsKeyword = xmlnsKeyword;
         this.namespaceuri = namespaceuri;
         this.asKeyword = asKeyword;

@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.VariableDeclarationNode;
 
 import java.util.Collection;
@@ -63,7 +63,7 @@ public class STVariableDeclarationNode extends STStatementNode {
             STNode initializer,
             STNode semicolonToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.LOCAL_VAR_DECL, diagnostics);
+        super(SyntaxKind2.LOCAL_VAR_DECL, diagnostics);
         this.annotations = annotations;
         this.finalKeyword = finalKeyword;
         this.typedBindingPattern = typedBindingPattern;

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.AnnotAccessExpressionNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STAnnotAccessExpressionNode extends STExpressionNode {
             STNode annotChainingToken,
             STNode annotTagReference,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.ANNOT_ACCESS, diagnostics);
+        super(SyntaxKind2.ANNOT_ACCESS, diagnostics);
         this.expression = expression;
         this.annotChainingToken = annotChainingToken;
         this.annotTagReference = annotTagReference;

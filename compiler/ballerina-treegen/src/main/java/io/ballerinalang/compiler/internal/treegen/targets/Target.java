@@ -42,7 +42,7 @@ import java.util.List;
  */
 public abstract class Target {
     protected static final String INTERNAL_BASE_NODE_CN = "STNode";
-    protected static final String SYNTAX_KIND_CN = "SyntaxKind";
+    protected static final String SYNTAX_KIND_CN = "SyntaxKind2";
     protected static final String EXTERNAL_BASE_NODE_CN = "Node";
     protected static final String EXTERNAL_BASE_NON_TERMINAL_NODE_CN = "NonTerminalNode";
 

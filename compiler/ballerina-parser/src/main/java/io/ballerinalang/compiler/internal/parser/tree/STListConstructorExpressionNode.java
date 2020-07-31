@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ListConstructorExpressionNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STListConstructorExpressionNode extends STExpressionNode {
             STNode expressions,
             STNode closeBracket,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.LIST_CONSTRUCTOR, diagnostics);
+        super(SyntaxKind2.LIST_CONSTRUCTOR, diagnostics);
         this.openBracket = openBracket;
         this.expressions = expressions;
         this.closeBracket = closeBracket;

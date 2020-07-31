@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.JoinClauseNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -63,7 +63,7 @@ public class STJoinClauseNode extends STClauseNode {
             STNode expression,
             STNode onCondition,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.JOIN_CLAUSE, diagnostics);
+        super(SyntaxKind2.JOIN_CLAUSE, diagnostics);
         this.outerKeyword = outerKeyword;
         this.joinKeyword = joinKeyword;
         this.typedBindingPattern = typedBindingPattern;

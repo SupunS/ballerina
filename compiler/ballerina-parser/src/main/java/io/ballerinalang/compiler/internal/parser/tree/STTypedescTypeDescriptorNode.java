@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TypedescTypeDescriptorNode;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class STTypedescTypeDescriptorNode extends STTypeDescriptorNode {
             STNode typedescKeywordToken,
             STNode typedescTypeParamsNode,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TYPEDESC_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.TYPEDESC_TYPE_DESC, diagnostics);
         this.typedescKeywordToken = typedescKeywordToken;
         this.typedescTypeParamsNode = typedescTypeParamsNode;
 

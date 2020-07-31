@@ -259,7 +259,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static ExpressionStatementNode createExpressionStatementNode(
-            SyntaxKind kind,
+            int kind,
             ExpressionNode expression,
             Token semicolonToken) {
         Objects.requireNonNull(expression, "expression must not be null");
@@ -448,7 +448,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static BinaryExpressionNode createBinaryExpressionNode(
-            SyntaxKind kind,
+            int kind,
             Node lhsExpr,
             Token operator,
             Node rhsExpr) {
@@ -465,7 +465,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static BracedExpressionNode createBracedExpressionNode(
-            SyntaxKind kind,
+            int kind,
             Token openParen,
             ExpressionNode expression,
             Token closeParen) {
@@ -482,7 +482,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static CheckExpressionNode createCheckExpressionNode(
-            SyntaxKind kind,
+            int kind,
             Token checkKeyword,
             ExpressionNode expression) {
         Objects.requireNonNull(checkKeyword, "checkKeyword must not be null");
@@ -496,7 +496,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static FailExpressionNode createFailExpressionNode(
-            SyntaxKind kind,
+            int kind,
             Token failKeyword,
             ExpressionNode expression) {
         Objects.requireNonNull(failKeyword, "failKeyword must not be null");
@@ -1314,7 +1314,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static BasicLiteralNode createBasicLiteralNode(
-            SyntaxKind kind,
+            int kind,
             Token literalToken) {
         Objects.requireNonNull(literalToken, "literalToken must not be null");
 
@@ -1349,7 +1349,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static BuiltinSimpleNameReferenceNode createBuiltinSimpleNameReferenceNode(
-            SyntaxKind kind,
+            int kind,
             Token name) {
         Objects.requireNonNull(name, "name must not be null");
 
@@ -1360,7 +1360,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static TrapExpressionNode createTrapExpressionNode(
-            SyntaxKind kind,
+            int kind,
             Token trapKeyword,
             ExpressionNode expression) {
         Objects.requireNonNull(trapKeyword, "trapKeyword must not be null");
@@ -1587,7 +1587,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static TemplateExpressionNode createTemplateExpressionNode(
-            SyntaxKind kind,
+            int kind,
             Token type,
             Token startBacktick,
             NodeList<TemplateMemberNode> content,
@@ -2975,7 +2975,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static MarkdownDocumentationLineNode createMarkdownDocumentationLineNode(
-            SyntaxKind kind,
+            int kind,
             Token hashToken,
             NodeList<Node> documentElements) {
         Objects.requireNonNull(hashToken, "hashToken must not be null");
@@ -2989,7 +2989,7 @@ public abstract class NodeFactory extends AbstractNodeFactory {
     }
 
     public static MarkdownParameterDocumentationLineNode createMarkdownParameterDocumentationLineNode(
-            SyntaxKind kind,
+            int kind,
             Token hashToken,
             Token plusToken,
             Token parameterName,

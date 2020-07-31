@@ -63,7 +63,7 @@ public class BracedExpressionNode extends ExpressionNode {
     }
 
     public BracedExpressionNode modify(
-            SyntaxKind kind,
+            int kind,
             Token openParen,
             ExpressionNode expression,
             Token closeParen) {

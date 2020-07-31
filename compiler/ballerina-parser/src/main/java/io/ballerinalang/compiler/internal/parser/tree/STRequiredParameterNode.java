@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.RequiredParameterNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -59,7 +59,7 @@ public class STRequiredParameterNode extends STParameterNode {
             STNode typeName,
             STNode paramName,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.REQUIRED_PARAM, diagnostics);
+        super(SyntaxKind2.REQUIRED_PARAM, diagnostics);
         this.leadingComma = leadingComma;
         this.annotations = annotations;
         this.visibilityQualifier = visibilityQualifier;

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ExpressionStatementNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +35,7 @@ public class STExpressionStatementNode extends STStatementNode {
     public final STNode semicolonToken;
 
     STExpressionStatementNode(
-            SyntaxKind kind,
+            int kind,
             STNode expression,
             STNode semicolonToken) {
         this(
@@ -46,7 +46,7 @@ public class STExpressionStatementNode extends STStatementNode {
     }
 
     STExpressionStatementNode(
-            SyntaxKind kind,
+            int kind,
             STNode expression,
             STNode semicolonToken,
             Collection<STNodeDiagnostic> diagnostics) {
@@ -68,7 +68,7 @@ public class STExpressionStatementNode extends STStatementNode {
     }
 
     public STExpressionStatementNode modify(
-            SyntaxKind kind,
+            int kind,
             STNode expression,
             STNode semicolonToken) {
         if (checkForReferenceEquality(

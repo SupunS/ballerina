@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.RemoteMethodCallActionNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -63,7 +63,7 @@ public class STRemoteMethodCallActionNode extends STActionNode {
             STNode arguments,
             STNode closeParenToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.REMOTE_METHOD_CALL_ACTION, diagnostics);
+        super(SyntaxKind2.REMOTE_METHOD_CALL_ACTION, diagnostics);
         this.expression = expression;
         this.rightArrowToken = rightArrowToken;
         this.methodName = methodName;

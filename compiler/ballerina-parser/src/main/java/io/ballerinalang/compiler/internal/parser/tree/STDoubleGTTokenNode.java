@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.DoubleGTTokenNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STDoubleGTTokenNode extends STNode {
             STNode openGTToken,
             STNode endGTToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.DOUBLE_GT_TOKEN, diagnostics);
+        super(SyntaxKind2.DOUBLE_GT_TOKEN, diagnostics);
         this.openGTToken = openGTToken;
         this.endGTToken = endGTToken;
 

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.InterpolationNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STInterpolationNode extends STXMLItemNode {
             STNode expression,
             STNode interpolationEndToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.INTERPOLATION, diagnostics);
+        super(SyntaxKind2.INTERPOLATION, diagnostics);
         this.interpolationStartToken = interpolationStartToken;
         this.expression = expression;
         this.interpolationEndToken = interpolationEndToken;

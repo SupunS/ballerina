@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.ReceiveFieldsNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STReceiveFieldsNode extends STNode {
             STNode receiveFields,
             STNode closeBrace,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.RECEIVE_FIELDS, diagnostics);
+        super(SyntaxKind2.RECEIVE_FIELDS, diagnostics);
         this.openBrace = openBrace;
         this.receiveFields = receiveFields;
         this.closeBrace = closeBrace;

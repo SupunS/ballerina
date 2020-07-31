@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ModulePartNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STModulePartNode extends STNode {
             STNode members,
             STNode eofToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.MODULE_PART, diagnostics);
+        super(SyntaxKind2.MODULE_PART, diagnostics);
         this.imports = imports;
         this.members = members;
         this.eofToken = eofToken;

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.RollbackStatementNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STRollbackStatementNode extends STStatementNode {
             STNode expression,
             STNode semicolon,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.ROLLBACK_STATEMENT, diagnostics);
+        super(SyntaxKind2.ROLLBACK_STATEMENT, diagnostics);
         this.rollbackKeyword = rollbackKeyword;
         this.expression = expression;
         this.semicolon = semicolon;

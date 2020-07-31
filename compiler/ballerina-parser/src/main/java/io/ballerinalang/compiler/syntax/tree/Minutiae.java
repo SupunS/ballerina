@@ -50,7 +50,7 @@ public final class Minutiae {
         return internalMinutiae.text();
     }
 
-    public SyntaxKind kind() {
+    public int kind() {
         return internalMinutiae.kind;
     }
 

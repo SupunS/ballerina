@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.ParenthesisedTypeDescriptorNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STParenthesisedTypeDescriptorNode extends STTypeDescriptorNode {
             STNode typedesc,
             STNode closeParenToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.PARENTHESISED_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.PARENTHESISED_TYPE_DESC, diagnostics);
         this.openParenToken = openParenToken;
         this.typedesc = typedesc;
         this.closeParenToken = closeParenToken;

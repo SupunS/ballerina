@@ -19,7 +19,9 @@ package io.ballerinalang.compiler.parser.test;
 
 import io.ballerinalang.compiler.internal.parser.BallerinaParser;
 import io.ballerinalang.compiler.internal.parser.ParserFactory;
+import io.ballerinalang.compiler.internal.parser.tree.STModulePartNode;
 import io.ballerinalang.compiler.internal.parser.tree.STNode;
+import io.ballerinalang.compiler.internal.parser.tree.STNodeFactory;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,9 +43,10 @@ public class TestParser {
         // String path = "src/test/resources/test3.bal";
 
         String content = new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
-        testParser(content);
+        testNodeCreation(content);
     }
 
+    @SuppressWarnings("unused")
     private static void testParser(String content) throws FileNotFoundException {
         long sTime = System.currentTimeMillis();
         BallerinaParser parser = ParserFactory.getParser(content);
@@ -51,6 +54,30 @@ public class TestParser {
         OUT.println("__________________________________________________");
         OUT.println(node);
         OUT.println("__________________________________________________");
+        OUT.println("Time: " + (System.currentTimeMillis() - sTime) / 1000.0);
+    }
+
+    @SuppressWarnings("unused")
+    private static void testParsingOnly(String content) throws FileNotFoundException {
+        BallerinaParser parser = ParserFactory.getParser(content);
+        long sTime = System.currentTimeMillis();
+        parser.parse();
+        OUT.println("Time: " + (System.currentTimeMillis() - sTime) / 1000.0);
+    }
+
+    @SuppressWarnings("unused")
+    private static void testGetParser(String content) throws FileNotFoundException {
+        long sTime = System.currentTimeMillis();
+        BallerinaParser parser = ParserFactory.getParser(content);
+        OUT.println("Time: " + (System.currentTimeMillis() - sTime) / 1000.0);
+    }
+    
+    @SuppressWarnings("unused")
+    private static void testNodeCreation(String content) throws FileNotFoundException {
+        BallerinaParser parser = ParserFactory.getParser(content);
+        long sTime = System.currentTimeMillis();
+        STNodeFactory.createModulePartNode(null, null, null);
+        new STModulePartNode(null, null, null);
         OUT.println("Time: " + (System.currentTimeMillis() - sTime) / 1000.0);
     }
 }

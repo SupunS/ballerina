@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.MappingConstructorExpressionNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STMappingConstructorExpressionNode extends STExpressionNode {
             STNode fields,
             STNode closeBrace,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.MAPPING_CONSTRUCTOR, diagnostics);
+        super(SyntaxKind2.MAPPING_CONSTRUCTOR, diagnostics);
         this.openBrace = openBrace;
         this.fields = fields;
         this.closeBrace = closeBrace;

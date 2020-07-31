@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ForEachStatementNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -59,7 +59,7 @@ public class STForEachStatementNode extends STStatementNode {
             STNode actionOrExpressionNode,
             STNode blockStatement,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.FOREACH_STATEMENT, diagnostics);
+        super(SyntaxKind2.FOREACH_STATEMENT, diagnostics);
         this.forEachKeyword = forEachKeyword;
         this.typedBindingPattern = typedBindingPattern;
         this.inKeyword = inKeyword;

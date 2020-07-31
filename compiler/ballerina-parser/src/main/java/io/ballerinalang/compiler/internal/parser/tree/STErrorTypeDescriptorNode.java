@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ErrorTypeDescriptorNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STErrorTypeDescriptorNode extends STTypeDescriptorNode {
             STNode errorKeywordToken,
             STNode errorTypeParamsNode,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.ERROR_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.ERROR_TYPE_DESC, diagnostics);
         this.errorKeywordToken = errorKeywordToken;
         this.errorTypeParamsNode = errorTypeParamsNode;
 

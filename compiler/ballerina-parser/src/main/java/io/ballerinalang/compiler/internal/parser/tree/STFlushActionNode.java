@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.FlushActionNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STFlushActionNode extends STExpressionNode {
             STNode flushKeyword,
             STNode peerWorker,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.FLUSH_ACTION, diagnostics);
+        super(SyntaxKind2.FLUSH_ACTION, diagnostics);
         this.flushKeyword = flushKeyword;
         this.peerWorker = peerWorker;
 

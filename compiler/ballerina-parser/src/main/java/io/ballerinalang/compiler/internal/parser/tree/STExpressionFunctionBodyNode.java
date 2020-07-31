@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ExpressionFunctionBodyNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STExpressionFunctionBodyNode extends STFunctionBodyNode {
             STNode expression,
             STNode semicolon,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.EXPRESSION_FUNCTION_BODY, diagnostics);
+        super(SyntaxKind2.EXPRESSION_FUNCTION_BODY, diagnostics);
         this.rightDoubleArrow = rightDoubleArrow;
         this.expression = expression;
         this.semicolon = semicolon;

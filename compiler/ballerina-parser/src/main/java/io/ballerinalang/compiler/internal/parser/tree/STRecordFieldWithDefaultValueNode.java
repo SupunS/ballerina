@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.RecordFieldWithDefaultValueNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -67,7 +67,7 @@ public class STRecordFieldWithDefaultValueNode extends STNode {
             STNode expression,
             STNode semicolonToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.RECORD_FIELD_WITH_DEFAULT_VALUE, diagnostics);
+        super(SyntaxKind2.RECORD_FIELD_WITH_DEFAULT_VALUE, diagnostics);
         this.metadata = metadata;
         this.readonlyKeyword = readonlyKeyword;
         this.typeName = typeName;

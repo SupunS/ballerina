@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.XMLProcessingInstruction;
 
 import java.util.Collection;
@@ -55,7 +55,7 @@ public class STXMLProcessingInstruction extends STXMLItemNode {
             STNode data,
             STNode piEnd,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.XML_PI, diagnostics);
+        super(SyntaxKind2.XML_PI, diagnostics);
         this.piStart = piStart;
         this.target = target;
         this.data = data;

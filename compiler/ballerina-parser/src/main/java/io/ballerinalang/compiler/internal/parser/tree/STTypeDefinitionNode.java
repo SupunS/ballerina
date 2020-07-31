@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TypeDefinitionNode;
 
 import java.util.Collection;
@@ -63,7 +63,7 @@ public class STTypeDefinitionNode extends STModuleMemberDeclarationNode {
             STNode typeDescriptor,
             STNode semicolonToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TYPE_DEFINITION, diagnostics);
+        super(SyntaxKind2.TYPE_DEFINITION, diagnostics);
         this.metadata = metadata;
         this.visibilityQualifier = visibilityQualifier;
         this.typeKeyword = typeKeyword;

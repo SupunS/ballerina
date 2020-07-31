@@ -41,7 +41,7 @@ public class {{className}} extends {{superClassName}} {
     {{^isAbstract}}
 
     public static STNode create{{externalClassName}}(
-            {{^syntaxKind}}SyntaxKind kind, &#10;            {{/syntaxKind}}{{#fields}}STNode {{fieldName}}{{^isLast}}, &#10;            {{/isLast}}{{/fields}}) {
+            {{^syntaxKind}}int kind, &#10;            {{/syntaxKind}}{{#fields}}STNode {{fieldName}}{{^isLast}}, &#10;            {{/isLast}}{{/fields}}) {
 
         return new {{internalClassName}}(
                 {{^syntaxKind}}kind, &#10;                {{/syntaxKind}}{{#fields}}{{fieldName}}{{^isLast}}, &#10;                {{/isLast}}{{/fields}});

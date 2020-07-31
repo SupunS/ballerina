@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.QueryExpressionNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -59,7 +59,7 @@ public class STQueryExpressionNode extends STExpressionNode {
             STNode onConflictClause,
             STNode limitClause,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.QUERY_EXPRESSION, diagnostics);
+        super(SyntaxKind2.QUERY_EXPRESSION, diagnostics);
         this.queryConstructType = queryConstructType;
         this.queryPipeline = queryPipeline;
         this.selectClause = selectClause;

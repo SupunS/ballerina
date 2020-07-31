@@ -21,7 +21,6 @@ import io.ballerinalang.compiler.internal.syntax.NodeListUtils;
 import io.ballerinalang.compiler.internal.syntax.SyntaxUtils;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -33,7 +32,7 @@ import java.util.EnumSet;
  * @since 1.3.0
  */
 public abstract class STNode {
-    public final SyntaxKind kind;
+    public final int kind;
     protected final Collection<STNodeDiagnostic> diagnostics;
     protected int width;
     protected int widthWithLeadingMinutiae;
@@ -47,12 +46,12 @@ public abstract class STNode {
     protected int bucketCount;
     protected STNode[] childBuckets = EMPTY_BUCKET;
 
-    STNode(SyntaxKind kind) {
+    STNode(int kind) {
         this.kind = kind;
         this.diagnostics = Collections.emptyList();
     }
 
-    STNode(SyntaxKind kind, Collection<STNodeDiagnostic> diagnostics) {
+    STNode(int kind, Collection<STNodeDiagnostic> diagnostics) {
         this.kind = kind;
         this.diagnostics = diagnostics;
         if (diagnostics.size() > 0) {

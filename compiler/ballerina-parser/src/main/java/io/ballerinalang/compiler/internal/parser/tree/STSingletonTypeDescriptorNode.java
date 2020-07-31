@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.SingletonTypeDescriptorNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class STSingletonTypeDescriptorNode extends STTypeDescriptorNode {
     STSingletonTypeDescriptorNode(
             STNode simpleContExprNode,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.SINGLETON_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.SINGLETON_TYPE_DESC, diagnostics);
         this.simpleContExprNode = simpleContExprNode;
 
         addChildren(

@@ -17,7 +17,7 @@
  */
 package io.ballerinalang.compiler.internal.parser.tree;
 
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 /**
  * This class represents a minutiae node which contains an invalid syntax node.
@@ -28,7 +28,7 @@ public class STInvalidNodeMinutiae extends STMinutiae {
     private final STNode invalidNode;
 
     STInvalidNodeMinutiae(STNode invalidNode) {
-        super(SyntaxKind.INVALID_NODE_MINUTIAE, invalidNode.toSourceCode());
+        super(SyntaxKind2.INVALID_NODE_MINUTIAE, invalidNode.toSourceCode());
         this.invalidNode = invalidNode;
     }
 

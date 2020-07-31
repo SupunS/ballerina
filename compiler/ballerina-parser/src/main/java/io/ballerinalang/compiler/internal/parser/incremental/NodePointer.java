@@ -22,7 +22,7 @@ import io.ballerinalang.compiler.syntax.tree.ChildNodeList;
 import io.ballerinalang.compiler.syntax.tree.ModulePartNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.Token;
 
 /**
@@ -142,7 +142,7 @@ class NodePointer {
     }
 
     private boolean isEOFToken(Node node) {
-        return node.kind() == SyntaxKind.EOF_TOKEN;
+        return node.kind() == SyntaxKind2.EOF_TOKEN;
     }
 
     private boolean isZeroWidthNode(Node node) {

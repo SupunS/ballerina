@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.XMLComment;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STXMLComment extends STXMLItemNode {
             STNode content,
             STNode commentEnd,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.XML_COMMENT, diagnostics);
+        super(SyntaxKind2.XML_COMMENT, diagnostics);
         this.commentStart = commentStart;
         this.content = content;
         this.commentEnd = commentEnd;

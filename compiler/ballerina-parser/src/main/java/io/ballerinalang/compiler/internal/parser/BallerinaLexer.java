@@ -21,7 +21,7 @@ import io.ballerinalang.compiler.internal.diagnostics.DiagnosticErrorCode;
 import io.ballerinalang.compiler.internal.parser.tree.STNode;
 import io.ballerinalang.compiler.internal.parser.tree.STNodeFactory;
 import io.ballerinalang.compiler.internal.parser.tree.STToken;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +90,7 @@ public class BallerinaLexer extends AbstractLexer {
     private STToken readToken() {
         reader.mark();
         if (reader.isEOF()) {
-            return getSyntaxToken(SyntaxKind.EOF_TOKEN);
+            return getSyntaxToken(SyntaxKind2.EOF_TOKEN);
         }
 
         int c = reader.peek();
@@ -99,39 +99,39 @@ public class BallerinaLexer extends AbstractLexer {
         switch (c) {
             // Separators
             case LexerTerminals.COLON:
-                token = getSyntaxToken(SyntaxKind.COLON_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.COLON_TOKEN);
                 break;
             case LexerTerminals.SEMICOLON:
-                token = getSyntaxToken(SyntaxKind.SEMICOLON_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.SEMICOLON_TOKEN);
                 break;
             case LexerTerminals.DOT:
                 token = processDot();
                 break;
             case LexerTerminals.COMMA:
-                token = getSyntaxToken(SyntaxKind.COMMA_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.COMMA_TOKEN);
                 break;
             case LexerTerminals.OPEN_PARANTHESIS:
-                token = getSyntaxToken(SyntaxKind.OPEN_PAREN_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.OPEN_PAREN_TOKEN);
                 break;
             case LexerTerminals.CLOSE_PARANTHESIS:
-                token = getSyntaxToken(SyntaxKind.CLOSE_PAREN_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.CLOSE_PAREN_TOKEN);
                 break;
             case LexerTerminals.OPEN_BRACE:
                 if (peek() == LexerTerminals.PIPE) {
                     reader.advance();
-                    token = getSyntaxToken(SyntaxKind.OPEN_BRACE_PIPE_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.OPEN_BRACE_PIPE_TOKEN);
                 } else {
-                    token = getSyntaxToken(SyntaxKind.OPEN_BRACE_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.OPEN_BRACE_TOKEN);
                 }
                 break;
             case LexerTerminals.CLOSE_BRACE:
-                token = getSyntaxToken(SyntaxKind.CLOSE_BRACE_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.CLOSE_BRACE_TOKEN);
                 break;
             case LexerTerminals.OPEN_BRACKET:
-                token = getSyntaxToken(SyntaxKind.OPEN_BRACKET_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.OPEN_BRACKET_TOKEN);
                 break;
             case LexerTerminals.CLOSE_BRACKET:
-                token = getSyntaxToken(SyntaxKind.CLOSE_BRACKET_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.CLOSE_BRACKET_TOKEN);
                 break;
             case LexerTerminals.PIPE:
                 token = processPipeOperator();
@@ -139,12 +139,12 @@ public class BallerinaLexer extends AbstractLexer {
             case LexerTerminals.QUESTION_MARK:
                 if (peek() == LexerTerminals.DOT && reader.peek(1) != LexerTerminals.DOT) {
                     reader.advance();
-                    token = getSyntaxToken(SyntaxKind.OPTIONAL_CHAINING_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.OPTIONAL_CHAINING_TOKEN);
                 } else if (peek() == LexerTerminals.COLON) {
                     reader.advance();
-                    token = getSyntaxToken(SyntaxKind.ELVIS_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.ELVIS_TOKEN);
                 } else {
-                    token = getSyntaxToken(SyntaxKind.QUESTION_MARK_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.QUESTION_MARK_TOKEN);
                 }
                 break;
             case LexerTerminals.DOUBLE_QUOTE:
@@ -154,7 +154,7 @@ public class BallerinaLexer extends AbstractLexer {
                 token = processDocumentationString();
                 break;
             case LexerTerminals.AT:
-                token = getSyntaxToken(SyntaxKind.AT_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.AT_TOKEN);
                 break;
 
             // Arithmetic operators
@@ -162,43 +162,43 @@ public class BallerinaLexer extends AbstractLexer {
                 token = processEqualOperator();
                 break;
             case LexerTerminals.PLUS:
-                token = getSyntaxToken(SyntaxKind.PLUS_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.PLUS_TOKEN);
                 break;
             case LexerTerminals.MINUS:
                 if (reader.peek() == LexerTerminals.GT) {
                     reader.advance();
                     if (peek() == LexerTerminals.GT) {
                         reader.advance();
-                        token = getSyntaxToken(SyntaxKind.SYNC_SEND_TOKEN);
+                        token = getSyntaxToken(SyntaxKind2.SYNC_SEND_TOKEN);
                     } else {
-                        token = getSyntaxToken(SyntaxKind.RIGHT_ARROW_TOKEN);
+                        token = getSyntaxToken(SyntaxKind2.RIGHT_ARROW_TOKEN);
                     }
                 } else {
-                    token = getSyntaxToken(SyntaxKind.MINUS_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.MINUS_TOKEN);
                 }
                 break;
             case LexerTerminals.ASTERISK:
-                token = getSyntaxToken(SyntaxKind.ASTERISK_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.ASTERISK_TOKEN);
                 break;
             case LexerTerminals.SLASH:
                 token = processSlashToken();
                 break;
             case LexerTerminals.PERCENT:
-                token = getSyntaxToken(SyntaxKind.PERCENT_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.PERCENT_TOKEN);
                 break;
             case LexerTerminals.LT:
                 int nextChar = peek();
                 if (nextChar == LexerTerminals.EQUAL) {
                     reader.advance();
-                    token = getSyntaxToken(SyntaxKind.LT_EQUAL_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.LT_EQUAL_TOKEN);
                 } else if (nextChar == LexerTerminals.MINUS) {
                     reader.advance();
-                    token = getSyntaxToken(SyntaxKind.LEFT_ARROW_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.LEFT_ARROW_TOKEN);
                 } else if (nextChar == LexerTerminals.LT) {
                     reader.advance();
-                    token = getSyntaxToken(SyntaxKind.DOUBLE_LT_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.DOUBLE_LT_TOKEN);
                 } else {
-                    token = getSyntaxToken(SyntaxKind.LT_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.LT_TOKEN);
                 }
                 break;
             case LexerTerminals.GT:
@@ -210,16 +210,16 @@ public class BallerinaLexer extends AbstractLexer {
             case LexerTerminals.BITWISE_AND:
                 if (peek() == LexerTerminals.BITWISE_AND) {
                     reader.advance();
-                    token = getSyntaxToken(SyntaxKind.LOGICAL_AND_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.LOGICAL_AND_TOKEN);
                 } else {
-                    token = getSyntaxToken(SyntaxKind.BITWISE_AND_TOKEN);
+                    token = getSyntaxToken(SyntaxKind2.BITWISE_AND_TOKEN);
                 }
                 break;
             case LexerTerminals.BITWISE_XOR:
-                token = getSyntaxToken(SyntaxKind.BITWISE_XOR_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.BITWISE_XOR_TOKEN);
                 break;
             case LexerTerminals.NEGATION:
-                token = getSyntaxToken(SyntaxKind.NEGATION_TOKEN);
+                token = getSyntaxToken(SyntaxKind2.NEGATION_TOKEN);
                 break;
             case LexerTerminals.BACKTICK:
                 startMode(ParserMode.TEMPLATE);
@@ -312,7 +312,7 @@ public class BallerinaLexer extends AbstractLexer {
         return token;
     }
 
-    private STToken getSyntaxToken(SyntaxKind kind) {
+    private STToken getSyntaxToken(int kind) {
         STNode leadingTrivia = STNodeFactory.createNodeList(this.leadingTriviaList);
         STNode trailingTrivia = processTrailingTrivia();
         return STNodeFactory.createToken(kind, leadingTrivia, trailingTrivia);
@@ -325,7 +325,7 @@ public class BallerinaLexer extends AbstractLexer {
         return STNodeFactory.createIdentifierToken(lexeme, leadingTrivia, trailingTrivia);
     }
 
-    private STToken getLiteral(SyntaxKind kind) {
+    private STToken getLiteral(int kind) {
         STNode leadingTrivia = STNodeFactory.createNodeList(this.leadingTriviaList);
         String lexeme = getLexeme();
         STNode trailingTrivia = processTrailingTrivia();
@@ -413,7 +413,7 @@ public class BallerinaLexer extends AbstractLexer {
             break;
         }
 
-        return STNodeFactory.createMinutiae(SyntaxKind.WHITESPACE_MINUTIAE, getLexeme());
+        return STNodeFactory.createMinutiae(SyntaxKind2.WHITESPACE_MINUTIAE, getLexeme());
     }
 
     /**
@@ -428,13 +428,13 @@ public class BallerinaLexer extends AbstractLexer {
         switch (c) {
             case LexerTerminals.NEWLINE:
                 reader.advance();
-                return STNodeFactory.createMinutiae(SyntaxKind.END_OF_LINE_MINUTIAE, getLexeme());
+                return STNodeFactory.createMinutiae(SyntaxKind2.END_OF_LINE_MINUTIAE, getLexeme());
             case LexerTerminals.CARRIAGE_RETURN:
                 reader.advance();
                 if (reader.peek() == LexerTerminals.NEWLINE) {
                     reader.advance();
                 }
-                return STNodeFactory.createMinutiae(SyntaxKind.END_OF_LINE_MINUTIAE, getLexeme());
+                return STNodeFactory.createMinutiae(SyntaxKind2.END_OF_LINE_MINUTIAE, getLexeme());
             default:
                 throw new IllegalStateException();
         }
@@ -451,23 +451,23 @@ public class BallerinaLexer extends AbstractLexer {
             int nextNextChar = reader.peek(1);
             if (nextNextChar == LexerTerminals.DOT) {
                 reader.advance(2);
-                return getSyntaxToken(SyntaxKind.ELLIPSIS_TOKEN);
+                return getSyntaxToken(SyntaxKind2.ELLIPSIS_TOKEN);
             } else if (nextNextChar == LexerTerminals.LT) {
                 reader.advance(2);
-                return getSyntaxToken(SyntaxKind.DOUBLE_DOT_LT_TOKEN);
+                return getSyntaxToken(SyntaxKind2.DOUBLE_DOT_LT_TOKEN);
             }
         } else if (nextChar == LexerTerminals.AT) {
             reader.advance();
-            return getSyntaxToken(SyntaxKind.ANNOT_CHAINING_TOKEN);
+            return getSyntaxToken(SyntaxKind2.ANNOT_CHAINING_TOKEN);
         } else if (nextChar == LexerTerminals.LT) {
             reader.advance();
-            return getSyntaxToken(SyntaxKind.DOT_LT_TOKEN);
+            return getSyntaxToken(SyntaxKind2.DOT_LT_TOKEN);
         }
 
         if (this.mode != ParserMode.IMPORT && isDigit(nextChar)) {
             return processDecimalFloatLiteral();
         }
-        return getSyntaxToken(SyntaxKind.DOT_TOKEN);
+        return getSyntaxToken(SyntaxKind2.DOT_TOKEN);
     }
 
     /**
@@ -497,7 +497,7 @@ public class BallerinaLexer extends AbstractLexer {
             break;
         }
 
-        return STNodeFactory.createMinutiae(SyntaxKind.COMMENT_MINUTIAE, getLexeme());
+        return STNodeFactory.createMinutiae(SyntaxKind2.COMMENT_MINUTIAE, getLexeme());
     }
 
     /**
@@ -512,18 +512,18 @@ public class BallerinaLexer extends AbstractLexer {
                 if (peek() == LexerTerminals.EQUAL) {
                     // this is '==='
                     reader.advance();
-                    return getSyntaxToken(SyntaxKind.TRIPPLE_EQUAL_TOKEN);
+                    return getSyntaxToken(SyntaxKind2.TRIPPLE_EQUAL_TOKEN);
                 } else {
                     // this is '=='
-                    return getSyntaxToken(SyntaxKind.DOUBLE_EQUAL_TOKEN);
+                    return getSyntaxToken(SyntaxKind2.DOUBLE_EQUAL_TOKEN);
                 }
             case LexerTerminals.GT:
                 // this is '=>'
                 reader.advance();
-                return getSyntaxToken(SyntaxKind.RIGHT_DOUBLE_ARROW_TOKEN);
+                return getSyntaxToken(SyntaxKind2.RIGHT_DOUBLE_ARROW_TOKEN);
             default:
                 // this is '='
-                return getSyntaxToken(SyntaxKind.EQUAL_TOKEN);
+                return getSyntaxToken(SyntaxKind2.EQUAL_TOKEN);
         }
     }
 
@@ -597,7 +597,7 @@ public class BallerinaLexer extends AbstractLexer {
             reportLexerError(DiagnosticErrorCode.ERROR_LEADING_ZEROS_IN_NUMERIC_LITERALS);
         }
 
-        return getLiteral(SyntaxKind.DECIMAL_INTEGER_LITERAL);
+        return getLiteral(SyntaxKind2.DECIMAL_INTEGER_LITERAL);
     }
 
     /**
@@ -647,7 +647,7 @@ public class BallerinaLexer extends AbstractLexer {
                 return parseFloatingPointTypeSuffix();
         }
 
-        return getLiteral(SyntaxKind.DECIMAL_FLOATING_POINT_LITERAL);
+        return getLiteral(SyntaxKind2.DECIMAL_FLOATING_POINT_LITERAL);
     }
 
     /**
@@ -695,7 +695,7 @@ public class BallerinaLexer extends AbstractLexer {
         }
 
         if (isHex) {
-            return getLiteral(SyntaxKind.HEX_FLOATING_POINT_LITERAL);
+            return getLiteral(SyntaxKind2.HEX_FLOATING_POINT_LITERAL);
         }
 
         switch (nextChar) {
@@ -706,7 +706,7 @@ public class BallerinaLexer extends AbstractLexer {
                 return parseFloatingPointTypeSuffix();
         }
 
-        return getLiteral(SyntaxKind.DECIMAL_FLOATING_POINT_LITERAL);
+        return getLiteral(SyntaxKind2.DECIMAL_FLOATING_POINT_LITERAL);
     }
 
     /**
@@ -725,7 +725,7 @@ public class BallerinaLexer extends AbstractLexer {
      */
     private STToken parseFloatingPointTypeSuffix() {
         reader.advance();
-        return getLiteral(SyntaxKind.DECIMAL_FLOATING_POINT_LITERAL);
+        return getLiteral(SyntaxKind2.DECIMAL_FLOATING_POINT_LITERAL);
     }
 
     /**
@@ -784,10 +784,10 @@ public class BallerinaLexer extends AbstractLexer {
             case 'P':
                 return processExponent(true);
             default:
-                return getLiteral(SyntaxKind.HEX_INTEGER_LITERAL);
+                return getLiteral(SyntaxKind2.HEX_INTEGER_LITERAL);
         }
 
-        return getLiteral(SyntaxKind.HEX_FLOATING_POINT_LITERAL);
+        return getLiteral(SyntaxKind2.HEX_FLOATING_POINT_LITERAL);
     }
 
     /**
@@ -804,197 +804,197 @@ public class BallerinaLexer extends AbstractLexer {
         switch (tokenText) {
             // built-in named-types
             case LexerTerminals.INT:
-                return getSyntaxToken(SyntaxKind.INT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.INT_KEYWORD);
             case LexerTerminals.FLOAT:
-                return getSyntaxToken(SyntaxKind.FLOAT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FLOAT_KEYWORD);
             case LexerTerminals.STRING:
-                return getSyntaxToken(SyntaxKind.STRING_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.STRING_KEYWORD);
             case LexerTerminals.BOOLEAN:
-                return getSyntaxToken(SyntaxKind.BOOLEAN_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.BOOLEAN_KEYWORD);
             case LexerTerminals.DECIMAL:
-                return getSyntaxToken(SyntaxKind.DECIMAL_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.DECIMAL_KEYWORD);
             case LexerTerminals.XML:
-                return getSyntaxToken(SyntaxKind.XML_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.XML_KEYWORD);
             case LexerTerminals.JSON:
-                return getSyntaxToken(SyntaxKind.JSON_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.JSON_KEYWORD);
             case LexerTerminals.HANDLE:
-                return getSyntaxToken(SyntaxKind.HANDLE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.HANDLE_KEYWORD);
             case LexerTerminals.ANY:
-                return getSyntaxToken(SyntaxKind.ANY_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ANY_KEYWORD);
             case LexerTerminals.ANYDATA:
-                return getSyntaxToken(SyntaxKind.ANYDATA_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ANYDATA_KEYWORD);
             case LexerTerminals.NEVER:
-                return getSyntaxToken(SyntaxKind.NEVER_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.NEVER_KEYWORD);
             case LexerTerminals.BYTE:
-                return getSyntaxToken(SyntaxKind.BYTE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.BYTE_KEYWORD);
 
             // Keywords
             case LexerTerminals.PUBLIC:
-                return getSyntaxToken(SyntaxKind.PUBLIC_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.PUBLIC_KEYWORD);
             case LexerTerminals.PRIVATE:
-                return getSyntaxToken(SyntaxKind.PRIVATE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.PRIVATE_KEYWORD);
             case LexerTerminals.FUNCTION:
-                return getSyntaxToken(SyntaxKind.FUNCTION_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FUNCTION_KEYWORD);
             case LexerTerminals.RETURN:
-                return getSyntaxToken(SyntaxKind.RETURN_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.RETURN_KEYWORD);
             case LexerTerminals.RETURNS:
-                return getSyntaxToken(SyntaxKind.RETURNS_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.RETURNS_KEYWORD);
             case LexerTerminals.EXTERNAL:
-                return getSyntaxToken(SyntaxKind.EXTERNAL_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.EXTERNAL_KEYWORD);
             case LexerTerminals.TYPE:
-                return getSyntaxToken(SyntaxKind.TYPE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.TYPE_KEYWORD);
             case LexerTerminals.RECORD:
-                return getSyntaxToken(SyntaxKind.RECORD_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.RECORD_KEYWORD);
             case LexerTerminals.OBJECT:
-                return getSyntaxToken(SyntaxKind.OBJECT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.OBJECT_KEYWORD);
             case LexerTerminals.REMOTE:
-                return getSyntaxToken(SyntaxKind.REMOTE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.REMOTE_KEYWORD);
             case LexerTerminals.ABSTRACT:
-                return getSyntaxToken(SyntaxKind.ABSTRACT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ABSTRACT_KEYWORD);
             case LexerTerminals.CLIENT:
-                return getSyntaxToken(SyntaxKind.CLIENT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.CLIENT_KEYWORD);
             case LexerTerminals.IF:
-                return getSyntaxToken(SyntaxKind.IF_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.IF_KEYWORD);
             case LexerTerminals.ELSE:
-                return getSyntaxToken(SyntaxKind.ELSE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ELSE_KEYWORD);
             case LexerTerminals.WHILE:
-                return getSyntaxToken(SyntaxKind.WHILE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.WHILE_KEYWORD);
             case LexerTerminals.TRUE:
-                return getSyntaxToken(SyntaxKind.TRUE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.TRUE_KEYWORD);
             case LexerTerminals.FALSE:
-                return getSyntaxToken(SyntaxKind.FALSE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FALSE_KEYWORD);
             case LexerTerminals.CHECK:
-                return getSyntaxToken(SyntaxKind.CHECK_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.CHECK_KEYWORD);
             case LexerTerminals.FAIL:
-                return getSyntaxToken(SyntaxKind.FAIL_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FAIL_KEYWORD);
             case LexerTerminals.CHECKPANIC:
-                return getSyntaxToken(SyntaxKind.CHECKPANIC_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.CHECKPANIC_KEYWORD);
             case LexerTerminals.CONTINUE:
-                return getSyntaxToken(SyntaxKind.CONTINUE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.CONTINUE_KEYWORD);
             case LexerTerminals.BREAK:
-                return getSyntaxToken(SyntaxKind.BREAK_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.BREAK_KEYWORD);
             case LexerTerminals.PANIC:
-                return getSyntaxToken(SyntaxKind.PANIC_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.PANIC_KEYWORD);
             case LexerTerminals.IMPORT:
-                return getSyntaxToken(SyntaxKind.IMPORT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.IMPORT_KEYWORD);
             case LexerTerminals.VERSION:
-                return getSyntaxToken(SyntaxKind.VERSION_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.VERSION_KEYWORD);
             case LexerTerminals.AS:
-                return getSyntaxToken(SyntaxKind.AS_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.AS_KEYWORD);
             case LexerTerminals.SERVICE:
-                return getSyntaxToken(SyntaxKind.SERVICE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.SERVICE_KEYWORD);
             case LexerTerminals.ON:
-                return getSyntaxToken(SyntaxKind.ON_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ON_KEYWORD);
             case LexerTerminals.RESOURCE:
-                return getSyntaxToken(SyntaxKind.RESOURCE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.RESOURCE_KEYWORD);
             case LexerTerminals.LISTENER:
-                return getSyntaxToken(SyntaxKind.LISTENER_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.LISTENER_KEYWORD);
             case LexerTerminals.CONST:
-                return getSyntaxToken(SyntaxKind.CONST_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.CONST_KEYWORD);
             case LexerTerminals.FINAL:
-                return getSyntaxToken(SyntaxKind.FINAL_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FINAL_KEYWORD);
             case LexerTerminals.TYPEOF:
-                return getSyntaxToken(SyntaxKind.TYPEOF_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.TYPEOF_KEYWORD);
             case LexerTerminals.IS:
-                return getSyntaxToken(SyntaxKind.IS_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.IS_KEYWORD);
             case LexerTerminals.NULL:
-                return getSyntaxToken(SyntaxKind.NULL_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.NULL_KEYWORD);
             case LexerTerminals.LOCK:
-                return getSyntaxToken(SyntaxKind.LOCK_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.LOCK_KEYWORD);
             case LexerTerminals.ANNOTATION:
-                return getSyntaxToken(SyntaxKind.ANNOTATION_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ANNOTATION_KEYWORD);
             case LexerTerminals.SOURCE:
-                return getSyntaxToken(SyntaxKind.SOURCE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.SOURCE_KEYWORD);
             case LexerTerminals.VAR:
-                return getSyntaxToken(SyntaxKind.VAR_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.VAR_KEYWORD);
             case LexerTerminals.WORKER:
-                return getSyntaxToken(SyntaxKind.WORKER_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.WORKER_KEYWORD);
             case LexerTerminals.PARAMETER:
-                return getSyntaxToken(SyntaxKind.PARAMETER_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.PARAMETER_KEYWORD);
             case LexerTerminals.FIELD:
-                return getSyntaxToken(SyntaxKind.FIELD_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FIELD_KEYWORD);
             case LexerTerminals.XMLNS:
-                return getSyntaxToken(SyntaxKind.XMLNS_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.XMLNS_KEYWORD);
             case LexerTerminals.FORK:
-                return getSyntaxToken(SyntaxKind.FORK_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FORK_KEYWORD);
             case LexerTerminals.MAP:
-                return getSyntaxToken(SyntaxKind.MAP_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.MAP_KEYWORD);
             case LexerTerminals.FUTURE:
-                return getSyntaxToken(SyntaxKind.FUTURE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FUTURE_KEYWORD);
             case LexerTerminals.TYPEDESC:
-                return getSyntaxToken(SyntaxKind.TYPEDESC_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.TYPEDESC_KEYWORD);
             case LexerTerminals.TRAP:
-                return getSyntaxToken(SyntaxKind.TRAP_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.TRAP_KEYWORD);
             case LexerTerminals.IN:
-                return getSyntaxToken(SyntaxKind.IN_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.IN_KEYWORD);
             case LexerTerminals.FOREACH:
-                return getSyntaxToken(SyntaxKind.FOREACH_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FOREACH_KEYWORD);
             case LexerTerminals.TABLE:
-                return getSyntaxToken(SyntaxKind.TABLE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.TABLE_KEYWORD);
             case LexerTerminals.ERROR:
-                return getSyntaxToken(SyntaxKind.ERROR_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ERROR_KEYWORD);
             case LexerTerminals.LET:
-                return getSyntaxToken(SyntaxKind.LET_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.LET_KEYWORD);
             case LexerTerminals.STREAM:
-                return getSyntaxToken(SyntaxKind.STREAM_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.STREAM_KEYWORD);
             case LexerTerminals.NEW:
-                return getSyntaxToken(SyntaxKind.NEW_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.NEW_KEYWORD);
             case LexerTerminals.READONLY:
-                return getSyntaxToken(SyntaxKind.READONLY_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.READONLY_KEYWORD);
             case LexerTerminals.DISTINCT:
-                return getSyntaxToken(SyntaxKind.DISTINCT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.DISTINCT_KEYWORD);
             case LexerTerminals.FROM:
-                return getSyntaxToken(SyntaxKind.FROM_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FROM_KEYWORD);
             case LexerTerminals.WHERE:
-                return getSyntaxToken(SyntaxKind.WHERE_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.WHERE_KEYWORD);
             case LexerTerminals.SELECT:
-                return getSyntaxToken(SyntaxKind.SELECT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.SELECT_KEYWORD);
             case LexerTerminals.START:
-                return getSyntaxToken(SyntaxKind.START_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.START_KEYWORD);
             case LexerTerminals.FLUSH:
-                return getSyntaxToken(SyntaxKind.FLUSH_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.FLUSH_KEYWORD);
             case LexerTerminals.DEFAULT:
-                return getSyntaxToken(SyntaxKind.DEFAULT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.DEFAULT_KEYWORD);
             case LexerTerminals.WAIT:
-                return getSyntaxToken(SyntaxKind.WAIT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.WAIT_KEYWORD);
             case LexerTerminals.DO:
-                return getSyntaxToken(SyntaxKind.DO_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.DO_KEYWORD);
             case LexerTerminals.TRANSACTION:
-                return getSyntaxToken(SyntaxKind.TRANSACTION_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.TRANSACTION_KEYWORD);
             case LexerTerminals.COMMIT:
-                return getSyntaxToken(SyntaxKind.COMMIT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.COMMIT_KEYWORD);
             case LexerTerminals.RETRY:
-                return getSyntaxToken(SyntaxKind.RETRY_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.RETRY_KEYWORD);
             case LexerTerminals.ROLLBACK:
-                return getSyntaxToken(SyntaxKind.ROLLBACK_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ROLLBACK_KEYWORD);
             case LexerTerminals.TRANSACTIONAL:
-                return getSyntaxToken(SyntaxKind.TRANSACTIONAL_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.TRANSACTIONAL_KEYWORD);
             case LexerTerminals.ENUM:
-                return getSyntaxToken(SyntaxKind.ENUM_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ENUM_KEYWORD);
             case LexerTerminals.BASE16:
-                return getSyntaxToken(SyntaxKind.BASE16_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.BASE16_KEYWORD);
             case LexerTerminals.BASE64:
-                return getSyntaxToken(SyntaxKind.BASE64_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.BASE64_KEYWORD);
             case LexerTerminals.MATCH:
-                return getSyntaxToken(SyntaxKind.MATCH_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.MATCH_KEYWORD);
             case LexerTerminals.CONFLICT:
-                return getSyntaxToken(SyntaxKind.CONFLICT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.CONFLICT_KEYWORD);
             case LexerTerminals.LIMIT:
-                return getSyntaxToken(SyntaxKind.LIMIT_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.LIMIT_KEYWORD);
             case LexerTerminals.JOIN:
-                return getSyntaxToken(SyntaxKind.JOIN_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.JOIN_KEYWORD);
             case LexerTerminals.OUTER:
-                return getSyntaxToken(SyntaxKind.OUTER_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.OUTER_KEYWORD);
             case LexerTerminals.EQUALS:
-                return getSyntaxToken(SyntaxKind.EQUALS_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.EQUALS_KEYWORD);
             case LexerTerminals.ORDER:
-                return getSyntaxToken(SyntaxKind.ORDER_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ORDER_KEYWORD);
             case LexerTerminals.BY:
-                return getSyntaxToken(SyntaxKind.BY_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.BY_KEYWORD);
             case LexerTerminals.ASCENDING:
-                return getSyntaxToken(SyntaxKind.ASCENDING_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.ASCENDING_KEYWORD);
             case LexerTerminals.DESCENDING:
-                return getSyntaxToken(SyntaxKind.DESCENDING_KEYWORD);
+                return getSyntaxToken(SyntaxKind2.DESCENDING_KEYWORD);
             default:
                 return getIdentifierToken();
         }
@@ -1218,7 +1218,7 @@ public class BallerinaLexer extends AbstractLexer {
             break;
         }
 
-        return getLiteral(SyntaxKind.STRING_LITERAL);
+        return getLiteral(SyntaxKind2.STRING_LITERAL);
     }
 
     /**
@@ -1262,14 +1262,14 @@ public class BallerinaLexer extends AbstractLexer {
                 if (peek() == LexerTerminals.EQUAL) {
                     // this is '!=='
                     reader.advance();
-                    return getSyntaxToken(SyntaxKind.NOT_DOUBLE_EQUAL_TOKEN);
+                    return getSyntaxToken(SyntaxKind2.NOT_DOUBLE_EQUAL_TOKEN);
                 } else {
                     // this is '!='
-                    return getSyntaxToken(SyntaxKind.NOT_EQUAL_TOKEN);
+                    return getSyntaxToken(SyntaxKind2.NOT_EQUAL_TOKEN);
                 }
             default:
                 // this is '!'
-                return getSyntaxToken(SyntaxKind.EXCLAMATION_MARK_TOKEN);
+                return getSyntaxToken(SyntaxKind2.EXCLAMATION_MARK_TOKEN);
         }
     }
 
@@ -1282,12 +1282,12 @@ public class BallerinaLexer extends AbstractLexer {
         switch (peek()) { // check for the second char
             case LexerTerminals.CLOSE_BRACE:
                 reader.advance();
-                return getSyntaxToken(SyntaxKind.CLOSE_BRACE_PIPE_TOKEN);
+                return getSyntaxToken(SyntaxKind2.CLOSE_BRACE_PIPE_TOKEN);
             case LexerTerminals.PIPE:
                 reader.advance();
-                return getSyntaxToken(SyntaxKind.LOGICAL_OR_TOKEN);
+                return getSyntaxToken(SyntaxKind2.LOGICAL_OR_TOKEN);
             default:
-                return getSyntaxToken(SyntaxKind.PIPE_TOKEN);
+                return getSyntaxToken(SyntaxKind2.PIPE_TOKEN);
         }
     }
 
@@ -1299,17 +1299,17 @@ public class BallerinaLexer extends AbstractLexer {
     private STToken processSlashToken() {
         // check for the second char
         if (peek() != LexerTerminals.ASTERISK) {
-            return getSyntaxToken(SyntaxKind.SLASH_TOKEN);
+            return getSyntaxToken(SyntaxKind2.SLASH_TOKEN);
         }
 
         reader.advance();
         if (peek() != LexerTerminals.ASTERISK) {
-            return getSyntaxToken(SyntaxKind.SLASH_ASTERISK_TOKEN);
+            return getSyntaxToken(SyntaxKind2.SLASH_ASTERISK_TOKEN);
         } else if (reader.peek(1) == LexerTerminals.SLASH && reader.peek(2) == LexerTerminals.LT) {
             reader.advance(3);
-            return getSyntaxToken(SyntaxKind.DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN);
+            return getSyntaxToken(SyntaxKind2.DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN);
         } else {
-            return getSyntaxToken(SyntaxKind.SLASH_ASTERISK_TOKEN);
+            return getSyntaxToken(SyntaxKind2.SLASH_ASTERISK_TOKEN);
         }
     }
 
@@ -1373,7 +1373,7 @@ public class BallerinaLexer extends AbstractLexer {
         STNode leadingTrivia = STNodeFactory.createNodeList(this.leadingTriviaList);
         String lexeme = getLexeme();
         STNode trailingTrivia = STNodeFactory.createNodeList(new ArrayList<>(0)); // No trailing trivia
-        return STNodeFactory.createLiteralValueToken(SyntaxKind.DOCUMENTATION_STRING, lexeme, leadingTrivia,
+        return STNodeFactory.createLiteralValueToken(SyntaxKind2.DOCUMENTATION_STRING, lexeme, leadingTrivia,
                 trailingTrivia);
     }
 
@@ -1383,13 +1383,13 @@ public class BallerinaLexer extends AbstractLexer {
         // Therefore do not process trailing trivia for starting back-tick. We reach here only for
         // starting back-tick. Ending back-tick is processed by the template mode.
         STNode trailingTrivia = STNodeFactory.createEmptyNodeList();
-        return STNodeFactory.createToken(SyntaxKind.BACKTICK_TOKEN, leadingTrivia, trailingTrivia);
+        return STNodeFactory.createToken(SyntaxKind2.BACKTICK_TOKEN, leadingTrivia, trailingTrivia);
     }
 
     private STToken readTemplateToken() {
         reader.mark();
         if (reader.isEOF()) {
-            return getSyntaxToken(SyntaxKind.EOF_TOKEN);
+            return getSyntaxToken(SyntaxKind2.EOF_TOKEN);
         }
 
         char nextChar = this.reader.peek();
@@ -1397,14 +1397,14 @@ public class BallerinaLexer extends AbstractLexer {
             case LexerTerminals.BACKTICK:
                 reader.advance();
                 endMode();
-                return getSyntaxToken(SyntaxKind.BACKTICK_TOKEN);
+                return getSyntaxToken(SyntaxKind2.BACKTICK_TOKEN);
             case LexerTerminals.DOLLAR:
                 if (reader.peek(1) == LexerTerminals.OPEN_BRACE) {
                     // Switch to interpolation mode. Then the next token will be read in that mode.
                     startMode(ParserMode.INTERPOLATION);
                     reader.advance(2);
 
-                    return getSyntaxToken(SyntaxKind.INTERPOLATION_START_TOKEN);
+                    return getSyntaxToken(SyntaxKind2.INTERPOLATION_START_TOKEN);
                 }
                 // fall through
             default:
@@ -1428,7 +1428,7 @@ public class BallerinaLexer extends AbstractLexer {
                 }
         }
 
-        return getLiteral(SyntaxKind.TEMPLATE_STRING);
+        return getLiteral(SyntaxKind2.TEMPLATE_STRING);
     }
 
     /**
@@ -1490,11 +1490,11 @@ public class BallerinaLexer extends AbstractLexer {
     private STToken processTokenStartWithGt() {
         if (peek() == LexerTerminals.EQUAL) {
             reader.advance();
-            return getSyntaxToken(SyntaxKind.GT_EQUAL_TOKEN);
+            return getSyntaxToken(SyntaxKind2.GT_EQUAL_TOKEN);
         }
 
         if (reader.peek() != LexerTerminals.GT) {
-            return getSyntaxToken(SyntaxKind.GT_TOKEN);
+            return getSyntaxToken(SyntaxKind2.GT_TOKEN);
         }
 
         char nextChar = reader.peek(1);
@@ -1503,15 +1503,15 @@ public class BallerinaLexer extends AbstractLexer {
                 if (reader.peek(2) == LexerTerminals.EQUAL) {
                     // ">>>="
                     reader.advance(2);
-                    return getSyntaxToken(SyntaxKind.TRIPPLE_GT_TOKEN);
+                    return getSyntaxToken(SyntaxKind2.TRIPPLE_GT_TOKEN);
                 }
-                return getSyntaxToken(SyntaxKind.GT_TOKEN);
+                return getSyntaxToken(SyntaxKind2.GT_TOKEN);
             case LexerTerminals.EQUAL:
                 // ">>="
                 reader.advance(1);
-                return getSyntaxToken(SyntaxKind.DOUBLE_GT_TOKEN);
+                return getSyntaxToken(SyntaxKind2.DOUBLE_GT_TOKEN);
             default:
-                return getSyntaxToken(SyntaxKind.GT_TOKEN);
+                return getSyntaxToken(SyntaxKind2.GT_TOKEN);
         }
     }
 
@@ -1537,7 +1537,7 @@ public class BallerinaLexer extends AbstractLexer {
                 // then end of the interpolation.
                 endMode();
                 reader.advance();
-                return getSyntaxTokenWithoutTrailingTrivia(SyntaxKind.CLOSE_BRACE_TOKEN);
+                return getSyntaxTokenWithoutTrailingTrivia(SyntaxKind2.CLOSE_BRACE_TOKEN);
             case LexerTerminals.BACKTICK:
                 // If we are inside the interpolation, that means its no longer XML
                 // mode, but in the default mode. Hence treat the back-tick in the
@@ -1548,7 +1548,7 @@ public class BallerinaLexer extends AbstractLexer {
         }
     }
 
-    private STToken getSyntaxTokenWithoutTrailingTrivia(SyntaxKind kind) {
+    private STToken getSyntaxTokenWithoutTrailingTrivia(int kind) {
         STNode leadingTrivia = STNodeFactory.createNodeList(this.leadingTriviaList);
         STNode trailingTrivia = STNodeFactory.createNodeList(new ArrayList<>(0));
         return STNodeFactory.createToken(kind, leadingTrivia, trailingTrivia);

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ByteArrayLiteralNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STByteArrayLiteralNode extends STExpressionNode {
             STNode content,
             STNode endBacktick,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.BYTE_ARRAY_LITERAL, diagnostics);
+        super(SyntaxKind2.BYTE_ARRAY_LITERAL, diagnostics);
         this.type = type;
         this.startBacktick = startBacktick;
         this.content = content;

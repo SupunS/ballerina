@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.WaitActionNode;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class STWaitActionNode extends STActionNode {
             STNode waitKeyword,
             STNode waitFutureExpr,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.WAIT_ACTION, diagnostics);
+        super(SyntaxKind2.WAIT_ACTION, diagnostics);
         this.waitKeyword = waitKeyword;
         this.waitFutureExpr = waitFutureExpr;
 

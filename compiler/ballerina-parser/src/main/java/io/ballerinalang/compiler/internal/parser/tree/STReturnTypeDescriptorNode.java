@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.ReturnTypeDescriptorNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STReturnTypeDescriptorNode extends STNode {
             STNode annotations,
             STNode type,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.RETURN_TYPE_DESCRIPTOR, diagnostics);
+        super(SyntaxKind2.RETURN_TYPE_DESCRIPTOR, diagnostics);
         this.returnsKeyword = returnsKeyword;
         this.annotations = annotations;
         this.type = type;

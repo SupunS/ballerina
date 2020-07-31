@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.NamedWorkerDeclarator;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STNamedWorkerDeclarator extends STNode {
             STNode workerInitStatements,
             STNode namedWorkerDeclarations,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.NAMED_WORKER_DECLARATOR, diagnostics);
+        super(SyntaxKind2.NAMED_WORKER_DECLARATOR, diagnostics);
         this.workerInitStatements = workerInitStatements;
         this.namedWorkerDeclarations = namedWorkerDeclarations;
 

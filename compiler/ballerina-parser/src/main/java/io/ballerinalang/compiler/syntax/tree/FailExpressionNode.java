@@ -58,7 +58,7 @@ public class FailExpressionNode extends ExpressionNode {
     }
 
     public FailExpressionNode modify(
-            SyntaxKind kind,
+            int kind,
             Token failKeyword,
             ExpressionNode expression) {
         if (checkForReferenceEquality(

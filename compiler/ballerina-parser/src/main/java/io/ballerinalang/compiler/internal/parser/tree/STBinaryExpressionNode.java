@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.BinaryExpressionNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -36,7 +36,7 @@ public class STBinaryExpressionNode extends STExpressionNode {
     public final STNode rhsExpr;
 
     STBinaryExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode lhsExpr,
             STNode operator,
             STNode rhsExpr) {
@@ -49,7 +49,7 @@ public class STBinaryExpressionNode extends STExpressionNode {
     }
 
     STBinaryExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode lhsExpr,
             STNode operator,
             STNode rhsExpr,
@@ -75,7 +75,7 @@ public class STBinaryExpressionNode extends STExpressionNode {
     }
 
     public STBinaryExpressionNode modify(
-            SyntaxKind kind,
+            int kind,
             STNode lhsExpr,
             STNode operator,
             STNode rhsExpr) {

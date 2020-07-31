@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TypeReferenceNode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STTypeReferenceNode extends STTypeDescriptorNode {
             STNode typeName,
             STNode semicolonToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TYPE_REFERENCE, diagnostics);
+        super(SyntaxKind2.TYPE_REFERENCE, diagnostics);
         this.asteriskToken = asteriskToken;
         this.typeName = typeName;
         this.semicolonToken = semicolonToken;

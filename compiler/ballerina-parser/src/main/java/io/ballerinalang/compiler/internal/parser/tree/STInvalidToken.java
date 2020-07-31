@@ -17,7 +17,7 @@
  */
 package io.ballerinalang.compiler.internal.parser.tree;
 
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 
@@ -30,7 +30,7 @@ public class STInvalidToken extends STToken {
     private String tokenText;
 
     STInvalidToken(String tokenText) {
-        super(SyntaxKind.INVALID_TOKEN, STNodeFactory.createEmptyNodeList(), STNodeFactory.createEmptyNodeList());
+        super(SyntaxKind2.INVALID_TOKEN, STNodeFactory.createEmptyNodeList(), STNodeFactory.createEmptyNodeList());
         this.tokenText = tokenText;
     }
 
@@ -38,7 +38,7 @@ public class STInvalidToken extends STToken {
                    STNode leadingTrivia,
                    STNode trailingTrivia,
                    Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.INVALID_TOKEN, tokenText.length(), leadingTrivia, trailingTrivia, diagnostics);
+        super(SyntaxKind2.INVALID_TOKEN, tokenText.length(), leadingTrivia, trailingTrivia, diagnostics);
         this.tokenText = tokenText;
     }
 

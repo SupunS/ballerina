@@ -64,11 +64,11 @@ public abstract class AbstractNodeFactory {
         return token.createUnlinkedFacade();
     }
 
-    public static Token createToken(SyntaxKind kind) {
+    public static Token createToken(int kind) {
         return createToken(kind, createEmptyMinutiaeList(), createEmptyMinutiaeList());
     }
 
-    public static Token createToken(SyntaxKind kind,
+    public static Token createToken(int kind,
                                     MinutiaeList leadingMinutiae,
                                     MinutiaeList trailingMinutiae) {
         STNode leadingMinutiaeSTNode = leadingMinutiae.internalNode();
@@ -112,21 +112,21 @@ public abstract class AbstractNodeFactory {
         // TODO Validate the given text for comment characters
         // TODO Can we invoke the lexer here to get the minutiae
         STMinutiae internalNode = (STMinutiae) STNodeFactory.createMinutiae(
-                SyntaxKind.COMMENT_MINUTIAE, text);
+                SyntaxKind2.COMMENT_MINUTIAE, text);
         return Minutiae.createUnlinked(internalNode);
     }
 
     public static Minutiae createWhitespaceMinutiae(String text) {
         // TODO Validate the given text for whitespace characters
         STMinutiae internalNode = (STMinutiae) STNodeFactory.createMinutiae(
-                SyntaxKind.WHITESPACE_MINUTIAE, text);
+                SyntaxKind2.WHITESPACE_MINUTIAE, text);
         return Minutiae.createUnlinked((STMinutiae) internalNode);
     }
 
     public static Minutiae createEndOfLineMinutiae(String text) {
         // TODO Validate the given text for end of line characters
         STMinutiae internalNode = (STMinutiae) STNodeFactory.createMinutiae(
-                SyntaxKind.END_OF_LINE_MINUTIAE, text);
+                SyntaxKind2.END_OF_LINE_MINUTIAE, text);
         return Minutiae.createUnlinked(internalNode);
     }
 

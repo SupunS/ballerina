@@ -53,7 +53,7 @@ public class BuiltinSimpleNameReferenceNode extends NameReferenceNode {
     }
 
     public BuiltinSimpleNameReferenceNode modify(
-            SyntaxKind kind,
+            int kind,
             Token name) {
         if (checkForReferenceEquality(
                 name)) {

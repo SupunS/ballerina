@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.XMLAttributeValue;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STXMLAttributeValue extends STNode {
             STNode value,
             STNode endQuote,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.XML_ATTRIBUTE_VALUE, diagnostics);
+        super(SyntaxKind2.XML_ATTRIBUTE_VALUE, diagnostics);
         this.startQuote = startQuote;
         this.value = value;
         this.endQuote = endQuote;

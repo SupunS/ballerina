@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.DistinctTypeDescriptorNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STDistinctTypeDescriptorNode extends STTypeDescriptorNode {
             STNode distinctKeyword,
             STNode typeDescriptor,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.DISTINCT_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.DISTINCT_TYPE_DESC, diagnostics);
         this.distinctKeyword = distinctKeyword;
         this.typeDescriptor = typeDescriptor;
 

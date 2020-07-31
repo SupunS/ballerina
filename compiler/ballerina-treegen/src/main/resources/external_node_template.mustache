@@ -81,7 +81,7 @@ public{{#isAbstract}} abstract{{/isAbstract}} class {{externalClassName}} extend
     }
 
     public {{externalClassName}} modify(
-            {{^syntaxKind}}SyntaxKind kind, &#10;            {{/syntaxKind}}{{#fields}}{{#isList}}{{listClassName}}<{{fieldClassName}}>{{/isList}}{{^isList}}{{fieldClassName}}{{/isList}} {{fieldName}}{{^isLast}}, &#10;            {{/isLast}}{{/fields}}) {
+            {{^syntaxKind}}int kind, &#10;            {{/syntaxKind}}{{#fields}}{{#isList}}{{listClassName}}<{{fieldClassName}}>{{/isList}}{{^isList}}{{fieldClassName}}{{/isList}} {{fieldName}}{{^isLast}}, &#10;            {{/isLast}}{{/fields}}) {
         if (checkForReferenceEquality(
                 {{#fields}}{{#isList}}{{fieldName}}.underlyingListNode(){{/isList}}{{^isList}}{{fieldName}}{{/isList}}{{^isLast}}, &#10;                {{/isLast}}{{/fields}})) {
             return this;

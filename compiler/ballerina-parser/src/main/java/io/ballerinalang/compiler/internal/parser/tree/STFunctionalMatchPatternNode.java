@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.FunctionalMatchPatternNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STFunctionalMatchPatternNode extends STNode {
             STNode argListMatchPatternNode,
             STNode closeParenthesisToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.FUNCTIONAL_MATCH_PATTERN, diagnostics);
+        super(SyntaxKind2.FUNCTIONAL_MATCH_PATTERN, diagnostics);
         this.typeRef = typeRef;
         this.openParenthesisToken = openParenthesisToken;
         this.argListMatchPatternNode = argListMatchPatternNode;

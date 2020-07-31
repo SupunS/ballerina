@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.WildcardBindingPatternNode;
 
 import java.util.Collection;
@@ -43,7 +43,7 @@ public class STWildcardBindingPatternNode extends STBindingPatternNode {
     STWildcardBindingPatternNode(
             STNode underscoreToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.WILDCARD_BINDING_PATTERN, diagnostics);
+        super(SyntaxKind2.WILDCARD_BINDING_PATTERN, diagnostics);
         this.underscoreToken = underscoreToken;
 
         addChildren(

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ArrayTypeDescriptorNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STArrayTypeDescriptorNode extends STTypeDescriptorNode {
             STNode arrayLength,
             STNode closeBracket,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.ARRAY_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.ARRAY_TYPE_DESC, diagnostics);
         this.memberTypeDesc = memberTypeDesc;
         this.openBracket = openBracket;
         this.arrayLength = arrayLength;

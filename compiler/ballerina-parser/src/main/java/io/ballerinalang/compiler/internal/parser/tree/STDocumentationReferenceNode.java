@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.DocumentationReferenceNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STDocumentationReferenceNode extends STDocumentationNode {
             STNode backtickContent,
             STNode endBacktick,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.DOCUMENTATION_REFERENCE, diagnostics);
+        super(SyntaxKind2.DOCUMENTATION_REFERENCE, diagnostics);
         this.referenceType = referenceType;
         this.startBacktick = startBacktick;
         this.backtickContent = backtickContent;

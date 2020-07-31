@@ -17,7 +17,7 @@
  */
 package io.ballerinalang.compiler.internal.parser.tree;
 
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 /**
  * A factory that constructs internal tree nodes.
@@ -204,7 +204,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createExpressionStatementNode(
-            SyntaxKind kind,
+            int kind,
             STNode expression,
             STNode semicolonToken) {
 
@@ -344,7 +344,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createBinaryExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode lhsExpr,
             STNode operator,
             STNode rhsExpr) {
@@ -357,7 +357,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createBracedExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode openParen,
             STNode expression,
             STNode closeParen) {
@@ -370,7 +370,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createCheckExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode checkKeyword,
             STNode expression) {
 
@@ -381,7 +381,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createFailExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode failKeyword,
             STNode expression) {
 
@@ -989,7 +989,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createBasicLiteralNode(
-            SyntaxKind kind,
+            int kind,
             STNode literalToken) {
 
         return new STBasicLiteralNode(
@@ -1016,7 +1016,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createBuiltinSimpleNameReferenceNode(
-            SyntaxKind kind,
+            int kind,
             STNode name) {
 
         return new STBuiltinSimpleNameReferenceNode(
@@ -1025,7 +1025,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createTrapExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode trapKeyword,
             STNode expression) {
 
@@ -1196,7 +1196,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createTemplateExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode type,
             STNode startBacktick,
             STNode content,
@@ -2232,7 +2232,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createMarkdownDocumentationLineNode(
-            SyntaxKind kind,
+            int kind,
             STNode hashToken,
             STNode documentElements) {
 
@@ -2243,7 +2243,7 @@ public class STNodeFactory extends STAbstractNodeFactory {
     }
 
     public static STNode createMarkdownParameterDocumentationLineNode(
-            SyntaxKind kind,
+            int kind,
             STNode hashToken,
             STNode plusToken,
             STNode parameterName,

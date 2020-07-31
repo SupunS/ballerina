@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.SpreadFieldNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STSpreadFieldNode extends STMappingFieldNode {
             STNode ellipsis,
             STNode valueExpr,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.SPREAD_FIELD, diagnostics);
+        super(SyntaxKind2.SPREAD_FIELD, diagnostics);
         this.ellipsis = ellipsis;
         this.valueExpr = valueExpr;
 

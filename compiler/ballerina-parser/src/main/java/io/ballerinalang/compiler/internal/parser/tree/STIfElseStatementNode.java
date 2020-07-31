@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.IfElseStatementNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STIfElseStatementNode extends STStatementNode {
             STNode ifBody,
             STNode elseBody,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.IF_ELSE_STATEMENT, diagnostics);
+        super(SyntaxKind2.IF_ELSE_STATEMENT, diagnostics);
         this.ifKeyword = ifKeyword;
         this.condition = condition;
         this.ifBody = ifBody;

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.QueryPipelineNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STQueryPipelineNode extends STNode {
             STNode fromClause,
             STNode intermediateClauses,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.QUERY_PIPELINE, diagnostics);
+        super(SyntaxKind2.QUERY_PIPELINE, diagnostics);
         this.fromClause = fromClause;
         this.intermediateClauses = intermediateClauses;
 

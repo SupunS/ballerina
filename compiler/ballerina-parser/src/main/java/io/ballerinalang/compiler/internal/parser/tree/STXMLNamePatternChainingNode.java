@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.XMLNamePatternChainingNode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STXMLNamePatternChainingNode extends STNode {
             STNode xmlNamePattern,
             STNode gtToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.XML_NAME_PATTERN_CHAIN, diagnostics);
+        super(SyntaxKind2.XML_NAME_PATTERN_CHAIN, diagnostics);
         this.startToken = startToken;
         this.xmlNamePattern = xmlNamePattern;
         this.gtToken = gtToken;

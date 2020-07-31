@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.XMLEmptyElementNode;
 
 import java.util.Collection;
@@ -59,7 +59,7 @@ public class STXMLEmptyElementNode extends STXMLItemNode {
             STNode slashToken,
             STNode getToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.XML_EMPTY_ELEMENT, diagnostics);
+        super(SyntaxKind2.XML_EMPTY_ELEMENT, diagnostics);
         this.ltToken = ltToken;
         this.name = name;
         this.attributes = attributes;

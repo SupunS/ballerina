@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.NamedArgumentNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STNamedArgumentNode extends STFunctionArgumentNode {
             STNode equalsToken,
             STNode expression,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.NAMED_ARG, diagnostics);
+        super(SyntaxKind2.NAMED_ARG, diagnostics);
         this.argumentName = argumentName;
         this.equalsToken = equalsToken;
         this.expression = expression;

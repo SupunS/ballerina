@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.QueryActionNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STQueryActionNode extends STActionNode {
             STNode blockStatement,
             STNode limitClause,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.QUERY_ACTION, diagnostics);
+        super(SyntaxKind2.QUERY_ACTION, diagnostics);
         this.queryPipeline = queryPipeline;
         this.doKeyword = doKeyword;
         this.blockStatement = blockStatement;

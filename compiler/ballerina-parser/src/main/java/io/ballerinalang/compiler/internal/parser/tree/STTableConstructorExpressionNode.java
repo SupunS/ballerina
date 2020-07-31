@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TableConstructorExpressionNode;
 
 import java.util.Collection;
@@ -59,7 +59,7 @@ public class STTableConstructorExpressionNode extends STExpressionNode {
             STNode mappingConstructors,
             STNode closeBracket,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TABLE_CONSTRUCTOR, diagnostics);
+        super(SyntaxKind2.TABLE_CONSTRUCTOR, diagnostics);
         this.tableKeyword = tableKeyword;
         this.keySpecifier = keySpecifier;
         this.openBracket = openBracket;

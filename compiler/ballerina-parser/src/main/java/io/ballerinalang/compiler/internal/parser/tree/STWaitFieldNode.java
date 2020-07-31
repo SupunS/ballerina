@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.WaitFieldNode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STWaitFieldNode extends STNode {
             STNode colon,
             STNode waitFutureExpr,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.WAIT_FIELD, diagnostics);
+        super(SyntaxKind2.WAIT_FIELD, diagnostics);
         this.fieldName = fieldName;
         this.colon = colon;
         this.waitFutureExpr = waitFutureExpr;

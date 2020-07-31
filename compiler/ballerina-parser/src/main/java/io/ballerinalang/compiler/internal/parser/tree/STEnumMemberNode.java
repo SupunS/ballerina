@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.EnumMemberNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STEnumMemberNode extends STNode {
             STNode equalToken,
             STNode constExprNode,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.ENUM_MEMBER, diagnostics);
+        super(SyntaxKind2.ENUM_MEMBER, diagnostics);
         this.metadata = metadata;
         this.identifier = identifier;
         this.equalToken = equalToken;

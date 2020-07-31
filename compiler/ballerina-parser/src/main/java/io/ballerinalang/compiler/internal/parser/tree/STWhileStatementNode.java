@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.WhileStatementNode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STWhileStatementNode extends STStatementNode {
             STNode condition,
             STNode whileBody,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.WHILE_STATEMENT, diagnostics);
+        super(SyntaxKind2.WHILE_STATEMENT, diagnostics);
         this.whileKeyword = whileKeyword;
         this.condition = condition;
         this.whileBody = whileBody;

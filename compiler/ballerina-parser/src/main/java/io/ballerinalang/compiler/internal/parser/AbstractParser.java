@@ -52,7 +52,7 @@ public abstract class AbstractParser {
 
     public abstract STNode parse();
 
-    public abstract STNode resumeParsing(ParserRuleContext context, Object... args);
+    public abstract STNode resumeParsing(int context, Object... args);
 
     protected STToken peek() {
         return this.tokenReader.peek();
@@ -81,7 +81,7 @@ public abstract class AbstractParser {
         return token;
     }
 
-    protected Solution recover(STToken token, ParserRuleContext currentCtx, Object... args) {
+    protected Solution recover(STToken token, int currentCtx, Object... args) {
         Solution sol = this.errorHandler.recover(currentCtx, token, args);
         // If the action is to remove, then re-parse the same rule.
         if (sol.action == Action.REMOVE) {
@@ -91,7 +91,7 @@ public abstract class AbstractParser {
         return sol;
     }
 
-    protected void startContext(ParserRuleContext context) {
+    protected void startContext(int context) {
         this.errorHandler.startContext(context);
     }
 
@@ -105,11 +105,11 @@ public abstract class AbstractParser {
      *
      * @param context Context to switch to.
      */
-    protected void switchContext(ParserRuleContext context) {
+    protected void switchContext(int context) {
         this.errorHandler.switchContext(context);
     }
 
-    protected STToken getNextNextToken(SyntaxKind tokenKind) {
+    protected STToken getNextNextToken(int tokenKind) {
         STToken nextToken = peek(1);
         return nextToken.kind == tokenKind ? peek(2) : nextToken;
     }

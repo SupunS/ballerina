@@ -4,7 +4,7 @@
     "attributes": [
         {
             "name": "kind",
-            "type": "SyntaxKind"
+            "type": "int"
         },
         {
             "name": "width",

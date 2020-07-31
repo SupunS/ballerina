@@ -53,7 +53,7 @@ public class BasicLiteralNode extends ExpressionNode {
     }
 
     public BasicLiteralNode modify(
-            SyntaxKind kind,
+            int kind,
             Token literalToken) {
         if (checkForReferenceEquality(
                 literalToken)) {

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.KeyTypeConstraintNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STKeyTypeConstraintNode extends STNode {
             STNode keyKeywordToken,
             STNode typeParameterNode,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.KEY_TYPE_CONSTRAINT, diagnostics);
+        super(SyntaxKind2.KEY_TYPE_CONSTRAINT, diagnostics);
         this.keyKeywordToken = keyKeywordToken;
         this.typeParameterNode = typeParameterNode;
 

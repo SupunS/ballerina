@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.OrderKeyNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STOrderKeyNode extends STNode {
             STNode expression,
             STNode orderDirection,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.ORDER_KEY, diagnostics);
+        super(SyntaxKind2.ORDER_KEY, diagnostics);
         this.expression = expression;
         this.orderDirection = orderDirection;
 

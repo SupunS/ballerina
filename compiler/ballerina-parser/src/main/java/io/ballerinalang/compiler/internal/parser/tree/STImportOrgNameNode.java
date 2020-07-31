@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ImportOrgNameNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STImportOrgNameNode extends STNode {
             STNode orgName,
             STNode slashToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.IMPORT_ORG_NAME, diagnostics);
+        super(SyntaxKind2.IMPORT_ORG_NAME, diagnostics);
         this.orgName = orgName;
         this.slashToken = slashToken;
 

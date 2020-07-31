@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.OnConflictClauseNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STOnConflictClauseNode extends STClauseNode {
             STNode conflictKeyword,
             STNode expression,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.ON_CONFLICT_CLAUSE, diagnostics);
+        super(SyntaxKind2.ON_CONFLICT_CLAUSE, diagnostics);
         this.onKeyword = onKeyword;
         this.conflictKeyword = conflictKeyword;
         this.expression = expression;

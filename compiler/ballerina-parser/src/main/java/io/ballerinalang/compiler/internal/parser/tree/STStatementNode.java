@@ -17,7 +17,7 @@
  */
 package io.ballerinalang.compiler.internal.parser.tree;
 
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 
@@ -28,11 +28,11 @@ import java.util.Collection;
  */
 public abstract class STStatementNode extends STNode {
 
-    STStatementNode(SyntaxKind kind) {
+    STStatementNode(int kind) {
         super(kind);
     }
 
-    STStatementNode(SyntaxKind kind, Collection<STNodeDiagnostic> diagnostics) {
+    STStatementNode(int kind, Collection<STNodeDiagnostic> diagnostics) {
         super(kind, diagnostics);
     }
 }

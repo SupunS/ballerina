@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.DefaultableParameterNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -67,7 +67,7 @@ public class STDefaultableParameterNode extends STParameterNode {
             STNode equalsToken,
             STNode expression,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.DEFAULTABLE_PARAM, diagnostics);
+        super(SyntaxKind2.DEFAULTABLE_PARAM, diagnostics);
         this.leadingComma = leadingComma;
         this.annotations = annotations;
         this.visibilityQualifier = visibilityQualifier;

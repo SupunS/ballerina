@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.BracedExpressionNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -36,7 +36,7 @@ public class STBracedExpressionNode extends STExpressionNode {
     public final STNode closeParen;
 
     STBracedExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode openParen,
             STNode expression,
             STNode closeParen) {
@@ -49,7 +49,7 @@ public class STBracedExpressionNode extends STExpressionNode {
     }
 
     STBracedExpressionNode(
-            SyntaxKind kind,
+            int kind,
             STNode openParen,
             STNode expression,
             STNode closeParen,
@@ -75,7 +75,7 @@ public class STBracedExpressionNode extends STExpressionNode {
     }
 
     public STBracedExpressionNode modify(
-            SyntaxKind kind,
+            int kind,
             STNode openParen,
             STNode expression,
             STNode closeParen) {

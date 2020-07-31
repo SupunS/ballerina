@@ -57,6 +57,6 @@ public class ChildNodeEntry {
     }
 
     public boolean isList() {
-        return node.kind() == SyntaxKind.LIST;
+        return node.kind() == SyntaxKind2.LIST;
     }
 }

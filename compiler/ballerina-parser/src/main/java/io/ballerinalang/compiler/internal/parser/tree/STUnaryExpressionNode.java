@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.UnaryExpressionNode;
 
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class STUnaryExpressionNode extends STExpressionNode {
             STNode unaryOperator,
             STNode expression,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.UNARY_EXPRESSION, diagnostics);
+        super(SyntaxKind2.UNARY_EXPRESSION, diagnostics);
         this.unaryOperator = unaryOperator;
         this.expression = expression;
 

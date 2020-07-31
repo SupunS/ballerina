@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.XMLTextNode;
 
 import java.util.Collection;
@@ -43,7 +43,7 @@ public class STXMLTextNode extends STXMLItemNode {
     STXMLTextNode(
             STNode content,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.XML_TEXT, diagnostics);
+        super(SyntaxKind2.XML_TEXT, diagnostics);
         this.content = content;
 
         addChildren(

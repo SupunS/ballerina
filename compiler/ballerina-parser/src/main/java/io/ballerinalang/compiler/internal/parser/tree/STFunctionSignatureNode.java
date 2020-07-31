@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.FunctionSignatureNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STFunctionSignatureNode extends STNode {
             STNode closeParenToken,
             STNode returnTypeDesc,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.FUNCTION_SIGNATURE, diagnostics);
+        super(SyntaxKind2.FUNCTION_SIGNATURE, diagnostics);
         this.openParenToken = openParenToken;
         this.parameters = parameters;
         this.closeParenToken = closeParenToken;

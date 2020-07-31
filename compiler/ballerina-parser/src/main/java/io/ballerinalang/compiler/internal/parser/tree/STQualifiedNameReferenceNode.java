@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.QualifiedNameReferenceNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STQualifiedNameReferenceNode extends STNameReferenceNode {
             STNode colon,
             STNode identifier,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.QUALIFIED_NAME_REFERENCE, diagnostics);
+        super(SyntaxKind2.QUALIFIED_NAME_REFERENCE, diagnostics);
         this.modulePrefix = modulePrefix;
         this.colon = colon;
         this.identifier = identifier;

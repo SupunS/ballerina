@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.PositionalArgumentNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +43,7 @@ public class STPositionalArgumentNode extends STFunctionArgumentNode {
     STPositionalArgumentNode(
             STNode expression,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.POSITIONAL_ARG, diagnostics);
+        super(SyntaxKind2.POSITIONAL_ARG, diagnostics);
         this.expression = expression;
 
         addChildren(

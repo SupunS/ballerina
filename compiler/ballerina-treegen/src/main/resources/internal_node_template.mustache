@@ -41,26 +41,26 @@ public{{#isAbstract}} abstract{{/isAbstract}} class {{internalClassName}} extend
     {{/fields}}
 
     {{#isAbstract}}
-    {{internalClassName}}(SyntaxKind kind) {
+    {{internalClassName}}(int kind) {
         super(kind);
     }
 
-    {{internalClassName}}(SyntaxKind kind, Collection<STNodeDiagnostic> diagnostics) {
+    {{internalClassName}}(int kind, Collection<STNodeDiagnostic> diagnostics) {
         super(kind, diagnostics);
     }
     {{/isAbstract}}
     {{^isAbstract}}
     {{internalClassName}}(
-            {{^syntaxKind}}SyntaxKind kind, &#10;            {{/syntaxKind}}{{#fields}}STNode {{fieldName}}{{^isLast}}, &#10;            {{/isLast}}{{/fields}}) {
+            {{^syntaxKind}}int kind, &#10;            {{/syntaxKind}}{{#fields}}STNode {{fieldName}}{{^isLast}}, &#10;            {{/isLast}}{{/fields}}) {
         this(
                 {{^syntaxKind}}kind, &#10;                {{/syntaxKind}}{{#fields}}{{fieldName}}{{^isLast}}, &#10;                {{/isLast}}{{/fields}},
                 Collections.emptyList());
     }
 
     {{internalClassName}}(
-            {{^syntaxKind}}SyntaxKind kind, &#10;            {{/syntaxKind}}{{#fields}}STNode {{fieldName}}{{^isLast}}, &#10;            {{/isLast}}{{/fields}},
+            {{^syntaxKind}}int kind, &#10;            {{/syntaxKind}}{{#fields}}STNode {{fieldName}}{{^isLast}}, &#10;            {{/isLast}}{{/fields}},
             Collection<STNodeDiagnostic> diagnostics) {
-        super({{#syntaxKind}}SyntaxKind.{{syntaxKind}}{{/syntaxKind}}{{^syntaxKind}}kind{{/syntaxKind}}, diagnostics);
+        super({{#syntaxKind}}SyntaxKind2.{{syntaxKind}}{{/syntaxKind}}{{^syntaxKind}}kind{{/syntaxKind}}, diagnostics);
         {{#fields}}
         this.{{fieldName}} = {{fieldName}};
         {{/fields}}
@@ -76,7 +76,7 @@ public{{#isAbstract}} abstract{{/isAbstract}} class {{internalClassName}} extend
     }
 
     public {{internalClassName}} modify(
-            {{^syntaxKind}}SyntaxKind kind, &#10;            {{/syntaxKind}}{{#fields}}STNode {{fieldName}}{{^isLast}}, &#10;            {{/isLast}}{{/fields}}) {
+            {{^syntaxKind}}int kind, &#10;            {{/syntaxKind}}{{#fields}}STNode {{fieldName}}{{^isLast}}, &#10;            {{/isLast}}{{/fields}}) {
         if (checkForReferenceEquality(
                 {{#fields}}{{fieldName}}{{^isLast}}, &#10;                {{/isLast}}{{/fields}})) {
             return this;

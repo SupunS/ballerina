@@ -58,7 +58,7 @@ public class ExpressionStatementNode extends StatementNode {
     }
 
     public ExpressionStatementNode modify(
-            SyntaxKind kind,
+            int kind,
             ExpressionNode expression,
             Token semicolonToken) {
         if (checkForReferenceEquality(

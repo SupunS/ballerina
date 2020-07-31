@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TypeParameterNode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STTypeParameterNode extends STNode {
             STNode typeNode,
             STNode gtToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TYPE_PARAMETER, diagnostics);
+        super(SyntaxKind2.TYPE_PARAMETER, diagnostics);
         this.ltToken = ltToken;
         this.typeNode = typeNode;
         this.gtToken = gtToken;

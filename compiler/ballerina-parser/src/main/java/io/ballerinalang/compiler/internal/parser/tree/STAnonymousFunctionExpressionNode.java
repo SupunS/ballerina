@@ -17,7 +17,7 @@
  */
 package io.ballerinalang.compiler.internal.parser.tree;
 
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 
@@ -28,11 +28,11 @@ import java.util.Collection;
  */
 public abstract class STAnonymousFunctionExpressionNode extends STExpressionNode {
 
-    STAnonymousFunctionExpressionNode(SyntaxKind kind) {
+    STAnonymousFunctionExpressionNode(int kind) {
         super(kind);
     }
 
-    STAnonymousFunctionExpressionNode(SyntaxKind kind, Collection<STNodeDiagnostic> diagnostics) {
+    STAnonymousFunctionExpressionNode(int kind, Collection<STNodeDiagnostic> diagnostics) {
         super(kind, diagnostics);
     }
 }

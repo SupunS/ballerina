@@ -68,7 +68,7 @@ public class TemplateExpressionNode extends ExpressionNode {
     }
 
     public TemplateExpressionNode modify(
-            SyntaxKind kind,
+            int kind,
             Token type,
             Token startBacktick,
             NodeList<TemplateMemberNode> content,

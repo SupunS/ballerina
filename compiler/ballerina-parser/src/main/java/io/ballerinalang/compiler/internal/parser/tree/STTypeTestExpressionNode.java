@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TypeTestExpressionNode;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class STTypeTestExpressionNode extends STExpressionNode {
             STNode isKeyword,
             STNode typeDescriptor,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TYPE_TEST_EXPRESSION, diagnostics);
+        super(SyntaxKind2.TYPE_TEST_EXPRESSION, diagnostics);
         this.expression = expression;
         this.isKeyword = isKeyword;
         this.typeDescriptor = typeDescriptor;

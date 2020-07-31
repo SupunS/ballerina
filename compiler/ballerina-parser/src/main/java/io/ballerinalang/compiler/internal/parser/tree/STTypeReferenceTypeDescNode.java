@@ -19,7 +19,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 import io.ballerinalang.compiler.syntax.tree.TypeReferenceTypeDescNode;
 
 import java.util.Collection;
@@ -43,7 +43,7 @@ public class STTypeReferenceTypeDescNode extends STTypeDescriptorNode {
     STTypeReferenceTypeDescNode(
             STNode typeRef,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.TYPE_REFERENCE_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.TYPE_REFERENCE_TYPE_DESC, diagnostics);
         this.typeRef = typeRef;
 
         addChildren(

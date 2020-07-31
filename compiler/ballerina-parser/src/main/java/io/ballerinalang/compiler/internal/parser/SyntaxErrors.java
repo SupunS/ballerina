@@ -24,7 +24,7 @@ import io.ballerinalang.compiler.internal.parser.tree.STNodeDiagnostic;
 import io.ballerinalang.compiler.internal.parser.tree.STNodeFactory;
 import io.ballerinalang.compiler.internal.parser.tree.STNodeList;
 import io.ballerinalang.compiler.internal.parser.tree.STToken;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -71,342 +71,342 @@ public class SyntaxErrors {
         return (T) node.modifyWith(newDiagnostics);
     }
 
-    public static STToken createMissingToken(SyntaxKind expectedKind) {
+    public static STToken createMissingToken(int expectedKind) {
         return STNodeFactory.createMissingToken(expectedKind);
     }
 
-    public static STToken createMissingTokenWithDiagnostics(SyntaxKind expectedKind) {
+    public static STToken createMissingTokenWithDiagnostics(int expectedKind) {
         return createMissingTokenWithDiagnostics(expectedKind, getErrorCode(expectedKind));
     }
 
-    public static STToken createMissingTokenWithDiagnostics(SyntaxKind expectedKind,
+    public static STToken createMissingTokenWithDiagnostics(int expectedKind,
                                                             DiagnosticCode diagnosticCode) {
         List<STNodeDiagnostic> diagnosticList = new ArrayList<>();
         diagnosticList.add(createDiagnostic(diagnosticCode));
         return STNodeFactory.createMissingToken(expectedKind, diagnosticList);
     }
 
-    private static DiagnosticCode getErrorCode(SyntaxKind expectedKind) {
+    private static DiagnosticCode getErrorCode(int expectedKind) {
         switch (expectedKind) {
             // Keywords
-            case PUBLIC_KEYWORD:
+            case SyntaxKind2.PUBLIC_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_PUBLIC_KEYWORD;
-            case PRIVATE_KEYWORD:
+            case SyntaxKind2.PRIVATE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_PRIVATE_KEYWORD;
-            case REMOTE_KEYWORD:
+            case SyntaxKind2.REMOTE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_REMOTE_KEYWORD;
-            case ABSTRACT_KEYWORD:
+            case SyntaxKind2.ABSTRACT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_ABSTRACT_KEYWORD;
-            case CLIENT_KEYWORD:
+            case SyntaxKind2.CLIENT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_CLIENT_KEYWORD;
-            case IMPORT_KEYWORD:
+            case SyntaxKind2.IMPORT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_IMPORT_KEYWORD;
-            case FUNCTION_KEYWORD:
+            case SyntaxKind2.FUNCTION_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_FUNCTION_KEYWORD;
-            case CONST_KEYWORD:
+            case SyntaxKind2.CONST_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_CONST_KEYWORD;
-            case LISTENER_KEYWORD:
+            case SyntaxKind2.LISTENER_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_LISTENER_KEYWORD;
-            case SERVICE_KEYWORD:
+            case SyntaxKind2.SERVICE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_SERVICE_KEYWORD;
-            case XMLNS_KEYWORD:
+            case SyntaxKind2.XMLNS_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_XMLNS_KEYWORD;
-            case ANNOTATION_KEYWORD:
+            case SyntaxKind2.ANNOTATION_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_ANNOTATION_KEYWORD;
-            case TYPE_KEYWORD:
+            case SyntaxKind2.TYPE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_TYPE_KEYWORD;
-            case RECORD_KEYWORD:
+            case SyntaxKind2.RECORD_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_RECORD_KEYWORD;
-            case OBJECT_KEYWORD:
+            case SyntaxKind2.OBJECT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_OBJECT_KEYWORD;
-            case VERSION_KEYWORD:
+            case SyntaxKind2.VERSION_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_VERSION_KEYWORD;
-            case AS_KEYWORD:
+            case SyntaxKind2.AS_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_AS_KEYWORD;
-            case ON_KEYWORD:
+            case SyntaxKind2.ON_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_ON_KEYWORD;
-            case RESOURCE_KEYWORD:
+            case SyntaxKind2.RESOURCE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_RESOURCE_KEYWORD;
-            case FINAL_KEYWORD:
+            case SyntaxKind2.FINAL_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_FINAL_KEYWORD;
-            case SOURCE_KEYWORD:
+            case SyntaxKind2.SOURCE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_SOURCE_KEYWORD;
-            case WORKER_KEYWORD:
+            case SyntaxKind2.WORKER_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_WORKER_KEYWORD;
-            case PARAMETER_KEYWORD:
+            case SyntaxKind2.PARAMETER_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_PARAMETER_KEYWORD;
-            case FIELD_KEYWORD:
+            case SyntaxKind2.FIELD_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_FIELD_KEYWORD;
 
-            case RETURNS_KEYWORD:
+            case SyntaxKind2.RETURNS_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_RETURNS_KEYWORD;
-            case RETURN_KEYWORD:
+            case SyntaxKind2.RETURN_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_RETURN_KEYWORD;
-            case EXTERNAL_KEYWORD:
+            case SyntaxKind2.EXTERNAL_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_EXTERNAL_KEYWORD;
-            case TRUE_KEYWORD:
+            case SyntaxKind2.TRUE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_TRUE_KEYWORD;
-            case FALSE_KEYWORD:
+            case SyntaxKind2.FALSE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_FALSE_KEYWORD;
-            case IF_KEYWORD:
+            case SyntaxKind2.IF_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_IF_KEYWORD;
-            case ELSE_KEYWORD:
+            case SyntaxKind2.ELSE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_ELSE_KEYWORD;
-            case WHILE_KEYWORD:
+            case SyntaxKind2.WHILE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_WHILE_KEYWORD;
-            case CHECK_KEYWORD:
+            case SyntaxKind2.CHECK_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_CHECK_KEYWORD;
-            case CHECKPANIC_KEYWORD:
+            case SyntaxKind2.CHECKPANIC_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_CHECKPANIC_KEYWORD;
-            case PANIC_KEYWORD:
+            case SyntaxKind2.PANIC_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_PANIC_KEYWORD;
-            case CONTINUE_KEYWORD:
+            case SyntaxKind2.CONTINUE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_CONTINUE_KEYWORD;
-            case BREAK_KEYWORD:
+            case SyntaxKind2.BREAK_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_BREAK_KEYWORD;
-            case TYPEOF_KEYWORD:
+            case SyntaxKind2.TYPEOF_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_TYPEOF_KEYWORD;
-            case IS_KEYWORD:
+            case SyntaxKind2.IS_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_IS_KEYWORD;
-            case NULL_KEYWORD:
+            case SyntaxKind2.NULL_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_NULL_KEYWORD;
-            case LOCK_KEYWORD:
+            case SyntaxKind2.LOCK_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_LOCK_KEYWORD;
-            case FORK_KEYWORD:
+            case SyntaxKind2.FORK_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_FORK_KEYWORD;
-            case TRAP_KEYWORD:
+            case SyntaxKind2.TRAP_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_TRAP_KEYWORD;
-            case IN_KEYWORD:
+            case SyntaxKind2.IN_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_IN_KEYWORD;
-            case FOREACH_KEYWORD:
+            case SyntaxKind2.FOREACH_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_FOREACH_KEYWORD;
-            case TABLE_KEYWORD:
+            case SyntaxKind2.TABLE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_TABLE_KEYWORD;
-            case KEY_KEYWORD:
+            case SyntaxKind2.KEY_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_KEY_KEYWORD;
-            case LET_KEYWORD:
+            case SyntaxKind2.LET_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_LET_KEYWORD;
-            case NEW_KEYWORD:
+            case SyntaxKind2.NEW_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_NEW_KEYWORD;
-            case FROM_KEYWORD:
+            case SyntaxKind2.FROM_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_FROM_KEYWORD;
-            case WHERE_KEYWORD:
+            case SyntaxKind2.WHERE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_WHERE_KEYWORD;
-            case SELECT_KEYWORD:
+            case SyntaxKind2.SELECT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_SELECT_KEYWORD;
-            case START_KEYWORD:
+            case SyntaxKind2.START_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_START_KEYWORD;
-            case FLUSH_KEYWORD:
+            case SyntaxKind2.FLUSH_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_FLUSH_KEYWORD;
-            case DEFAULT_KEYWORD:
+            case SyntaxKind2.DEFAULT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_DEFAULT_KEYWORD;
-            case WAIT_KEYWORD:
+            case SyntaxKind2.WAIT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_WAIT_KEYWORD;
-            case DO_KEYWORD:
+            case SyntaxKind2.DO_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_DO_KEYWORD;
-            case TRANSACTION_KEYWORD:
+            case SyntaxKind2.TRANSACTION_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_TRANSACTION_KEYWORD;
-            case TRANSACTIONAL_KEYWORD:
+            case SyntaxKind2.TRANSACTIONAL_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_TRANSACTIONAL_KEYWORD;
-            case COMMIT_KEYWORD:
+            case SyntaxKind2.COMMIT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_COMMIT_KEYWORD;
-            case ROLLBACK_KEYWORD:
+            case SyntaxKind2.ROLLBACK_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_ROLLBACK_KEYWORD;
-            case RETRY_KEYWORD:
+            case SyntaxKind2.RETRY_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_RETRY_KEYWORD;
-            case ENUM_KEYWORD:
+            case SyntaxKind2.ENUM_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_ENUM_KEYWORD;
-            case BASE16_KEYWORD:
+            case SyntaxKind2.BASE16_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_BASE16_KEYWORD;
-            case BASE64_KEYWORD:
+            case SyntaxKind2.BASE64_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_BASE64_KEYWORD;
-            case MATCH_KEYWORD:
+            case SyntaxKind2.MATCH_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_MATCH_KEYWORD;
 
             // Type keywords
-            case INT_KEYWORD:
+            case SyntaxKind2.INT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_INT_KEYWORD;
-            case BYTE_KEYWORD:
+            case SyntaxKind2.BYTE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_BYTE_KEYWORD;
-            case FLOAT_KEYWORD:
+            case SyntaxKind2.FLOAT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_FLOAT_KEYWORD;
-            case DECIMAL_KEYWORD:
+            case SyntaxKind2.DECIMAL_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_DECIMAL_KEYWORD;
-            case STRING_KEYWORD:
+            case SyntaxKind2.STRING_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_STRING_KEYWORD;
-            case BOOLEAN_KEYWORD:
+            case SyntaxKind2.BOOLEAN_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_BOOLEAN_KEYWORD;
-            case XML_KEYWORD:
+            case SyntaxKind2.XML_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_XML_KEYWORD;
-            case JSON_KEYWORD:
+            case SyntaxKind2.JSON_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_JSON_KEYWORD;
-            case HANDLE_KEYWORD:
+            case SyntaxKind2.HANDLE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_HANDLE_KEYWORD;
-            case ANY_KEYWORD:
+            case SyntaxKind2.ANY_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_ANY_KEYWORD;
-            case ANYDATA_KEYWORD:
+            case SyntaxKind2.ANYDATA_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_ANYDATA_KEYWORD;
-            case NEVER_KEYWORD:
+            case SyntaxKind2.NEVER_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_NEVER_KEYWORD;
-            case VAR_KEYWORD:
+            case SyntaxKind2.VAR_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_VAR_KEYWORD;
-            case MAP_KEYWORD:
+            case SyntaxKind2.MAP_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_MAP_KEYWORD;
-            case FUTURE_KEYWORD:
+            case SyntaxKind2.FUTURE_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_FUTURE_KEYWORD;
-            case TYPEDESC_KEYWORD:
+            case SyntaxKind2.TYPEDESC_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_TYPEDESC_KEYWORD;
-            case ERROR_KEYWORD:
+            case SyntaxKind2.ERROR_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_ERROR_KEYWORD;
-            case STREAM_KEYWORD:
+            case SyntaxKind2.STREAM_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_STREAM_KEYWORD;
-            case READONLY_KEYWORD:
+            case SyntaxKind2.READONLY_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_READONLY_KEYWORD;
-            case DISTINCT_KEYWORD:
+            case SyntaxKind2.DISTINCT_KEYWORD:
                 return DiagnosticErrorCode.ERROR_MISSING_DISTINCT_KEYWORD;
 
             // Separators
-            case OPEN_BRACE_TOKEN:
+            case SyntaxKind2.OPEN_BRACE_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_OPEN_BRACE_TOKEN;
-            case CLOSE_BRACE_TOKEN:
+            case SyntaxKind2.CLOSE_BRACE_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_CLOSE_BRACE_TOKEN;
-            case OPEN_PAREN_TOKEN:
+            case SyntaxKind2.OPEN_PAREN_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_OPEN_PAREN_TOKEN;
-            case CLOSE_PAREN_TOKEN:
+            case SyntaxKind2.CLOSE_PAREN_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_CLOSE_PAREN_TOKEN;
-            case OPEN_BRACKET_TOKEN:
+            case SyntaxKind2.OPEN_BRACKET_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_OPEN_BRACKET_TOKEN;
-            case CLOSE_BRACKET_TOKEN:
+            case SyntaxKind2.CLOSE_BRACKET_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_CLOSE_BRACKET_TOKEN;
-            case SEMICOLON_TOKEN:
+            case SyntaxKind2.SEMICOLON_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_SEMICOLON_TOKEN;
-            case DOT_TOKEN:
+            case SyntaxKind2.DOT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_DOT_TOKEN;
-            case COLON_TOKEN:
+            case SyntaxKind2.COLON_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_COLON_TOKEN;
-            case COMMA_TOKEN:
+            case SyntaxKind2.COMMA_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_COMMA_TOKEN;
-            case ELLIPSIS_TOKEN:
+            case SyntaxKind2.ELLIPSIS_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_ELLIPSIS_TOKEN;
-            case OPEN_BRACE_PIPE_TOKEN:
+            case SyntaxKind2.OPEN_BRACE_PIPE_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_OPEN_BRACE_PIPE_TOKEN;
-            case CLOSE_BRACE_PIPE_TOKEN:
+            case SyntaxKind2.CLOSE_BRACE_PIPE_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_CLOSE_BRACE_PIPE_TOKEN;
-            case AT_TOKEN:
+            case SyntaxKind2.AT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_AT_TOKEN;
-            case HASH_TOKEN:
+            case SyntaxKind2.HASH_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_HASH_TOKEN;
-            case BACKTICK_TOKEN:
+            case SyntaxKind2.BACKTICK_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_BACKTICK_TOKEN;
-            case DOUBLE_QUOTE_TOKEN:
+            case SyntaxKind2.DOUBLE_QUOTE_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_DOUBLE_QUOTE_TOKEN;
-            case SINGLE_QUOTE_TOKEN:
+            case SyntaxKind2.SINGLE_QUOTE_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_SINGLE_QUOTE_TOKEN;
 
             // Operators
-            case EQUAL_TOKEN:
+            case SyntaxKind2.EQUAL_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_EQUAL_TOKEN;
-            case DOUBLE_EQUAL_TOKEN:
+            case SyntaxKind2.DOUBLE_EQUAL_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_DOUBLE_EQUAL_TOKEN;
-            case TRIPPLE_EQUAL_TOKEN:
+            case SyntaxKind2.TRIPPLE_EQUAL_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_TRIPPLE_EQUAL_TOKEN;
-            case PLUS_TOKEN:
+            case SyntaxKind2.PLUS_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_PLUS_TOKEN;
-            case MINUS_TOKEN:
+            case SyntaxKind2.MINUS_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_MINUS_TOKEN;
-            case SLASH_TOKEN:
+            case SyntaxKind2.SLASH_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_SLASH_TOKEN;
-            case PERCENT_TOKEN:
+            case SyntaxKind2.PERCENT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_PERCENT_TOKEN;
-            case ASTERISK_TOKEN:
+            case SyntaxKind2.ASTERISK_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_ASTERISK_TOKEN;
-            case LT_TOKEN:
+            case SyntaxKind2.LT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_LT_TOKEN;
-            case LT_EQUAL_TOKEN:
+            case SyntaxKind2.LT_EQUAL_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_LT_EQUAL_TOKEN;
-            case GT_TOKEN:
+            case SyntaxKind2.GT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_GT_TOKEN;
-            case RIGHT_DOUBLE_ARROW_TOKEN:
+            case SyntaxKind2.RIGHT_DOUBLE_ARROW_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_RIGHT_DOUBLE_ARROW_TOKEN;
-            case QUESTION_MARK_TOKEN:
+            case SyntaxKind2.QUESTION_MARK_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_QUESTION_MARK_TOKEN;
-            case PIPE_TOKEN:
+            case SyntaxKind2.PIPE_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_PIPE_TOKEN;
-            case GT_EQUAL_TOKEN:
+            case SyntaxKind2.GT_EQUAL_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_GT_EQUAL_TOKEN;
-            case EXCLAMATION_MARK_TOKEN:
+            case SyntaxKind2.EXCLAMATION_MARK_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_EXCLAMATION_MARK_TOKEN;
-            case NOT_EQUAL_TOKEN:
+            case SyntaxKind2.NOT_EQUAL_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_NOT_EQUAL_TOKEN;
-            case NOT_DOUBLE_EQUAL_TOKEN:
+            case SyntaxKind2.NOT_DOUBLE_EQUAL_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_NOT_DOUBLE_EQUAL_TOKEN;
-            case BITWISE_AND_TOKEN:
+            case SyntaxKind2.BITWISE_AND_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_BITWISE_AND_TOKEN;
-            case BITWISE_XOR_TOKEN:
+            case SyntaxKind2.BITWISE_XOR_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_BITWISE_XOR_TOKEN;
-            case LOGICAL_AND_TOKEN:
+            case SyntaxKind2.LOGICAL_AND_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_LOGICAL_AND_TOKEN;
-            case LOGICAL_OR_TOKEN:
+            case SyntaxKind2.LOGICAL_OR_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_LOGICAL_OR_TOKEN;
-            case NEGATION_TOKEN:
+            case SyntaxKind2.NEGATION_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_NEGATION_TOKEN;
-            case RIGHT_ARROW_TOKEN:
+            case SyntaxKind2.RIGHT_ARROW_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_RIGHT_ARROW_TOKEN;
-            case INTERPOLATION_START_TOKEN:
+            case SyntaxKind2.INTERPOLATION_START_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_INTERPOLATION_START_TOKEN;
-            case XML_PI_START_TOKEN:
+            case SyntaxKind2.XML_PI_START_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_XML_PI_START_TOKEN;
-            case XML_PI_END_TOKEN:
+            case SyntaxKind2.XML_PI_END_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_XML_PI_END_TOKEN;
-            case XML_COMMENT_START_TOKEN:
+            case SyntaxKind2.XML_COMMENT_START_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_XML_COMMENT_START_TOKEN;
-            case XML_COMMENT_END_TOKEN:
+            case SyntaxKind2.XML_COMMENT_END_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_XML_COMMENT_END_TOKEN;
-            case SYNC_SEND_TOKEN:
+            case SyntaxKind2.SYNC_SEND_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_SYNC_SEND_TOKEN;
-            case LEFT_ARROW_TOKEN:
+            case SyntaxKind2.LEFT_ARROW_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_LEFT_ARROW_TOKEN;
-            case DOUBLE_DOT_LT_TOKEN:
+            case SyntaxKind2.DOUBLE_DOT_LT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_DOUBLE_DOT_LT_TOKEN;
-            case DOUBLE_LT_TOKEN:
+            case SyntaxKind2.DOUBLE_LT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_DOUBLE_LT_TOKEN;
-            case ANNOT_CHAINING_TOKEN:
+            case SyntaxKind2.ANNOT_CHAINING_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_ANNOT_CHAINING_TOKEN;
-            case OPTIONAL_CHAINING_TOKEN:
+            case SyntaxKind2.OPTIONAL_CHAINING_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_OPTIONAL_CHAINING_TOKEN;
-            case ELVIS_TOKEN:
+            case SyntaxKind2.ELVIS_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_ELVIS_TOKEN;
-            case DOT_LT_TOKEN:
+            case SyntaxKind2.DOT_LT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_DOT_LT_TOKEN;
-            case SLASH_LT_TOKEN:
+            case SyntaxKind2.SLASH_LT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_SLASH_LT_TOKEN;
-            case DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN:
+            case SyntaxKind2.DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_DOUBLE_SLASH_DOUBLE_ASTERISK_LT_TOKEN;
-            case SLASH_ASTERISK_TOKEN:
+            case SyntaxKind2.SLASH_ASTERISK_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_SLASH_ASTERISK_TOKEN;
-            case DOUBLE_GT_TOKEN:
+            case SyntaxKind2.DOUBLE_GT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_DOUBLE_GT_TOKEN;
-            case TRIPPLE_GT_TOKEN:
+            case SyntaxKind2.TRIPPLE_GT_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_TRIPPLE_GT_TOKEN;
 
-            case IDENTIFIER_TOKEN:
+            case SyntaxKind2.IDENTIFIER_TOKEN:
                 return DiagnosticErrorCode.ERROR_MISSING_IDENTIFIER;
-            case STRING_LITERAL:
+            case SyntaxKind2.STRING_LITERAL:
                 return DiagnosticErrorCode.ERROR_MISSING_STRING_LITERAL;
-            case DECIMAL_INTEGER_LITERAL:
+            case SyntaxKind2.DECIMAL_INTEGER_LITERAL:
                 return DiagnosticErrorCode.ERROR_MISSING_DECIMAL_INTEGER_LITERAL;
-            case HEX_INTEGER_LITERAL:
+            case SyntaxKind2.HEX_INTEGER_LITERAL:
                 return DiagnosticErrorCode.ERROR_MISSING_HEX_INTEGER_LITERAL;
-            case DECIMAL_FLOATING_POINT_LITERAL:
+            case SyntaxKind2.DECIMAL_FLOATING_POINT_LITERAL:
                 return DiagnosticErrorCode.ERROR_MISSING_DECIMAL_FLOATING_POINT_LITERAL;
-            case HEX_FLOATING_POINT_LITERAL:
+            case SyntaxKind2.HEX_FLOATING_POINT_LITERAL:
                 return DiagnosticErrorCode.ERROR_MISSING_HEX_FLOATING_POINT_LITERAL;
-            case XML_TEXT_CONTENT:
+            case SyntaxKind2.XML_TEXT_CONTENT:
                 return DiagnosticErrorCode.ERROR_MISSING_XML_TEXT_CONTENT;
-            case TEMPLATE_STRING:
+            case SyntaxKind2.TEMPLATE_STRING:
                 return DiagnosticErrorCode.ERROR_MISSING_TEMPLATE_STRING;
 
-            case TYPE_DESC:
+            case SyntaxKind2.TYPE_DESC:
                 return DiagnosticErrorCode.ERROR_MISSING_TYPE_DESC;
             default:
                 return DiagnosticErrorCode.ERROR_SYNTAX_ERROR;

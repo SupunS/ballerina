@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.StreamTypeDescriptorNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -47,7 +47,7 @@ public class STStreamTypeDescriptorNode extends STTypeDescriptorNode {
             STNode streamKeywordToken,
             STNode streamTypeParamsNode,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.STREAM_TYPE_DESC, diagnostics);
+        super(SyntaxKind2.STREAM_TYPE_DESC, diagnostics);
         this.streamKeywordToken = streamKeywordToken;
         this.streamTypeParamsNode = streamTypeParamsNode;
 

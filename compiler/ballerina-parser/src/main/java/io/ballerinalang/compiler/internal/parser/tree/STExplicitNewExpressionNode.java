@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ExplicitNewExpressionNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STExplicitNewExpressionNode extends STNewExpressionNode {
             STNode typeDescriptor,
             STNode parenthesizedArgList,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.EXPLICIT_NEW_EXPRESSION, diagnostics);
+        super(SyntaxKind2.EXPLICIT_NEW_EXPRESSION, diagnostics);
         this.newKeyword = newKeyword;
         this.typeDescriptor = typeDescriptor;
         this.parenthesizedArgList = parenthesizedArgList;

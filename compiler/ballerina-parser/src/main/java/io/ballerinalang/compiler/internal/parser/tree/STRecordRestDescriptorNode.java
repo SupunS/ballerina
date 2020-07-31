@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.RecordRestDescriptorNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STRecordRestDescriptorNode extends STNode {
             STNode ellipsisToken,
             STNode semicolonToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.RECORD_REST_TYPE, diagnostics);
+        super(SyntaxKind2.RECORD_REST_TYPE, diagnostics);
         this.typeName = typeName;
         this.ellipsisToken = ellipsisToken;
         this.semicolonToken = semicolonToken;

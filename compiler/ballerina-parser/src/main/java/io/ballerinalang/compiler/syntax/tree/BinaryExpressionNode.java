@@ -63,7 +63,7 @@ public class BinaryExpressionNode extends ExpressionNode {
     }
 
     public BinaryExpressionNode modify(
-            SyntaxKind kind,
+            int kind,
             Node lhsExpr,
             Token operator,
             Node rhsExpr) {

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ConditionalExpressionNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -59,7 +59,7 @@ public class STConditionalExpressionNode extends STExpressionNode {
             STNode colonToken,
             STNode endExpression,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.CONDITIONAL_EXPRESSION, diagnostics);
+        super(SyntaxKind2.CONDITIONAL_EXPRESSION, diagnostics);
         this.lhsExpression = lhsExpression;
         this.questionMarkToken = questionMarkToken;
         this.middleExpression = middleExpression;

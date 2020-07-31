@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.OptionalFieldAccessExpressionNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STOptionalFieldAccessExpressionNode extends STExpressionNode {
             STNode optionalChainingToken,
             STNode fieldName,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.OPTIONAL_FIELD_ACCESS, diagnostics);
+        super(SyntaxKind2.OPTIONAL_FIELD_ACCESS, diagnostics);
         this.expression = expression;
         this.optionalChainingToken = optionalChainingToken;
         this.fieldName = fieldName;

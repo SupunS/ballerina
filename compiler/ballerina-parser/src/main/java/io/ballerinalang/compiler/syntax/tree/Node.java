@@ -109,7 +109,7 @@ public abstract class Node {
         return textRangeWithMinutiae;
     }
 
-    public SyntaxKind kind() {
+    public int kind() {
         return internalNode.kind;
     }
 

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.ServiceBodyNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STServiceBodyNode extends STNode {
             STNode resources,
             STNode closeBraceToken,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.SERVICE_BODY, diagnostics);
+        super(SyntaxKind2.SERVICE_BODY, diagnostics);
         this.openBraceToken = openBraceToken;
         this.resources = resources;
         this.closeBraceToken = closeBraceToken;

@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
 import io.ballerinalang.compiler.syntax.tree.SyncSendActionNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -51,7 +51,7 @@ public class STSyncSendActionNode extends STActionNode {
             STNode syncSendToken,
             STNode peerWorker,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.SYNC_SEND_ACTION, diagnostics);
+        super(SyntaxKind2.SYNC_SEND_ACTION, diagnostics);
         this.expression = expression;
         this.syncSendToken = syncSendToken;
         this.peerWorker = peerWorker;

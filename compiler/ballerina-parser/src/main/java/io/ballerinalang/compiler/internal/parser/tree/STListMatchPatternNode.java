@@ -20,7 +20,7 @@ package io.ballerinalang.compiler.internal.parser.tree;
 import io.ballerinalang.compiler.syntax.tree.ListMatchPatternNode;
 import io.ballerinalang.compiler.syntax.tree.Node;
 import io.ballerinalang.compiler.syntax.tree.NonTerminalNode;
-import io.ballerinalang.compiler.syntax.tree.SyntaxKind;
+import io.ballerinalang.compiler.syntax.tree.SyntaxKind2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class STListMatchPatternNode extends STNode {
             STNode restMatchPattern,
             STNode closeBracket,
             Collection<STNodeDiagnostic> diagnostics) {
-        super(SyntaxKind.LIST_MATCH_PATTERN, diagnostics);
+        super(SyntaxKind2.LIST_MATCH_PATTERN, diagnostics);
         this.openBracket = openBracket;
         this.matchPatterns = matchPatterns;
         this.restMatchPattern = restMatchPattern;
