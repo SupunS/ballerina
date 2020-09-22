@@ -17,6 +17,8 @@ package org.ballerinalang.formatter.core;
 
 import io.ballerina.tools.text.LinePosition;
 import io.ballerina.tools.text.LineRange;
+import io.ballerina.tools.text.TextDocument;
+import io.ballerina.tools.text.TextDocuments;
 import io.ballerinalang.compiler.syntax.tree.AbstractNodeFactory;
 import io.ballerinalang.compiler.syntax.tree.AsyncSendActionNode;
 import io.ballerinalang.compiler.syntax.tree.ChildNodeList;
@@ -120,6 +122,7 @@ class FormatterUtils {
                     parentKind == SyntaxKind.POSITIONAL_ARG ||
                     parentKind == SyntaxKind.BINARY_EXPRESSION ||
                     parentKind == SyntaxKind.BRACED_EXPRESSION ||
+                    parentKind == SyntaxKind.PANIC_STATEMENT ||
                     parentKind == SyntaxKind.ASYNC_SEND_ACTION ||
                     parentKind == SyntaxKind.SYNC_SEND_ACTION ||
                     parentKind == SyntaxKind.RECEIVE_ACTION ||
@@ -144,6 +147,10 @@ class FormatterUtils {
                         grandParent.kind() == SyntaxKind.TYPED_BINDING_PATTERN) {
                     return grandParent;
                 }
+                return null;
+            }
+            if (parentKind == SyntaxKind.METHOD_CALL && grandParent != null &&
+                    grandParent.kind() == SyntaxKind.LOCAL_VAR_DECL) {
                 return null;
             }
             return getParent(parent, syntaxKind);
@@ -476,7 +483,7 @@ class FormatterUtils {
         return preserve;
     }
 
-    private static ArrayList<NonTerminalNode> nestedIfBlock(NonTerminalNode node) {
+    static ArrayList<NonTerminalNode> nestedIfBlock(NonTerminalNode node) {
         NonTerminalNode parent = node.parent();
         ArrayList<NonTerminalNode> nestedParent = new ArrayList<>();
         if (parent == null) {
@@ -594,13 +601,15 @@ class FormatterUtils {
 
     /**
      * Converts the syntax tree into source code, remove superfluous spaces and newlines at the ending and returns it
-     * as a string.
+     * as a syntax tree.
      *
      * @param syntaxTree       syntaxTree
-     * @return source code as a string
+     * @return source code as a syntax tree
      */
-    public static String toFormattedSourceCode(SyntaxTree syntaxTree) {
-        return syntaxTree.toSourceCode().trim() + NEWLINE_SYMBOL;
+    static SyntaxTree handleNewLineEndings(SyntaxTree syntaxTree) {
+        String formattedSource = syntaxTree.toSourceCode().trim() + NEWLINE_SYMBOL;
+        TextDocument textDocument = TextDocuments.from(formattedSource);
+        return SyntaxTree.from(textDocument);
     }
 
     private static final class Indentation {
